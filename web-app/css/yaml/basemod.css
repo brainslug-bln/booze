@@ -1,0 +1,190 @@
+/**
+ * "Yet Another Multicolumn Layout" - (X)HTML/CSS framework
+ * (en) stylesheet for screen layout
+ * (de) Stylesheet für das Bildschirm-Layout
+ *
+ * @creator       YAML Builder V1.2.1 (http://builder.yaml.de)
+ * @file          basemod.css
+ * @-yaml-minver  3.3
+*/
+
+@media screen, projection
+{
+    /**
+     * (en) Forcing vertical scrollbars in IE8, Firefox, Webkit & Opera
+     * (de) Erzwingen vertikaler Scrollbalken in IE8, Firefox, Webkit & Opera
+     *
+     * @workaround
+     * @affected IE8, FF, Webkit, Opera
+     * @css-for all
+     * @valid CSS3
+    */
+
+    body { overflow-y: scroll; }
+
+    /*-------------------------------------------------------------------------*/
+
+    /* (en) Marginal areas & page background */
+    /* (de) Randbereiche & Seitenhintergrund */
+    body { background: #3b69ad none; padding: 10px 0; }
+
+    /* Layout Alignment | Layout-Ausrichtung */
+    .page_margins { margin: 0 auto; }
+
+    /* Layout Properties | Layout-Eigenschaften */
+    .page_margins { width: 70em;  min-width: inherit; max-width: none; background: #fff; }
+    .page { padding: 10px 15px 10px 10px; }
+    #main { margin: 10px 0; background: #fff; float: left; width: 100%}
+    #footer { margin: 0 0 10px 0; background: #fff; float: left; width: 100%; color:#666; background: #f9f9f9; border-top: 5px #efefef solid; font-size: 0.9em; text-align: right;}
+    #footer .content {
+        padding: 0.5em 1em;
+    }
+    /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
+    #nav ul { margin-left: 20px; }
+
+    /*-------------------------------------------------------------------------*/
+
+
+    .page_margins {
+        border: 0 none;
+        background-repeat:repeat-y;
+        background-position:left;
+        -moz-box-shadow: 5px 5px 8px #222;
+        -webkit-box-shadow: 5px 5px 8spx #222;
+        -moz-border-radius: 5px;
+    }
+
+    .page {
+        border: 0 none;
+        margin: 0 0 0 5px;
+        padding: 10px 15px 10px 10px;
+    }
+
+    .contentbox {
+        border: 1px solid #aed0ea;
+        -moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px;
+    }
+
+    .contentbox h1 {
+        background: url("../../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png") repeat-x scroll 50% 50% #D7EBF9;
+        color: #2779AA;
+        font-weight: bold;
+        font-size: 1.0em;
+        padding: 0.5em 1em 0.5em 1em;
+        border-bottom: 1px solid #aed0ea;
+        margin: 0;
+        -moz-border-radius-topleft: 6px; -webkit-border-top-left-radius: 6px; border-top-left-radius: 6px;
+        -moz-border-radius-topright: 6px; -webkit-border-top-right-radius: 6px; border-top-right-radius: 6px;
+    }
+
+    .contentbox .singleColumn {
+        padding: 0.5em 1em 0.5em 1em;
+        float: left;
+    }
+
+    .contentbox .leftColumn { float: left; width: 19em}
+    .contentbox .rightColumn { width: auto; margin: 0 0 0 19em}
+    .contentbox .leftColumn_content { padding: 0; float: left; }
+    .contentbox .rightColumn_content { padding: 0 20px 0 10px; padding: 0.5em 1em 0.5em 1em; float: left; }
+
+    /*#leftnav {
+        background: none;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    #leftnav ul {
+        margin: 0;
+        padding: 0;
+        border: none;
+        -moz-border-radius: 0;
+        webkit-border-radius: 0;
+        border-radius: 0;
+        background: none;
+    }
+
+    #leftnav ul li {
+        background: #d7ebf9 url(../../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #2779aa;
+        padding: 0 !important;
+        border-top: 1px solid #aed0ea;
+        border-bottom: 1px solid #aed0ea !important;
+        border-right: 1px solid #aed0ea;
+        border-left: none;
+        margin: 0 !important;
+        width: 18em;
+        font-size: 0.9em;
+        -moz-border-radius-topleft: 0;
+        -webkit-border-top-left-radius: 0;
+        border-top-left-radius: 0;
+        -moz-border-radius-topright: 0;
+        -webkit-border-top-right-radius: 0;
+        border-top-right-radius: 0;
+
+    }
+
+    #leftnav ul li:last-child {
+      -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
+    }
+
+    #leftnav ul li.ui-state-hover, #leftnav ul li.ui-state-active {
+      background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_50_3baae3_1x400.png) 50% 50% repeat-x;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    #leftnav li.ui-state-hover a {
+        color: #ffffff;
+    }*/
+
+
+    #leftnav ul {
+        list-style-type: none;
+        margin: 0.5em 0em 1em 0em;
+        padding: 0;
+        border: none;
+        -moz-border-radius: 0;
+        background: none;
+        float: left;
+    }
+
+    #leftnav ul li {
+        float: left;
+        background: #d7ebf9 url(../../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #2779aa;
+        padding: 1em 1em 1em 1em;
+        border-top: 1px solid #aed0ea;
+        border-bottom: 1px solid #aed0ea;
+        border-right: 1px solid #aed0ea;
+        cursor: pointer;
+        font-size: 0.9em;
+        width: 80%;
+        margin: 0;
+    }
+
+    #leftnav ul li a {
+        color: #2779AA;
+    }
+
+    #leftnav ul li:last-child {
+        -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
+    }
+
+    #leftnav ul li.active, #leftnav ul li.active:hover {
+        background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_50_3baae3_1x400.png) 50% 50% repeat-x;
+        width: 82%;
+        -moz-border-radius-topright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
+        -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
+    }
+
+    #leftnav ul li:hover {
+        background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_100_e4f1fb_1x400.png) 50% 50% repeat-x;
+    }
+
+    #leftnav ul li:hover a {
+        text-decoration: none;
+    }
+
+    #leftnav ul li.active a {
+        color: #ffffff;
+        text-decoration: none;
+    }
+}
