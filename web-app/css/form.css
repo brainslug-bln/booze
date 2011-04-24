@@ -1,0 +1,34 @@
+.form {
+    float: left;  
+}
+
+.form .column50percent {
+    width: 50%;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.form .row {
+    min-height: 3em;
+    width: 100%;
+    float: left;
+    margin-bottom: 10px;
+    padding-right: 10px;
+}
+
+.form label {
+    width: 100%;
+    font-weight: bold;
+    float: left;
+}
+
+.form input {
+    width: 90%;
+    float: left;
+}
+
+.form textarea {
+    float: left;
+    width: 90%;
+}

@@ -13,6 +13,7 @@
 
   <link href="${resource(dir:'/css/',file:'calculator.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'recipe.css')}" rel="stylesheet" type="text/css" />
+  <link href="${resource(dir:'/css/',file:'form.css')}" rel="stylesheet" type="text/css" />
 
   <g:javascript src="jquery.js" />
   <g:javascript src="jquery-ui.js" />
