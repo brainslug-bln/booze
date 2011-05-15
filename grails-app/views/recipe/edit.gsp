@@ -23,7 +23,18 @@
 
       <div class="rightColumn">
         <div class="rightColumn_content">
+          <div id="commonData">
+            <g:render template="mainData" bean="${recipeInstance}" />
+          </div>
           
+          <div id="mashing" style="display: none;">
+          </div>
+          
+          <div id="cooking" style="display: none;">
+          </div>
+          
+          <div id="fermentation" style="display: none;">
+          </div>
         </div>
       </div>
     </body>

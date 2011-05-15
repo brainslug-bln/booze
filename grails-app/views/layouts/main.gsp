@@ -17,10 +17,12 @@
 
   <g:javascript src="jquery.js" />
   <g:javascript src="jquery-ui.js" />
+  <g:javascript src="jquery.tmpl.js" />
   <g:javascript src="booze.js" />
   <g:javascript src="booze.leftnav.js" />
   <g:javascript src="booze.calculator.js" />
-
+  <g:javascript src="booze.form.js" />
+  
   <g:layoutHead />
 
 </head>

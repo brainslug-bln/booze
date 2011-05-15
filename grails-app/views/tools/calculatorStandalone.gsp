@@ -11,15 +11,15 @@
           <div id="leftnav">
             <ul>
               <li class="active"><a href="#" rel="#calculateFare"><g:message code="calculator.selector.calculateFare" /></a></li>
-              <li><a href="#" rel="#correctWort"><g:message code="calculator.selector.correctWort" /></a></li>
-              <li><a href="#" rel="#calculateAlcohol"><g:message code="calculator.selector.calculateAlcohol" /></a></li>
-              <li><a href="#" rel="#calculatePressure"><g:message code="calculator.selector.calculatePressure" /></a></li>
-              <li><a href="#" rel="#calculateFermentationRatio"><g:message code="calculator.selector.calculateFermentationRatio" /></a></li>
-              <li><a href="#" rel="#calculateVolume"><g:message code="calculator.selector.calculateVolume" /></a></li>
-              <li><a href="#" rel="#calculateMix"><g:message code="calculator.selector.calculateMix" /></a></li>
-              <li><a href="#" rel="#calculateYield"><g:message code="calculator.selector.calculateYield" /></a></li>
-              <li><a href="#" rel="#calculateWaterHardness"><g:message code="calculator.selector.calculateWaterHardness" /></a></li>
-              <li><a href="#" rel="#calculateAlternativeHop"><g:message code="calculator.selector.calculateAlternativeHop" /></a></li>
+              <li><a href="#" rel="display:#correctWort"><g:message code="calculator.selector.correctWort" /></a></li>
+              <li><a href="#" rel="display:#calculateAlcohol"><g:message code="calculator.selector.calculateAlcohol" /></a></li>
+              <li><a href="#" rel="display:#calculatePressure"><g:message code="calculator.selector.calculatePressure" /></a></li>
+              <li><a href="#" rel="display:#calculateFermentationRatio"><g:message code="calculator.selector.calculateFermentationRatio" /></a></li>
+              <li><a href="#" rel="display:#calculateVolume"><g:message code="calculator.selector.calculateVolume" /></a></li>
+              <li><a href="#" rel="display:#calculateMix"><g:message code="calculator.selector.calculateMix" /></a></li>
+              <li><a href="#" rel="display:#calculateYield"><g:message code="calculator.selector.calculateYield" /></a></li>
+              <li><a href="#" rel="display:#calculateWaterHardness"><g:message code="calculator.selector.calculateWaterHardness" /></a></li>
+              <li><a href="#" rel="display:#calculateAlternativeHop"><g:message code="calculator.selector.calculateAlternativeHop" /></a></li>
             </ul>
           </div>
           <div class="clearfix"></div>

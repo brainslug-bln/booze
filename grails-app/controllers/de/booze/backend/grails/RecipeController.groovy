@@ -13,23 +13,53 @@ class RecipeController {
         [recipeInstanceList: Recipe.list(params), recipeInstanceTotal: Recipe.count()]
     }
 
-    def create = { RecipeGeneralCommand co ->
-        def recipe = new Recipe()
+    def create = { 
+        session.recipe = new Recipe();
+    }
+    
+    def save = {
 
-        if(params.save && co.validate()) {
-            recipe.properties = co
-            try {
-                recipe.save(flush: true)
-                flash.message = g.message(code: "recipe.saved")
-                forward(action: "edit", id: recipe.id, params:[category: "general"])
+        // Create an instance of the command object we are going
+        // to validate
+        try {
+            def validCOs = ['RecipeMainDataCommand', 'RecipeMashingCommand', 'RecipeCookingCommand', 'RecipeFermentationCommand']
+            if(!params.validate || !validCOs.contains(params.validate)) {
+                throw new Exception("Requested command object not found")
             }
-            catch(Exception e) {
-                flash.message = g.message(code:"recipe.save.failed")
-                return [objectInstance: recipe]
+            Class myClass = Class.forName(params.validate)
+            def co = myClass.newInstance()
+            co.properties = params
+        }
+        catch(Exception e) {
+            render([success:false, error:g.message(code:"recipe.save.commandObjectNotFound", args:[params.validate.encodeAsHTML(), e])] as JSON)
+            return
+        }
+
+        if(co.validate()) {
+            session.recipe.properties = co;
+            
+            if(params.finalSave) {
+                // Finally save the whole recipe
+                try {
+                    session.recipe.save()
+                    render([success:true, redirect: createLink(controller:"recipe", action:"edit", id:session.recipe.id)] as JSON)
+                }
+                catch(Exception e) {
+                    render([success:false, error:g.message(code:"recipe.save.finalSaveFailed", args:[e])] as JSON)
+                }
+            }
+            else {
+                // Render the  next dialog, persist recipe changes to session
+                try {
+                    render([success:true, html: g.render(template:params.next, bean:session.recipe)] as JSON)
+                }
+                catch(Exception e) {
+                    render([success:false, error:g.message(code:"recipe.save.nextDialogFailed", args:[params.next, e])] as JSON)
+                }
             }
         }
         else {
-            return [objectInstance: co]
+            render([success:false, html: g.render(template:params.validate, bean:co)] as JSON)
         }
     }
 
@@ -37,192 +67,8 @@ class RecipeController {
      * Edit an existing recipe
      * @responseType mixed
      */
-    def editFlow = {
-        init {
-            action {
-                // Fetch recipe
-                flow.recipe = Recipe.get(params.id)
-                if(!flow.recipe) {
-                    recipeNotFound()
-                }
-            }
-            on("recipeNotFound").to "recipeNotFound"
-            on(Exception).to "handleException"
-        }
-
-        general {
-            action {
-                def generalCO = RecipeGeneralCommand(params)
-                if(generalCO.hasErrors()) {
-                    render([success: true,
-                            errors: [generalCO.errors.collect {
-                                        [field: it.getObjecName(), 
-                                         message: g.message(error: it)] 
-                                    }],
-                            dialog: g.message(code:"recipe.edit.pleaseCorrectErrors")] as JSON)
-                }
-                else {
-                    recipe.properties = generalCO
-
-                    try {
-                        if(recipe.save()) {
-                            render([success: true,
-                                    dialog: g.message(code:"recipe.edit.saved")] as JSON)
-                        }
-                        else {
-                           throw new Exception("Saving failed although validation was successful")
-                        }
-                    }
-                    catch(Exception e) {
-                        render([success: false,
-                                dialog: g.message(code:"recipe.edit.save.failed", args:[e])])
-                    }
-                }
-            }
-            on(Exception).to "handleException"
-        }
-
-        fills {
-            action {
-                def fillsCO = RecipeFillsCommand(params)
-                if(fillsCO.hasErrors()) {
-                    render([errors: []] as JSON)
-                }
-                else {
-                    recipe.properties = fillsCO
-                    if(!recipe.save()) {
-                        render([message: "test"] as JSON)
-                    }
-                }
-            }
-            on(Exception).to "handleException"
-        }
-
-        rests {
-            action {
-                def restsCO = RecipeRestsCommand(params)
-                if(restsCO.hasErrors()) {
-                    render([errors: []] as JSON)
-                }
-                else {
-                    recipe.properties = restsCO
-                    if(!recipe.save()) {
-                        render([message: "test"] as JSON)
-                    }
-                }
-            }
-            on(Exception).to "handleException"
-        }
-
-        cooking {
-            action {
-                def cookingCO = RecipeCookingCommand(params)
-                if(cookingCO.hasErrors()) {
-                    render([errors: []] as JSON)
-                }
-                else {
-                    recipe.properties = cookingCO
-                    if(!recipe.save()) {
-                        render([message: "test"] as JSON)
-                    }
-                }
-            }
-            on(Exception).to "handleException"
-        }
-
-        recipeNotFound {
-            // Render template
-        }
-
-        handleException {
-           action {
-              log.error("Webflow Exception occurred: ${flash.stateException}", flash.stateException)
-           }
-           on("restart").to "init"
-        }
-    }
-
-
-    /**
-     * Create a new recipe
-     *
-     * This action is a grails web flow
-     *
-     * Steps:
-     * 1. General recipe data
-     * 2. Fills
-     * 3. Rests
-     * 4. Cooking / Hop
-     *
-     * @responseType HTML
-     */
-    def createFlow = {
-        init {
-            action {
-                // Init recipe and command objects
-                flow.recipe = new Recipe()
-                flow.generalCO = new RecipeGeneralCommand()
-                flow.fillsCO = new RecipeFillsCommand()
-                flow.restsCO = new RecipeRestsCommand()
-                flow.cookingCO = new RecipeCookingCommand()
-            }.to "general"
-            on(Exception).to "handleException"
-        }
-
-        general {
-            on("proceed") {
-                flow.generalCO.properties = params
-                if(flow.generalCO.hasErrors()) {
-                    error()
-                }
-            }.to "fills"
-            on(Exception).to "handleException"
-        }
-
-        fills {
-            on("back").to "general"
-            on("proceed") {
-                flow.fillsCO.properties = params
-                if(flow.fillsCO.hasErrors()) {
-                    error()
-                }
-            }.to "rests"
-            on(Exception).to "handleException"
-        }
-
-        rests {
-            on("back").to "fills"
-            on("proceed") {
-                flow.restsCO.properties = params
-                if(flow.restsCO.hasErrors()) {
-                    error()
-                }
-            }.to "cooking"
-            on(Exception).to "handleException"
-        }
-
-        cooking {
-            on("back").to "rests"
-            on("proceed") {
-                flow.cookingCO.properties = params
-                if(flow.cookingCO.hasErrors()) {
-                    error()
-                }
-            }.to "finish"
-            on(Exception).to "handleException"
-        }
-
-        finish {
-            flash.message = "Recipe created"
-            redirect(controller: "recipe", action: "edit", id: flow.recipe.id)
-        }
-
-        handleException {
-           action {
-              log.error("Webflow Exception occurred: ${flash.stateException}", flash.stateException)
-           }
-           on("restart").to "init"
-        }
+    def edit = {
+        
     }
 
     /**
@@ -264,5 +110,85 @@ class RecipeController {
      */
     def communityUpload = {
 
+    }
+}
+
+
+class RecipeMainDataCommand implements Serializable{
+    String name
+    String description
+
+    static constraints = {
+        name(size: 3..255, nullable: false, blank: false)
+        description(size: 0..5000, nullable: true, blank: true)
+    }
+}
+
+class RecipeMashingCommand implements Serializable {
+    Double preSpargingWort
+    Double postSpargingWort
+    Double mashingWaterVolume
+    Double spargingWaterVolume
+    Double lauterTemperature
+    Double mashingTemperature
+    Double spargingTemperature
+  
+    boolean doColdMashing
+  
+    SortedSet rests
+
+    static hasMany = [rests: RecipeRest, malts: RecipeMalt]
+  
+    static constraints = {
+        preSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
+        postSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
+        originalWort(min: 0.0 as Double, max: 50.0 as Double, nullable: false)
+        mashingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true, validator: {val, obj ->
+                if (val == null && obj.doColdMashing == false) {
+                    ['recipe.mashingTemperature.nullable']
+                }
+            })
+        mashingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+        spargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+        spargingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true,  validator: {val, obj ->
+                if (val == null && obj.spargingWaterVolume != null ) {
+                    ['recipe.spargingTemperature.nullable']
+                }
+            })
+        lauterTemperature(min: 0.0 as Double, max: 100 as Double, nullable: false)
+    }
+}
+
+class RecipeCookingCommand implements Serializable {
+    Double originalWort
+    Double cookingTime
+    Double postIsomerization
+  
+    SortedSet rests
+
+    static hasMany = [hops: RecipeHop]
+  
+    static constraints = {
+        originalWort(min: 0.0 as Double, max: 50.0 as Double, nullable: false)
+        postIsomerization(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+        cookingTime(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+    }  
+}
+
+class RecipeFermentationCommand implements Serializable {
+    Double fermentationTemperature
+    Double storingTime
+    Double storingTemperature
+    String yeast
+    Double bottlingWort
+    Double alcohol
+    
+    static constraints = {
+        alcohol(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+        bottlingWort(min: 0.0 as Double, max: 20.0 as Double, nullable: true)
+        fermentationTemperature(min: 0.0 as Double, max: 50 as Double, nullable: false)
+        storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+        storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
+        yeast(nullable: false, size: 5..2000)
     }
 }

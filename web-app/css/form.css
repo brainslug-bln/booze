@@ -64,6 +64,26 @@
     font-weight: bold;
 }
 
+.form .ui-button {
+    width: auto;
+    font-weight: normal;
+}
+
+.form table {
+    margin-bottom: 2em;
+}
+
+.form table caption {
+    font-weight: bold;
+    text-align: left;
+}
+
+.form table th {
+    text-align: left;
+}
+
+
+/*
 .form table {
     width: 95%;
     border: none;
@@ -94,7 +114,6 @@
 
 .form table td {
     padding: 0.5em 1em 0.5em 1em;
-    border-top: 1px solid #aed0ea;
     border-bottom: 1px solid #aed0ea;
 }
 
@@ -106,9 +125,4 @@
     border-right: 1px solid #aed0ea;
 }
 
-
-.form .ui-button {
-    width: auto;
-    font-weight: normal;
-}
-
+ */

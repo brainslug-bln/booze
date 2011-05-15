@@ -1,6 +1,8 @@
-<h2><g:message code="recipe.edit.commonData" /></h2>
+<h2><g:message code="recipe.edit.mainData" /></h2>
 
 <div class="form">
+  <input type="hidden" name="validate" value="RecipeMainDataCommand" />
+  
   <div class="column50percent">
     <div class="row">
         <label for="recipe.name"><g:message code="recipe.name.label" /></label>
@@ -49,7 +51,7 @@
     </div>
     
     <div class="row">
-      <label for="recipe.originalWort"><g:message code="recipe.originalWort.label" /></label>
+      <label for="recipe.originalWort"><g:message code="recipe.originalWort" /></label>
       <span class="immutable">
         <g:if test="${$it?.originalWort}">
           <g:formatNumber number="${it?.originalWort}" format="####.00" />
