@@ -28,19 +28,19 @@ package de.booze.driverInterfaces
  */
 abstract class AbstractHeaterRegulatorDriver extends AbstractDriver {
 
-  abstract public int power
+  abstract public Integer power
 
   /**
    * Sets the heater power in percent
    */
-  abstract public void setPower(int power) throws Exception
+  abstract public void setPower(Integer power) throws Exception
 
   ;
 
   /**
    * Returns the actual heater power
    */
-  abstract public int getPower() throws Exception
+  abstract public Integer getPower() throws Exception
 
   ;
 }

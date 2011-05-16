@@ -37,12 +37,12 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
     /**
      * Minimum temperature value
      */
-    final private Double minimum;
+    private Double minimum;
 
     /**
      * Maximum temperature value
      */
-    final private Double maximum;
+    private Double maximum;
 
     /**
      * Logger instance
@@ -57,12 +57,12 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
     /**
      * PCF8591 address (0..7)
      */
-    private int pcf8591Address;
+    private Integer pcf8591Address;
 
     /**
      * PCF8591 Channel
      */
-    private int pcf8591Channel;
+    private Integer pcf8591Channel;
 
     /**
      * Driver options

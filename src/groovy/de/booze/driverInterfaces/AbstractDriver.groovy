@@ -55,7 +55,7 @@ abstract class AbstractDriver {
                 throw new IllegalArgumentException("Invalid value '${it.value}' for option ${it.name}");
             }
             else {
-                this[it.name] = it.value;
+                this[it.name] = this[it.name].getClass().getInstance(it.value);
             }
         }
     }
@@ -64,7 +64,7 @@ abstract class AbstractDriver {
      * Checks if a single option is valid for this driver
      */
     public static boolean checkOption(String name, String value) throws IllegalArgumentException {
-        options.each() { it ->
+        availableOptions.each() { it ->
             if(it.name == name) {
                 if(value ==~ it.validator) {
                     return true

@@ -28,19 +28,19 @@ package de.booze.driverInterfaces
  */
 abstract class AbstractMotorRegulatorDriver extends AbstractDriver {
 
-  abstract public int speed
+  abstract public Integer speed
 
   /**
    * Sets the motor speed in percent
    */
-  abstract public void setSpeed(int speed) throws Exception
+  abstract public void setSpeed(Integer speed) throws Exception
 
   ;
 
   /**
    * Returns the actual motor speed
    */
-  abstract public int getSpeed() throws Exception
+  abstract public Integer getSpeed() throws Exception
 
   ;
 }

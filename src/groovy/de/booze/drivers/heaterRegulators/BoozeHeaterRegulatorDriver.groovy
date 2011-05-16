@@ -46,12 +46,12 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
     /**
      * PCF8591 address (0..7)
      */
-    private int pcf8591Address;
+    private Integer pcf8591Address;
 
     /**
      * Acutal speed in percent
      */
-    private int power = 0;
+    private Integer power = 0;
   
     /**
      * Driver options
@@ -95,7 +95,7 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
     /**
      * Returns the actual speed
      */
-    public int getPower() {
+    public Integer getPower() {
         return this.power;
     }
 }

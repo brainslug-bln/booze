@@ -60,12 +60,12 @@ class BoozePressureSensorDriver extends AbstractPressureSensorDriver {
     /**
      * PCF8591 address (0..7)
      */
-    private int pcf8591Address;
+    private Integer pcf8591Address;
 
     /**
      * PCF8591 Channel
      */
-    private int pcf8591Channel;
+    private Integer pcf8591Channel;
 
     /**
      * Average value from the last

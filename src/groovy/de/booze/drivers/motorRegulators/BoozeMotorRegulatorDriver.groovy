@@ -53,7 +53,7 @@ class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
     /**
      * Acutal speed in percent
      */
-    private int speed = 0;
+    private Integer speed = 0;
   
     /**
      * Driver options
@@ -84,7 +84,7 @@ class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
      *
      * @param int speed
      */
-    public void setSpeed(int speed) throws IllegalArgumentException {
+    public void setSpeed(Integer speed) throws IllegalArgumentException {
         if(speed > 0 && speed < 100) {
             this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(speed * 2.54))
             this.speed = speed;
@@ -97,7 +97,7 @@ class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
     /**
      * Returns the actual speed
      */
-    public int getSpeed() {
+    public Integer getSpeed() {
         return this.speed;
     }
 }

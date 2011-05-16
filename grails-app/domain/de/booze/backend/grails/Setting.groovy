@@ -30,16 +30,20 @@ class Setting {
   Date dateCreated
   Date lastUpdated
 
-  PumpDevice pump
+  MotorDevice mashingPump
+  MotorDevice cookingPump
+  MotorDevice downPump
+  
+  MotorDevice mashingMixer
+  MotorDevice cookingMixer
 
   Double cookingTemperature
 
   Double heatingTemperatureOffset
 
   static hasMany = [heaters: HeaterDevice,
-          pressureSensors: PressureSensorDevice,
-          innerTemperatureSensors: TemperatureSensorDevice,
-          outerTemperatureSensors: TemperatureSensorDevice]
+                    pressureSensors: PressureSensorDevice,
+                    temperatureSensors: TemperatureSensorDevice]
 
   static constraints = {
     name(nullable: false, blank: false, size: 1..255)
