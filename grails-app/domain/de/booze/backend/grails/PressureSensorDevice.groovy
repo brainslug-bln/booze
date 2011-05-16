@@ -19,22 +19,29 @@
 
 package de.booze.backend.grails
 
+/**
+ * Represents a pressure sensor
+ */
 class PressureSensorDevice extends Device {
 
   /**
    * Pressure in mbar at which the whole brew process is paused
    */
   Double pressureMaxLimit
+  
+    
+  static belongsTo = [setting: Setting]
 
   static constraints = {
     pressureMaxLimit(nullable: false, min: 0.0 as Double, max: 10000.0 as Double)
   }
 
-  final static int MAX_AVERAGE_VALUES = 50
-
+  /**
+   * Returns a pressure value in mbar from the sensor
+   */
   public Double readPressure() throws Exception {
     if (!driverInstance) {
-      throw new Exception("Could not read pressure from driver: no driver instance")
+      throw new Exception("Pressure sensor ${this.getClass().getName()}:${this.name} could not read pressure from driver: no driver instance")
     }
 
     return driverInstance.getPressure() as Double

@@ -19,19 +19,68 @@
 
 package de.booze.backend.grails
 
+/**
+ * A motor device may be any device with a motor
+ * 
+ * Basic actions are enable/disable.
+ * Optionally speed can be regulated by a MotorRegulatorDevice.
+ * 
+ * If regulated, target pressure or temperature may be defined
+ * to automatically adapt the speed to a sensor value
+ */
 class MotorDevice extends Device {
 
   Long secondsOn = 0
   Date lastEnableTime
+    
+  /**
+   * Target temperature (°C) to achieve by regulating up or
+   * down the motor device
+   */
+  Double targetTemperature
+    
+  /**
+   * Regulate up (true) or down (false) to minimize temperature 
+   */
+  boolean temperatureRegulationDirection = false
+   
+  /**
+   * Target pressure (mbar) to achieve by regulating up or
+   * down the motor device
+   */
+  Double targetPressure
+    
+  /**
+   * Regulate up (true) or down (false) to minimize pressure 
+   */
+  boolean pressureRegulationDirection = false
 
+  /**
+   * Regulator device to regulate the motor's speed
+   */
   MotorRegulatorDevice regulator
+  
+  /**
+   * Operation mode (interval, permanently on)
+   */
+  MotorDeviceMode mode
 
   static transients = ["secondsOn", "lastEnableTime"]
+    
+  static hasMany = [temperatureSensors: TemperatureSensorDevice,
+    pressureSensors: PressureSensorDevice]
+                  
+  static belongsTo = [setting: Setting]
 
   static constraints = {
-      regulator(nullable: true)
+    regulator(nullable: true)
+    targetTemperature(nullable: true)
+    targetPressure(nullable: true)
   }
 
+  /** 
+   * Enables the motor device
+   */
   public void enable() {
     if (!this.enabled()) {
       driverInstance.enable()
@@ -39,6 +88,9 @@ class MotorDevice extends Device {
     }
   }
 
+  /**
+   * Disables the motor device
+   */
   public void disable() {
     if (this.enabled()) {
       driverInstance.disable();
@@ -46,6 +98,9 @@ class MotorDevice extends Device {
     }
   }
 
+  /**
+   * Returns true if the motor device is enabled, false if not
+   */
   public boolean enabled() {
     return driverInstance.enabled();
   }

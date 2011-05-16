@@ -19,6 +19,10 @@
 
 package de.booze.backend.grails
 
+/**
+ * Basic actions are enable/disable.
+ * Optionally heating power may be regulated by a MotorRegulatorDevice.
+ */
 class HeaterDevice extends Device {
 
   Long secondsOn = 0
@@ -27,11 +31,16 @@ class HeaterDevice extends Device {
   HeaterRegulatorDevice regulator
 
   static transients = ["secondsOn", "lastEnableTime"]
+  
+  static belongsTo = [setting: Setting]
 
   static constraints = {
-      regulator(nullable: true)
+    regulator(nullable: true)
   }
 
+  /**
+   * Enables the heater
+   */
   public void enable() {
     if (!this.enabled()) {
       driverInstance.enable()
@@ -39,6 +48,9 @@ class HeaterDevice extends Device {
     }
   }
 
+  /**
+   * Disabled the heater
+   */
   public void disable() {
     if (this.enabled()) {
       driverInstance.disable();
@@ -46,6 +58,9 @@ class HeaterDevice extends Device {
     }
   }
 
+  /**
+   * Returns true if the heater is enabled, false if not
+   */
   public boolean enabled() {
     return driverInstance.enabled();
   }

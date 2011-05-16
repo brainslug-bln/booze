@@ -24,10 +24,18 @@ class HeaterRegulatorDevice extends Device {
   static constraints = {
   }
 
+  /**
+   * Sets the heater power in percent
+   * of the maximum value
+   */
   public void setPower(int power) {
     driverInstance.setPower(power);
   }
 
+  /**
+   * Returns the heater power in percent
+   * of the maximum value
+   */
   public int getPower() {
     return driverInstance.getPower();
   }

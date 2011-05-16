@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +21,10 @@ package de.booze.backend.grails
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
 
+/**
+ * Represents an (abstract) device.
+ * 
+ */
 class Device implements Serializable {
 
     /**
@@ -69,6 +73,7 @@ class Device implements Serializable {
 
     /**
      * Init the device driver
+     * Store an instance of it in the transient driverInstance
      */
     def initDevice() {
         def myClassLoader = AH.application.mainContext.getClassLoader()

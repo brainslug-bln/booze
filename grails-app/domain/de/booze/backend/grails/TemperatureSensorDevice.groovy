@@ -19,19 +19,41 @@
 
 package de.booze.backend.grails
 
+/**
+ * Represents a temperature sensor
+ */
 class TemperatureSensorDevice extends Device {
 
   static transients = ['lastValue']
 
   Double lastValue = 0.0 as Double;
+  
+  /**
+   * Is this a referenceSensor for mashing?
+   */
+  boolean referenceForMashing = false
+  
+  /**
+   * Is this a referenceSensor for cooking?
+   */
+  boolean referenceForCooking = false
+  
+  static belongsTo = [setting: Setting]
 
+  /**
+   * Returns the last measured (cached) temperature in °C
+   * Does NOT actually read a value from the sensor
+   */
   public Double readTemperature() throws Exception {
     return lastValue;
   }
 
+  /**
+   * Reads the temperature in °C directly from the sensor
+   */
   public Double readTemperatureImmediate() throws Exception {
     if (!driverInstance) {
-      throw new Exception("Could not read temperature from driver: no driver instance")
+      throw new Exception("Temperature sensor ${this.getClass().getName()}:${this.name} could not read temperature from driver: no driver instance")
     }
 
     this.lastValue = driverInstance.getTemperature() as Double
