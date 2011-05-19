@@ -17,15 +17,73 @@
  *
  **/
 package de.booze.backend.grails
+import de.booze.tasks.MotorDeviceSoftOnTask
 
 /**
  *
  */
 class MotorRegulatorDevice extends Device {
+  
+   /**
+   * Target temperature (°C) to achieve by regulating up or
+   * down the motor device
+   */
+  Double targetTemperature
+    
+  /**
+   * Regulate up (true) or down (false) to minimize temperature 
+   */
+  boolean temperatureRegulationDirection = false
+   
+  /**
+   * Target pressure (mbar) to achieve by regulating up or
+   * down the motor device
+   */
+  Double targetPressure
+    
+  /**
+   * Regulate up (true) or down (false) to minimize pressure 
+   */
+  boolean pressureRegulationDirection = false
+  
+  /**
+   * Set this value in milliseconds to enable soft upspinning
+   */
+  Integer softOn
+  
+  /**
+   * Task for softOn upspinning
+   */
+  MotorDeviceSoftOnTask softOnTimer
+  
+  static transients = ["softOnTimer"]
+  
+  static hasMany = [temperatureSensors: TemperatureSensorDevice,
+    pressureSensors: PressureSensorDevice]
 
   static constraints = {
+    softOn(nullable: true, min: 0, max: 5000)
   }
 
+  public void enable() {
+    if(this.softOn && this.softOn > 0) {
+      this.setSpeed(0);
+      this.softOnTimer = new Timer();
+      this.softOnTimer.schedule(new MotorDeviceSoftOnTask(this), 0, 50);
+    }
+    else {
+      this.setSpeed(100);
+    }
+  }
+  
+  public void disable() {
+    if(this.softOnTimer) {
+      this.softOnTimer.cancel();
+      this.softOnTimer = null;
+    }
+    this.setSpeed(0);
+  }
+  
   /**
    * Sets the motor device speed in percent
    * of the maximum value

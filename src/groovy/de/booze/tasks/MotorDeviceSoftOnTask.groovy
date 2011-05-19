@@ -46,9 +46,9 @@ class MotorDeviceSoftOnTask extends TimerTask {
   /**
    * Constructor
    */
-  public MotorDeviceSoftOnTask(MotorRegulatorDevice r, Integer spinupTime) {
+  public MotorDeviceSoftOnTask(MotorRegulatorDevice r) {
     this.motorRegulator = r;
-    this.spinupTime = spinupTime;
+    this.spinupTime = r.softOn;
   }
 
   /**
