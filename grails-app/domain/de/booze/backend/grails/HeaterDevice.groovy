@@ -64,4 +64,29 @@ class HeaterDevice extends Device {
   public boolean enabled() {
     return driverInstance.enabled();
   }
+  
+  /**
+   * Sets the device power if a regulator is available
+   */
+  public void setPower(int s) {
+    if(this.hasRegulator()) {
+      this.regulator.setPower(s);
+    }
+  }
+  
+  /**
+   * Returns the device power if a regulator is available
+   */
+  public int getSpeed() {
+    if(this.hasRegulator()) {
+      return this.regulator.getPower()
+    }
+  }
+   
+  /**
+   * Checks if this device has a power regulator
+   */
+  public boolean hasRegulator() {
+    return !this.regulator.isNull()
+  }
 }

@@ -17,27 +17,26 @@
  *
  * */
 
-package de.booze.events;
+package de.booze.events
 
-
-import grails.converters.JSON
+import grails.converters.*
+import grails.util.GrailsNameUtils
 
 /**
- *
- * @author akotsias
+ * Event which informs the user about
+ * mashing elongation
  */
-class BrewFillTemperatureStartedEvent extends BrewEvent {
+class BrewElongateMashingEvent extends BrewEvent {
 
-  Double fillTemperature
+  private Long seconds
 
-  public BrewFillTemperatureStartedEvent(String message, Double fillTemperature) {
+  public BrewElongateMashingEvent(String message, Long seconds) {
     super(message);
-    this.fillTemperature = fillTemperature;
+    this.seconds = seconds;
   }
 
   public Map getEventDataForFrontend(g) {
-    def args = [this.fillTemperature]
-    return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message, args: args)])]
+    return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message, args: [Math.round(this.seconds / 60)])])]
   }
 
   public Map getEventDataForProtocol() {
@@ -45,7 +44,6 @@ class BrewFillTemperatureStartedEvent extends BrewEvent {
     return [message: this.message,
             created: this.created.getTime(),
             type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            data: new JSON([this.fillTemperature]).toString()];
+            data: new JSON([this.seconds]).toString()];
   }
 }
-

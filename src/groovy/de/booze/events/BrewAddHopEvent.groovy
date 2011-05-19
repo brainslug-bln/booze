@@ -21,7 +21,7 @@ package de.booze.events
 
 import grails.converters.*
 import grails.util.GrailsNameUtils
-import de.booze.grails.Hop
+import de.booze.backend.grails.Hop
 
 /**
  * Event which reminds the user to add

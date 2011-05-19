@@ -27,7 +27,7 @@ import de.booze.events.BrewPressureExceededEvent
  *
  * @author akotsias
  */
-class PressureRegulatorTask extends TimerTask {
+class PressureMonitorTask extends TimerTask {
 
   /**
    * Default logger
@@ -49,7 +49,7 @@ class PressureRegulatorTask extends TimerTask {
    */
   private Date lastExceedanceEvent = new Date();
 
-  public PressureRegulatorTask(BrewProcess brewProcess, List pressureSensors) {
+  public PressureMonitorTask(BrewProcess brewProcess, List pressureSensors) {
     this.pressureSensors = pressureSensors;
     this.brewProcess = brewProcess;
   }

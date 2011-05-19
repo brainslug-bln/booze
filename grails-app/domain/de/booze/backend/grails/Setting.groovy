@@ -38,7 +38,7 @@ class Setting {
   /**
    * Hysteresis 
    */
-  Double hysteresis = 1.0d
+  Double hysteresis = 5.0d
   
   /**
    * Heating ramp in °C/minute
@@ -65,7 +65,7 @@ class Setting {
     name(nullable: false, blank: false, size: 1..255, unique: true)
     description(nullable: true, size: 0..5000)
     cookingTemperature(min: 95.0 as Double, max: 110.0 as Double, nullable: false)
-    heatingTemperatureOffset(min: 0.0 as Double, max: 8.0 as Double, nullable: false)
+    hysteresis(min: 0.0 as Double, max: 10.0 as Double, nullable: false)
     mashingMixer(nullable: true)
     cookingMixer(nullable: true)
     mashingPump(nullable: true)

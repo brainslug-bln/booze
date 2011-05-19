@@ -25,20 +25,19 @@ import grails.converters.JSON
  *
  * @author akotsias
  */
-class BrewFillTemperatureReachedEvent extends BrewEvent {
+class BrewMashingTemperatureReachedEvent extends BrewEvent {
 
+  Double mashingTemperature
 
-  Double fillTemperature
-
-  public BrewFillTemperatureReachedEvent(String message, Double fillTemperature) {
+  public BrewMashingTemperatureReachedEvent(String message, Double mashingTemperature) {
     super(message);
-    this.fillTemperature = fillTemperature;
+    this.mashingTemperature = mashingTemperature;
   }
 
   public Map getEventDataForFrontend(g) {
-    def args = [this.fillTemperature]
+    def args = [this.mashingTemperature]
     return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message, args: args)]),
-            dialog: 'fillTemperatureReached',
+            dialog: 'mashingTemperatureReached',
             playSound: true]
   }
 
@@ -47,7 +46,7 @@ class BrewFillTemperatureReachedEvent extends BrewEvent {
     return [message: this.message,
             created: this.created.getTime(),
             type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            data: new JSON([this.fillTemperature]).toString()];
+            data: new JSON([this.mashingTemperature]).toString()];
   }
 }
 

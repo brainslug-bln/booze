@@ -69,9 +69,15 @@ class BrewElongateCookingStep extends AbstractBrewStep {
 
     this.stepStartTime = new Date();
 
-    // Start the temperature regulator
+    this.startMotors();
+
+    // Set the target temperature
     this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
-    this.brewProcess.temperatureRegulator.setReferenceSensors(this.brewProcess.recipe.cookingTemperatureReferenceSensors)
+    
+    // Use the mashing sensors as reference
+    this.brewProcess.temperatureRegulator.setCookingReferenceSensors();
+    
+    // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 
     // Start the timer for step checking
@@ -88,6 +94,7 @@ class BrewElongateCookingStep extends AbstractBrewStep {
   public void checkStep() {
     if ((this.stepStartTime.getTime() + this.time * 1000) < (new Date()).getTime()) {
       this.timer.cancel();
+      this.stopMotors();
       this.brewProcess.temperatureRegulator.stop()
       this.brewProcess.addEvent(new BrewCookingElongationFinishedEvent('brew.brewProcess.cookingElongationFinished'));
       this.brewProcess.nextStep();
@@ -133,11 +140,13 @@ class BrewElongateCookingStep extends AbstractBrewStep {
   }
 
   public void pause() {
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
+    this.startMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);

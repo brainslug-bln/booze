@@ -31,7 +31,7 @@ import de.booze.tasks.CheckStepTask
  *
  * @author akotsias
  */
-class BrewMeshStep extends AbstractBrewStep {
+class BrewMashingStep extends AbstractBrewStep {
 
   /**
    * This steps rest
@@ -75,15 +75,15 @@ class BrewMeshStep extends AbstractBrewStep {
     this.restIndex = ri;
     this.stepStartTime = new Date()
 
-    // Set actual pump mode
-    this.brewProcess.pumpRegulator.setPumpMode(this.rest.pumpMode)
+    this.startMotors();
 
-    // Start the pump
-    this.brewProcess.pumpRegulator.enable();
-
-    // Start the temperature regulator
+    // Set the target temperature
     this.brewProcess.temperatureRegulator.setTemperature(this.rest.temperature);
-    this.brewProcess.temperatureRegulator.setReferenceSensors(this.rest.referenceSensors)
+    
+    // Use the mashing sensors as reference
+    this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
+    
+    // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 
     // Start the timer for step checking
@@ -108,7 +108,7 @@ class BrewMeshStep extends AbstractBrewStep {
     else {
       if ((new Date()).getTime() > (this.targetTemperatureReachedTime.getTime() + (this.rest.duration * 60000))) {
         this.timer.cancel();
-        this.brewProcess.pumpRegulator.disable()
+        this.motors.stop();
         this.brewProcess.temperatureRegulator.stop()
         this.brewProcess.addEvent(new BrewRestEvent('brew.brewProcess.restFinished', this.rest));
         this.brewProcess.nextStep();
@@ -166,13 +166,13 @@ class BrewMeshStep extends AbstractBrewStep {
   }
 
   public void pause() {
-    this.brewProcess.pumpRegulator.disable();
+    this.motors.stop();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
-    this.brewProcess.pumpRegulator.enable();
+    this.motors.start();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -186,6 +186,34 @@ class BrewMeshStep extends AbstractBrewStep {
             stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime),
             targetTemperatureReachedTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.targetTemperatureReachedTime),
             targetTemperatureReached: this.targetTemperatureReached]
+  }
+  
+  /**
+   * Start all associated motors for this step
+   */
+  private void startMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.mashingPumpRegulator) {
+      this.brewProcess.mashingPumpRegulator.enable();
+    }
+    
+    if(this.brewProcess.mashingMixerRegulator) {
+      this.brewProcess.mashingMixerRegulator.enable();
+    }
+  }
+ 
+  /**
+   * Stop all associated motors for this step
+   */
+  private void stopMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.mashingPumpRegulator) {
+      this.brewProcess.mashingPumpRegulator.disable()();
+    }
+    
+    if(this.brewProcess.mashingMixerRegulator) {
+      this.brewProcess.mashingMixerRegulator.disable();
+    }
   }
 }
 

@@ -24,17 +24,17 @@ import grails.util.GrailsNameUtils
 /**
  * Triggers a dialog which informs
  * the user about the finishing of
- * meshing elongation
+ * mashing elongation
  */
-class BrewMeshingElongationFinishedEvent extends BrewEvent {
+class BrewMashingElongationFinishedEvent extends BrewEvent {
 
-  public BrewMeshingElongationFinishedEvent(String message) {
+  public BrewMashingElongationFinishedEvent(String message) {
     super(message);
   }
 
   public Map getEventDataForFrontend(g) {
     return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message)]),
-            dialog: 'meshingTemperatureReached',
+            dialog: 'mashingTemperatureReached',
             playSound: true]
   }
 

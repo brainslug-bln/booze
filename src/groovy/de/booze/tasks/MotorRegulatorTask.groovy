@@ -25,7 +25,7 @@ import org.apache.log4j.Logger
  *
  * @author akotsias
  */
-class PumpRegulatorTask extends TimerTask {
+class MotorRegulatorTask extends TimerTask {
 
   /**
    * Logger instance
@@ -34,20 +34,20 @@ class PumpRegulatorTask extends TimerTask {
 
   /**
    * ON-interval (seconds)
-   * (for interval pump mode)
+   * (for interval motor mode)
    */
   private Integer onInterval;
 
   /**
    * OFF-interval (seconds)
-   * (for interval pump mode)
+   * (for interval motor mode)
    */
   private Integer offInterval;
 
   /**
-   * Pump device
+   * Motor device
    */
-  def pump
+  def motor
 
   /**
    * Start time for the actual interval
@@ -62,11 +62,8 @@ class PumpRegulatorTask extends TimerTask {
   /**
    * Constructor
    */
-  public PumpRegulatorTask(pump, Integer on, Integer off) {
-
-    this.pump = pump;
-    this.onInterval = on;
-    this.offInterval = off;
+  public MotorRegulatorTask(motor) {
+    this.motor = motor;
   }
 
   /**
@@ -81,21 +78,21 @@ class PumpRegulatorTask extends TimerTask {
         return
       }
 
-      if (this.pump.enabled()) {
-        if ((this.actualIntervalStart.getTime() + (this.onInterval * 1000)) < (new Date().getTime())) {
-          this.pump.disable();
+      if (this.motor.enabled()) {
+        if ((this.actualIntervalStart.getTime() + (this.motor.mode.onInterval * 1000)) < (new Date().getTime())) {
+          this.motor.disable();
           this.actualIntervalStart = new Date();
         }
       }
       else {
-        if ((this.actualIntervalStart.getTime() + (this.offInterval * 1000)) < (new Date().getTime())) {
-          this.pump.enable();
+        if ((this.actualIntervalStart.getTime() + (this.motor.mode.offInterval * 1000)) < (new Date().getTime())) {
+          this.motor.enable();
           this.actualIntervalStart = new Date();
         }
       }
     }
     catch (Exception e) {
-      log.error("Could not access pump");
+      log.error("Could not access motor");
     }
   }
 }

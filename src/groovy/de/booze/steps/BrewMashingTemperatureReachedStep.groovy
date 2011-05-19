@@ -27,11 +27,11 @@ import grails.util.GrailsNameUtils
  *
  * @author akotsias
  */
-class BrewFillTemperatureReachedStep extends AbstractBrewStep {
+class BrewMashingTemperatureReachedStep extends AbstractBrewStep {
 
   Date stepStartTime
 
-  public BrewFillTemperatureReachedStep() {
+  public BrewMashingTemperatureReachedStep() {
     this.stepStartTime = new Date();
   }
 
@@ -45,7 +45,7 @@ class BrewFillTemperatureReachedStep extends AbstractBrewStep {
 
   public Map getInfo(taglib) {
     return [type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            headline: taglib.message(code: 'brew.step.brewFillTemperatureReached')]
+            headline: taglib.message(code: 'brew.step.brewMashingTemperatureReached')]
   }
 }
 

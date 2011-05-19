@@ -23,16 +23,16 @@ import java.lang.Math.*
 
 import grails.util.GrailsNameUtils
 import de.booze.process.BrewProcess
-import de.booze.events.BrewFillTemperatureReachedEvent
-import de.booze.events.BrewFillTemperatureStartedEvent
-import de.booze.grails.Recipe
+import de.booze.events.BrewMashingTemperatureReachedEvent
+import de.booze.events.BrewMashingTemperatureStartedEvent
+import de.booze.backend.grails.Recipe
 import de.booze.tasks.CheckStepTask
 
 /**
  *
  * @author akotsias
  */
-class BrewFillTemperatureStep extends AbstractBrewStep {
+class BrewMashingTemperatureStep extends AbstractBrewStep {
 
   /**
    * This step's type
@@ -55,28 +55,28 @@ class BrewFillTemperatureStep extends AbstractBrewStep {
   public Timer timer
 
 
-  public BrewFillTemperatureStep(BrewProcess bp, Recipe recipe) {
+  public BrewMashingTemperatureStep(BrewProcess bp, Recipe recipe) {
     this.brewProcess = bp;
     this.recipe = recipe;
 
     this.stepStartTime = new Date()
 
-    // Set actual pump mode
-    this.brewProcess.pumpRegulator.setPumpMode(this.recipe.fillTemperaturePumpMode)
+    this.startMotors();
 
-    // Start the pump
-    this.brewProcess.pumpRegulator.enable();
-
-    // Start the temperature regulator
-    this.brewProcess.temperatureRegulator.setTemperature(this.recipe.fillTemperature);
-    this.brewProcess.temperatureRegulator.setReferenceSensors(this.recipe.fillTemperatureReferenceSensors)
+    // Set the target temperature
+    this.brewProcess.temperatureRegulator.setTemperature(this.recipe.mashingTemperature);
+    
+    // Use the mashing sensors as reference
+    this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
+    
+    // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 
     // Start the timer for step checking
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
 
-    this.brewProcess.addEvent(new BrewFillTemperatureStartedEvent('brew.brewProcess.fillTemperatureStarted', this.recipe.fillTemperature));
+    this.brewProcess.addEvent(new BrewMashingTemperatureStartedEvent('brew.brewProcess.mashingTemperatureStarted', this.recipe.mashingTemperature));
   }
 
   /**
@@ -84,8 +84,8 @@ class BrewFillTemperatureStep extends AbstractBrewStep {
    */
   public void checkStep() {
 
-    if (this.brewProcess.temperatureRegulator.getActualTemperature() >= this.recipe.fillTemperature) {
-      this.brewProcess.addEvent(new BrewFillTemperatureReachedEvent('brew.brewProcess.fillTemperatureReached', this.recipe.fillTemperature));
+    if (this.brewProcess.temperatureRegulator.getActualTemperature() >= this.recipe.mashingTemperature) {
+      this.brewProcess.addEvent(new BrewMashingTemperatureReachedEvent('brew.brewProcess.mashingTemperatureReached', this.recipe.mashingTemperature));
 
       this.pause();
       this.brewProcess.nextStep();
@@ -101,13 +101,13 @@ class BrewFillTemperatureStep extends AbstractBrewStep {
   }
 
   public void pause() {
-    this.brewProcess.pumpRegulator.disable();
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
-    this.brewProcess.pumpRegulator.enable();
+    this.startMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -115,9 +115,37 @@ class BrewFillTemperatureStep extends AbstractBrewStep {
 
   public Map getInfo(taglib) {
     return [type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            headline: taglib.message(code: 'brew.step.fillTemperature'),
-            targetTemperature: taglib.message(code: 'default.formatter.degrees.celsius', args: [taglib.formatNumber(format: '##0.0', number: this.recipe.fillTemperature)]),
+            headline: taglib.message(code: 'brew.step.mashingTemperature'),
+            targetTemperature: taglib.message(code: 'default.formatter.degrees.celsius', args: [taglib.formatNumber(format: '##0.0', number: this.recipe.mashingTemperature)]),
             stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime)]
+  }
+  
+  /**
+   * Start all associated motors for this step
+   */
+  private void startMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.mashingPumpRegulator) {
+      this.brewProcess.mashingPumpRegulator.enable();
+    }
+    
+    if(this.brewProcess.mashingMixerRegulator) {
+      this.brewProcess.mashingMixerRegulator.enable();
+    }
+  }
+ 
+  /**
+   * Stop all associated motors for this step
+   */
+  private void stopMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.mashingPumpRegulator) {
+      this.brewProcess.mashingPumpRegulator.disable()();
+    }
+    
+    if(this.brewProcess.mashingMixerRegulator) {
+      this.brewProcess.mashingMixerRegulator.disable();
+    }
   }
 }
 

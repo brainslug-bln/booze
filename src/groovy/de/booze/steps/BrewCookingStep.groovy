@@ -25,7 +25,7 @@ import grails.util.GrailsNameUtils
 import de.booze.process.BrewProcess
 import de.booze.events.BrewAddHopEvent
 import de.booze.events.BrewEvent
-import de.booze.grails.Recipe
+import de.booze.backend.grails.Recipe
 import de.booze.tasks.CheckStepTask
 
 /**
@@ -84,12 +84,15 @@ class BrewCookingStep extends AbstractBrewStep {
 
     this.stepStartTime = new Date()
 
-    // Set pumpMode to off
-    this.brewProcess.pumpRegulator.clearPumpMode();
+    this.startMotors();
 
-    // Start the temperature regulator
+    // Set the target temperature
     this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
-    this.brewProcess.temperatureRegulator.setReferenceSensors(this.recipe.cookingTemperatureReferenceSensors)
+    
+    // Use the mashing sensors as reference
+    this.brewProcess.temperatureRegulator.setCookingReferenceSensors();
+    
+    // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 
     // Start the timer for step checking
@@ -114,6 +117,7 @@ class BrewCookingStep extends AbstractBrewStep {
     else {
       if ((new Date()).getTime() > (this.targetTemperatureReachedTime.getTime() + (this.recipe.cookingTime * 60000))) {
         this.timer.cancel();
+        this.stopMotors();
         this.brewProcess.temperatureRegulator.stop()
         this.brewProcess.nextStep();
       }
@@ -188,11 +192,13 @@ class BrewCookingStep extends AbstractBrewStep {
   }
 
   public void pause() {
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
+    this.startMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -206,6 +212,34 @@ class BrewCookingStep extends AbstractBrewStep {
             stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime),
             targetTemperatureReachedTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.targetTemperatureReachedTime),
             targetTemperatureReached: this.targetTemperatureReached]
+  }
+  
+  /**
+   * Start all associated motors for this step
+   */
+  private void startMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.cookingPumpRegulator) {
+      this.brewProcess.cookingPumpRegulator.enable();
+    }
+    
+    if(this.brewProcess.cookingMixerRegulator) {
+      this.brewProcess.cookingMixerRegulator.enable();
+    }
+  }
+ 
+  /**
+   * Stop all associated motors for this step
+   */
+  private void stopMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.cookingPumpRegulator) {
+      this.brewProcess.cookingPumpRegulator.disable()();
+    }
+    
+    if(this.brewProcess.cookingMixerRegulator) {
+      this.brewProcess.cookingMixerRegulator.disable();
+    }
   }
 }
 

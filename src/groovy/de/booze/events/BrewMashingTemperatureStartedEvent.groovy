@@ -17,30 +17,35 @@
  *
  * */
 
-package de.booze.events
+package de.booze.events;
 
-import grails.util.GrailsNameUtils
+
+import grails.converters.JSON
 
 /**
- * Triggers a dialog which informs
- * about finished meshing step
+ *
+ * @author akotsias
  */
-class BrewMeshingTemperatureReachedEvent extends BrewEvent {
+class BrewMashingTemperatureStartedEvent extends BrewEvent {
 
-  public BrewMeshingTemperatureReachedEvent(String message) {
+  Double mashingTemperature
+
+  public BrewMashingTemperatureStartedEvent(String message, Double mashingTemperature) {
     super(message);
+    this.mashingTemperature = mashingTemperature;
   }
 
   public Map getEventDataForFrontend(g) {
-    return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message)]),
-            dialog: 'meshingTemperatureReached',
-            playSound: true]
+    def args = [this.MashingTemperature]
+    return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message, args: args)])]
   }
 
   public Map getEventDataForProtocol() {
     this.savedToProtocol = true;
     return [message: this.message,
             created: this.created.getTime(),
-            type: grails.util.GrailsNameUtils.getShortName(this.getClass())];
+            type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
+            data: new JSON([this.mashingTemperature]).toString()];
   }
 }
+

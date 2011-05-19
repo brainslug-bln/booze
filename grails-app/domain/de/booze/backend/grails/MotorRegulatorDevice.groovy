@@ -37,7 +37,7 @@ class MotorRegulatorDevice extends Device {
   /**
    * Returns the motor device speed in percent
    * of the maximum value
-   *(
+   */
   public int getSpeed() {
     return driverInstance.getSpeed();
   }

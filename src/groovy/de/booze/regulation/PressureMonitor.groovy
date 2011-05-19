@@ -27,7 +27,7 @@ import de.booze.tasks.PressureRegulatorTask
  *
  * @author akotsias
  */
-class PressureRegulator {
+class PressureMonitor {
 
   /**
    * Timeout between pressure exceedance events in ms
@@ -49,14 +49,14 @@ class PressureRegulator {
    */
   Timer timer;
 
-  public PressureRegulator(BrewProcess brewProcess, List pressureSensors) {
+  public PressureMonitor(BrewProcess brewProcess, List pressureSensors) {
     this.brewProcess = brewProcess;
     this.pressureSensors = pressureSensors;
   }
 
   public void enable() {
     this.timer = new Timer();
-    this.timer.schedule(new PressureRegulatorTask(this.brewProcess, this.pressureSensors), 100, 500);
+    this.timer.schedule(new PressureMonitorTask(this.brewProcess, this.pressureSensors), 100, 500);
   }
 
   /**

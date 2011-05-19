@@ -23,8 +23,7 @@ import java.lang.Math
 
 import org.apache.log4j.Logger;
 
-
-import de.booze.grails.Recipe
+import de.booze.backend.grails.Recipe
 import de.booze.tasks.TemperatureRegulatorTask
 
 /**
@@ -33,19 +32,23 @@ import de.booze.tasks.TemperatureRegulatorTask
  * @author akotsias
  */
 class TemperatureRegulator {
+  
+  /**
+   * Use the sensors marked as "mashing" as reference
+   * sensors for temperature
+   */
+  final static int REFERENCE_SENSORS_MASHING = 0
+  
+  /**
+   * Use the sensors marked as "cooking" as reference
+   * sensors for temperature
+   */
+  final static int REFERENCE_SENSORS_COOKING = 1
 
   /**
-   * Maximal temperature difference between
-   * inner and outer sensors
+   * Hysteresis threshold
    */
-  final static Double INNER_OUTER_MAX_DIFFERENCE = 5.0 as Double
-
-  /**
-   * Offset at which to start to shut down heaters before
-   * reaching the desired temperature
-   * Default value is 4.0
-   */
-  private Double destinationTemperatureOffset = 4.0 as Double
+  private Double hysteresis = 1.0 as Double
 
   /**
    * List of available heaters
@@ -53,33 +56,27 @@ class TemperatureRegulator {
   private List heaters = []
 
   /**
-   * List of available inner sensors
-   * i.e. sensors which measure the real mesh temperature
+   * List of available temperature sensors
    */
-  private List innerSensors = []
+  private List sensors = []
 
   /**
-   * List of available outer sensors
-   * e.g. sensors which measure the temperature
-   * of the outer beholder (usually higher then inner
-   * temperature)
+   * Target temperature to achieve/hold
    */
-  private List outerSensors = []
-
-  /**
-   * Temperature to achieve/hold
-   */
-  private Double temperature = 0.0 as Double
+  private Double targetTemperature = 0.0 as Double
 
   /**
    * Actual reference temperature
    * */
   private Double actualTemperature = 0.0 as Double
-
+  
   /**
-   * Specifies which sensors to use as reference
+   * Which reference sensors to use
+   * Default: TemperatureRegulator.REFERENCE_SENSORS_MASHING
+   * 
+   * @see TemperatureRegulator.REFERENCE_SENSORS_*
    */
-  private int referenceSensors = Recipe.TEMPERATURE_REFERENCE_INNER;
+  private int referenceSensors = 0
 
   /**
    * Timer for temperature regulation cycles
@@ -100,29 +97,33 @@ class TemperatureRegulator {
   /**
    * Adds an inner sensor to the list
    */
-  public void addInnerSensor(s) {
-    this.innerSensors.add(s)
+  public void addSensor(s) {
+    this.sensors.add(s)
   }
 
   /**
    * Returns the list of inner sensors
    */
-  public List getInnerSensors() {
-    return this.innerSensors
+  public List getSensors() {
+    return this.sensors
   }
-
-  /**
-   * Adds an outer sensor to the list
+  
+  /** 
+   * Returns a list with all actual reference sensor devices
    */
-  public void addOuterSensor(s) {
-    this.outerSensors.add(s)
-  }
-
-  /**
-   * Returns the list of outer sensors
-   */
-  public List getOuterSensors() {
-    return this.outerSensors
+  public List getReferenceSensorDevices() {
+    List mySensors = []
+    this.sensors.each() { it ->
+      if(this.referenceSensors == TemperatureRegulator.REFERENCE_SENSORS_MASHING
+         && it.referenceForMashing == true) {
+        mySensors.add(it)
+      }
+      else if(this.referenceSensors == TemperatureRegulator.REFERENCE_SENSORS_COOKING
+              && it.referenceForCooking == true) {
+        mySensors.add(it)
+      }
+    }
+    return mySensors
   }
 
   /**
@@ -142,8 +143,8 @@ class TemperatureRegulator {
   /**
    * Sets the desired temperature
    */
-  public void setTemperature(Double t) {
-    this.temperature = t
+  public void setTargetTemperature(Double t) {
+    this.targetTemperature = t
     DeviceSwitcher d = DeviceSwitcher.getInstance();
     d.setTargetTemperature(t);
   }
@@ -151,8 +152,8 @@ class TemperatureRegulator {
   /**
    * Returns the temperature which is actually set
    */
-  public Double getTemperature() {
-    return this.temperature;
+  public Double getTargetTemperature() {
+    return this.targetTemperature;
   }
 
   /**
@@ -170,15 +171,21 @@ class TemperatureRegulator {
   }
 
   /**
-   * Setter for referenceSensors
-   *
-   * @see Recipe.TEMPERATURE_REFERENCE_*
+   * Select sensors for reference which are
+   * marked as "mashing" reference sensors
    */
-  public void setReferenceSensors(int reference) {
-    this.referenceSensors = reference;
-    log.debug("Using reference sensors: ${reference}")
+  public void setMashingReferenceSensors() {
+    this.referenceSensors = REFERENCE_SENSORS_MASHING
   }
-
+  
+  /**
+   * Select sensors for reference which are
+   * marked as "cooking" reference sensors
+   */
+  public void setCookingReferenceSensors() {
+    this.referenceSensors = REFERENCE_SENSORS_COOKING
+  }
+  
   /**
    * Getter for referenceSensors
    */
@@ -189,7 +196,10 @@ class TemperatureRegulator {
   /**
    * Starts temperature controlling
    */
-  public void start() {
+  public void start() throws Exception {
+    if(this.heaters.size() < 1) {
+      throw new Exception("A minimum of 1 heater has to be set")
+    }
     this.timer = new Timer();
     this.timer.schedule(new TemperatureRegulatorTask(this), 1000, 3000);
   }
@@ -213,15 +223,15 @@ class TemperatureRegulator {
   /**
    * Changes the offset for temperature hysteresis
    */
-  public void setOffset(Double offset) {
-    this.destinationTemperatureOffset = offset;
+  public void setHysteresis(Double h) {
+    this.hysteresis = h;
   }
 
   /**
    * Getter for destinationTemperatureOffset
    */
-  public Double getOffset() {
-    return this.destinationTemperatureOffset;
+  public Double getHysteresis() {
+    return this.hysteresis;
   }
 }
 

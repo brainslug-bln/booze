@@ -21,7 +21,7 @@ package de.booze.tasks
 import org.apache.log4j.Logger;
 
 
-import de.booze.grails.Recipe
+import de.booze.backend.grails.Recipe
 import de.booze.regulation.DeviceSwitcher
 import de.booze.regulation.TemperatureRegulator
 
@@ -41,7 +41,7 @@ class TemperatureRegulatorTask extends TimerTask {
    * Default logger
    */
   private Logger log = Logger.getLogger(getClass().getName());
-
+  
   /**
    * Constructor
    */
@@ -55,33 +55,16 @@ class TemperatureRegulatorTask extends TimerTask {
    * selected reference sensors
    */
   public Double getReferenceTemperature() {
-    Double rt = 0;
+    Double rt = 0.0d;
     int rtc = 0;
-
-    if (this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_INNER
-            || this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_BOTH) {
-      this.tempRegulator.getInnerSensors().each {
-        try {
-          Double itsT = it.readTemperatureImmediate();
-          rt += itsT;
+    
+    this.tempRegulator.getReferenceSensorDevices().each() {
+      try {
+          rt += it.readTemperatureImmediate();;
           rtc++;
-        }
-        catch (Exception e) {
-          log.error("Could not read temperature from sensor ${it.name}")
-        }
       }
-    }
-    else if (this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_OUTER
-            || this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_BOTH) {
-      this.tempRegulator.getOuterSensors().each {
-        try {
-          Double itsT = it.readTemperatureImmediate();
-          rt += itsT;
-          rtc++;
-        }
-        catch (Exception e) {
-          log.error("Could not read temperature from sensor ${it.name}")
-        }
+      catch (Exception e) {
+        log.error("Could not read temperature from sensor ${it.name}")
       }
     }
 
@@ -93,53 +76,13 @@ class TemperatureRegulatorTask extends TimerTask {
   }
 
   /**
-   * Returns the average temperature for additional (^= non-reference)
-   * temperature sensors
-   */
-  public Double getAdditionalTemperature() {
-    Double at = 0;
-    int atc = 0;
-
-    if (this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_INNER) {
-      this.tempRegulator.getOuterSensors().each {
-        try {
-          Double itsT = it.readTemperatureImmediate();
-          at += itsT;
-          atc++;
-        }
-        catch (Exception e) {
-          log.error("Could not read temperature from sensor ${it.name}")
-        }
-      }
-    }
-    else if (this.tempRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_OUTER) {
-      this.tempRegulator.getInnerSensors().each {
-        try {
-          Double itsT = it.readTemperatureImmediate();
-          at += itsT;
-          atc++;
-        }
-        catch (Exception e) {
-          log.error("Could not read temperature from sensor ${it.name}")
-        }
-      }
-    }
-
-    if (atc < 1) {
-      throw new Exception('No valid reference temperature sensors found');
-    }
-
-    return (at / atc) as Double
-  }
-
-  /**
    * Checks if the desired temperature is reached and
    *
    */
   public void run() {
     List heaters = this.tempRegulator.getHeaters();
 
-    Double targetTemperature = this.tempRegulator.getTemperature();
+    Double targetTemperature = this.tempRegulator.getTargetTemperature();
     Double referenceTemperature = 0.0 as Double;
 
     try {
@@ -165,24 +108,16 @@ class TemperatureRegulatorTask extends TimerTask {
 
     if (referenceTemperature < targetTemperature) {
       Double tempDifference = targetTemperature - referenceTemperature
-      Double offset = this.tempRegulator.getOffset()
+      Double hysteresis = this.tempRegulator.getHysteresis()
 
-      if (this.tempRegulator.getReferenceSensors() != Recipe.TEMPERATURE_REFERENCE_BOTH) {
-        try {
-          Double additionalTemperature = this.getAdditionalTemperature();
-          if (additionalTemperature > (referenceTemperature + TemperatureRegulator.INNER_OUTER_MAX_DIFFERENCE)) {
-            offset = offset + 2;
-          }
-        }
-        catch (Exception e) {
-          log.error("Additional temperature sensors could not be read: ${e}")
-        }
-      }
-
-      if (tempDifference > offset) {
-        // Enable all heaters
+      if (tempDifference >= hysteresis) {
+        // Set all heaters to full power because it's way too cold
         try {
           for (int i = 0; i < heaters.size(); i++) {
+            if(heaters[i].hasRegulator()) {
+              heaters[i].setPower(100)
+            }
+            
             if (!heaters[i].enabled()) {
               // Check if we are allowed to switch
               if (this.devSwitcher.getNextSwitchingSlot() == 0) {
@@ -196,31 +131,56 @@ class TemperatureRegulatorTask extends TimerTask {
         }
       }
       else {
-        Double o = tempDifference / offset * 0.7
-        // This is magic until now
-        // Should be re-done with a good hysteresis algorithm
-        int enableCount = Math.round(heaters.size() * o) as int
-        try {
-          for (int i = 0; i < enableCount; i++) {
-            if (!heaters[i].enabled()) {
-              // Check if we are allowed to switch
-              if (this.devSwitcher.getNextSwitchingSlot() == 0) {
-                heaters[i].enable()
+        // Check only the first for a regulator, assume they all got
+        // one. That should be assured by the Setting domain class
+        if(heaters[0].hasRegulator()) {
+          Integer power = new Integer(Math.round(tempDifference / ((hysteresis) / 100)))
+          try {
+            for(int i = 0; i< heaters.size(); i++) {
+              heaters[i].setPower(power)
+              if(!heaters[i].enabled()) {
+                // Check if we are allowed to switch
+                if (this.devSwitcher.getNextSwitchingSlot() == 0) {
+                  heaters[i].enable()
+                }
               }
             }
           }
-          for (int i = enableCount; i < heaters.size(); i++) {
-            heaters[i].disable();
+          catch (Exception e) {
+            log.error("Could not set heaters: ${e}")
           }
         }
-        catch (Exception e) {
-          log.error("Could not set heaters: ${e}")
+        else {
+          // No regulators, use on/off switching for hysteresis
+          Double o = tempDifference / offset * 0.7
+
+          int enableCount = Math.round(heaters.size() * o) as int
+          try {
+            for (int i = 0; i < enableCount; i++) {
+              if (!heaters[i].enabled()) {
+                // Check if we are allowed to switch
+                if (this.devSwitcher.getNextSwitchingSlot() == 0) {
+                  heaters[i].enable()
+                }
+              }
+            }
+            for (int i = enableCount; i < heaters.size(); i++) {
+              heaters[i].disable();
+            }
+          }
+          catch (Exception e) {
+            log.error("Could not set heaters: ${e}")
+          }
         }
+        
       }
     }
     else {
       try {
         for (int i = 0; i < heaters.size(); i++) {
+          if(heaters[i].hasRegulator()) {
+            heaters[i].setPower(0)
+          }
           heaters[i].disable();
         }
       }

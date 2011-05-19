@@ -18,6 +18,7 @@
  * */
 
 package de.booze.backend.grails
+import de.booze.tasks.MotorDeviceSoftOnTask
 
 /**
  * A motor device may be any device with a motor
@@ -61,11 +62,21 @@ class MotorDevice extends Device {
   MotorRegulatorDevice regulator
   
   /**
+   * Set this value in milliseconds to enable soft upspinning
+   */
+  Integer softOn
+  
+  /**
+   * Task for softOn upspinning
+   */
+  MotorDeviceSoftOnTask softOnTimer
+  
+  /**
    * Operation mode (interval, permanently on)
    */
   MotorDeviceMode mode
 
-  static transients = ["secondsOn", "lastEnableTime"]
+  static transients = ["secondsOn", "lastEnableTime", "softOnTimer"]
     
   static hasMany = [temperatureSensors: TemperatureSensorDevice,
     pressureSensors: PressureSensorDevice]
@@ -76,6 +87,11 @@ class MotorDevice extends Device {
     regulator(nullable: true)
     targetTemperature(nullable: true)
     targetPressure(nullable: true)
+    softOn(nullable: true, max: 5000, validator: { val,obj ->
+        if(val && val != 0 && !obj.regulator) {
+          return ["motorDevice.softOn.noRegulator"]
+        }
+    })
   }
 
   /** 
@@ -83,6 +99,13 @@ class MotorDevice extends Device {
    */
   public void enable() {
     if (!this.enabled()) {
+      
+      if(this.hasRegulator() && this.softOn && this.softOn > 0) {
+        this.setSpeed(0);
+        this.softOnTimer = new Timer();
+        this.softOnTimer.schedule(new MotorDeviceSoftOnTask(this.regulator, this.softOn), 0, 50);
+      }
+      
       driverInstance.enable()
       this.lastEnableTime = new Date()
     }
@@ -93,9 +116,40 @@ class MotorDevice extends Device {
    */
   public void disable() {
     if (this.enabled()) {
+      
+      if(this.softOnTimer) {
+        this.softOnTimer.cancel()
+        this.softOnTimer = null
+      }
+      
       driverInstance.disable();
       this.secondsOn += Math.round((new Date().getTime()) - this.lastEnableTime.getTime())
     }
+  }
+  
+  /**
+   * Sets the device speed if a regulator is available
+   */
+  public void setSpeed(int s) {
+    if(this.hasRegulator()) {
+      this.regulator.setSpeed(s);
+    }
+  }
+  
+  /**
+   * Returns the device speed if a regulator is available
+   */
+  public int getSpeed() {
+    if(this.hasRegulator()) {
+      return this.regulator.getSpeed()
+    }
+  }
+   
+  /**
+   * Checks if this device has a speed regulator
+   */
+  public boolean hasRegulator() {
+    return !this.regulator.isNull()
   }
 
   /**
