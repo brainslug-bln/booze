@@ -25,11 +25,6 @@ import de.booze.backend.grails.MotorRegulatorDevice
  * checkStep method
  */
 class MotorDeviceSoftOnTask extends TimerTask {
-
-  /**
-   * Spin-up time in milliseconds
-   */
-  Integer spinupTime;
   
   /**
    * Actual speed in percent
@@ -41,14 +36,25 @@ class MotorDeviceSoftOnTask extends TimerTask {
    */
   Date startDate
   
-  MotorRegulatorDevice motorRegulator
+  MotorRegulatorDevice mr
+  
+  /**
+   * Pressure/temperature adapted speed
+   */
+  Integer adaptedSpeed
+  
+  
+  /**
+   * Speed change amount
+   */
+  final static Integer SPEED_CHANGE = 2
 
   /**
    * Constructor
    */
   public MotorDeviceSoftOnTask(MotorRegulatorDevice r) {
-    this.motorRegulator = r;
-    this.spinupTime = r.softOn;
+    this.mr = r;
+    this.adaptedSpeed = this.mr.targetSpeed
   }
 
   /**
@@ -58,14 +64,73 @@ class MotorDeviceSoftOnTask extends TimerTask {
     if(!this.startDate) {
       this.startDate = new Date()
     }
+
     
-    Integer timeRun = (new Date()).getTime() - this.startDate.getTime();
-    if(this.timeRun >= this.spinupTime) {
-      this.motorRegulator.setSpeed(100);
-      this.cancel();
+    if(this.mr.targetPressure) {
+        if(this.mr.getAveragePressure > (this.mr.targetPressure + 100)) {
+            if(this.mr.pressureRegulationDirection) {
+                this.decreaseSpeed()
+            }
+            else {
+                this.increaseSpeed()
+            }
+        }
+        else if(this.mr.getAveragePressure < (this.mr.targetPressure - 100)) {
+            if(this.mr.pressureRegulationDirection) {
+                this.increaseSpeed()
+            }
+            else {
+                this.decreaseSpeed()
+            }
+        }
+        this.mr.setSpeed(this.adaptedSpeed);
     }
-    else {
-      this.motorRegulator.setSpeed(Math.round(this.spinupTime/timeRun * 100));
+    else (this.mr.targetTemperature) {
+        if(this.mr.getAverageTemperature > (this.mr.targetTemperature + 1)) {
+            if(this.mr.temperatureRegulationDirection) {
+                this.decreaseSpeed()
+            }
+            else {
+                this.increaseSpeed()
+            }
+        }
+        else if(this.mr.getAveragePressure < (this.mr.targetTemperature - 1)) {
+            if(this.mr.temperatureRegulationDirection) {
+                this.increaseSpeed()
+            }
+            else {
+                this.decreaseSpeed()
+            }
+        }
+        this.mr.setSpeed(this.adaptedSpeed);
     }
+    
+    if(this.mr.softOn) {
+        Integer timeRun = (new Date()).getTime() - this.startDate.getTime();
+        if(this.timeRun >= this.mr.softOn) {
+          this.mr.setSpeed(this.adaptedSpeed);
+        }
+        else {
+          this.mr.setSpeed(Math.round(this.spinupTime/timeRun * this.adaptedSpeed));
+        }
+    }
+  }
+  
+  public void increaseSpeed() {
+      if(this.adaptedSpeed+MotorDeviceSoftOnTask.SPEED_CHANGE <= 100) {
+          this.adaptedSpeed = this.adaptedSpeed + MotorDeviceSoftOnTask.SPEED_CHANGE
+      }
+      else {
+          this.adaptedSpeed = 100
+      }
+  }
+  
+  public void decreaseSpeed() {
+      if(this.adaptedSpeed-MotorDeviceSoftOnTask.SPEED_CHANGE >= 0) {
+          this.adaptedSpeed = this.adaptedSpeed - MotorDeviceSoftOnTask.SPEED_CHANGE
+      }
+      else {
+          this.adaptedSpeed = 0
+      }
   }
 }

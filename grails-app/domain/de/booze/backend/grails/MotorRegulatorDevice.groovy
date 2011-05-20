@@ -47,6 +47,11 @@ class MotorRegulatorDevice extends Device {
   boolean pressureRegulationDirection = false
   
   /**
+   * Target speed
+   */
+  Integer targetSpeed = 100
+  
+  /**
    * Set this value in milliseconds to enable soft upspinning
    */
   Integer softOn
