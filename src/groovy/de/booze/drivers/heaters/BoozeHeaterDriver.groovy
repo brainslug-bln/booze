@@ -33,68 +33,75 @@ import de.booze.driverInterfaces.DriverOption
  */
 class BoozeHeaterDriver extends AbstractHeaterDriver {
 
-    /**
-     * Controller instance
-     */
-    IoWarriorController iow;
+  /**
+   * Controller instance
+   */
+  IoWarriorController iow;
 
-    /**
-     * Logger instance
-     */
-    private Logger log = Logger.getLogger(getClass().getName());
+  /**
+   * Logger instance
+   */
+  private Logger log = Logger.getLogger(getClass().getName());
 
-    /**
-     * Device port
-     */
-    Integer port
+  /**
+   * Device port
+   */
+  Integer port
 
-    /**
-     * Device bit
-     */
-    Integer bit
+  /**
+   * Device bit
+   */
+  Integer bit
   
-    /**
-     * Driver options
-     */
-    private static availableOptions = [new DriverOption("port", 
+  /**
+   * Driver options
+   */
+  private static availableOptions = [new DriverOption("port", 
                                                      "de.booze.drivers.heaters.BoozeHeater.port.description",
                                                      "/d/"),
-                                       new DriverOption("bit", 
+    new DriverOption("bit", 
                                                      "de.booze.drivers.heaters.BoozeHeater.bit.description",
                                                      "/d/")]
 
 
-    /**
-     * Constructor
-     */
-    public BoozeHeaterDriver(Map o) throws Exception {
+  /**
+   * Constructor
+   */
+  public BoozeHeaterDriver(Map o) throws Exception {
     
-        // Try to get an IoWarrior instance
-        this.iow = IoWarriorController.getInstance()
+    // Try to get an IoWarrior instance
+    this.iow = IoWarriorController.getInstance()
 
-        this.setOptions(o);
+    this.setOptions(o);
     
-    }
+  }
 
-    /**
-     * Returns true if the device is enabled
-     */
-    public boolean enabled() throws Exception {
-        return !iow.isBitSet(port, bit)
-    }
+  /**
+   * Returns true if the device is enabled
+   */
+  public boolean enabled() throws Exception {
+    return !iow.isBitSet(port, bit)
+  }
 
-    /**
-     * Enables the device
-     */
-    public void enable() throws Exception {
-        iow.clearBit(port, bit)
-    }
+  /**
+   * Enables the device
+   */
+  public void enable() throws Exception {
+    iow.clearBit(port, bit)
+  }
 
-    /**
-     * Disables the device
-     */
-    public void disable() throws Exception {
-        iow.setBit(port, bit)
-    }
+  /**
+   * Disables the device
+   */
+  public void disable() throws Exception {
+    iow.setBit(port, bit)
+  }
+    
+  /**
+   * Device shutdown
+   */
+  public void shutdown() throws Exception {
+    this.disable()
+  }
 }
 

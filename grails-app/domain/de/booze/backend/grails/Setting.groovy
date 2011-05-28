@@ -45,32 +45,32 @@ class Setting {
    */
   Double heatingRamp = 1.0d
   
+  /**
+   * Font size for the frontend
+   */
+  Integer frontendFontSize = 0;
+  
   MotorDevice mashingMixer
   MotorDevice cookingMixer
   MotorDevice mashingPump
   MotorDevice cookingPump
-  MotorDevice whirlpoolPump
   MotorDevice drainPump
   
-  /**
-   * Note: 
-   * temperatureSensors and mashing/cookignReferenceTemperatureSensors
-   * contain partially duplicate entries
-   */
   static hasMany = [heaters: HeaterDevice,
                     pressureSensors: PressureSensorDevice,
                     temperatureSensors: TemperatureSensorDevice]
 
   static constraints = {
     name(nullable: false, blank: false, size: 1..255, unique: true)
-    description(nullable: true, size: 0..5000)
-    cookingTemperature(min: 95.0 as Double, max: 110.0 as Double, nullable: false)
-    hysteresis(min: 0.0 as Double, max: 10.0 as Double, nullable: false)
+    description(nullable: true, blank: true, size: 0..5000)
+    cookingTemperature(min: 95.0d, max: 110.0d, nullable: false)
+    hysteresis(min: 0.5d, max: 10.0d, nullable: false)
+    heatingRamp(min: 0.1d, max: 6.0d, nullable: false)
+    frontendFontSize(min: 0, max: 5, nullable: false)
     mashingMixer(nullable: true)
     cookingMixer(nullable: true)
     mashingPump(nullable: true)
     cookingPump(nullable: true)
-    whirlpoolPump(nullable: true)
     drainPump(nullable: true)
   }
 

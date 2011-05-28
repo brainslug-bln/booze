@@ -21,7 +21,7 @@
 package de.booze.regulation
 
 import de.booze.process.BrewProcess
-import de.booze.tasks.PressureRegulatorTask
+import de.booze.tasks.PressureMonitorTask
 
 /**
  *

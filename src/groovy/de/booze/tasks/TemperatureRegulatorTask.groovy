@@ -115,7 +115,7 @@ class TemperatureRegulatorTask extends TimerTask {
         try {
           for (int i = 0; i < heaters.size(); i++) {
             if(heaters[i].hasRegulator()) {
-              heaters[i].setPower(100)
+              heaters[i].writePower(100)
             }
             
             if (!heaters[i].enabled()) {
@@ -137,7 +137,7 @@ class TemperatureRegulatorTask extends TimerTask {
           Integer power = new Integer(Math.round(tempDifference / ((hysteresis) / 100)))
           try {
             for(int i = 0; i< heaters.size(); i++) {
-              heaters[i].setPower(power)
+              heaters[i].writePower(power)
               if(!heaters[i].enabled()) {
                 // Check if we are allowed to switch
                 if (this.devSwitcher.getNextSwitchingSlot() == 0) {
@@ -179,7 +179,7 @@ class TemperatureRegulatorTask extends TimerTask {
       try {
         for (int i = 0; i < heaters.size(); i++) {
           if(heaters[i].hasRegulator()) {
-            heaters[i].setPower(0)
+            heaters[i].writePower(0)
           }
           heaters[i].disable();
         }

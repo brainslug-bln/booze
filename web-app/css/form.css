@@ -44,6 +44,11 @@
     width: 90%;
 }
 
+.form input.checkbox {
+    float: left;
+    width: auto;
+}
+
 .form .errors {
     float: left;
     margin:0;
@@ -64,6 +69,24 @@
     font-weight: bold;
 }
 
+.form .slider {
+  float: left;
+  width: 84%;
+  margin-top: 2px;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+
+.form .sliderButton {
+  float: left;
+  width: 6%
+}
+
+.form .sliderIndicator {
+  float: right;
+  margin-right: 9%;
+}
+
 .form .ui-button {
     width: auto;
     font-weight: normal;
@@ -80,6 +103,20 @@
 
 .form table th {
     text-align: left;
+}
+
+.form .right {
+  float: right;
+}
+
+.form .left {
+  float: left;
+}
+
+.form .buttonbar {
+  float: left;
+  width: 100%;
+  margin-bottom: 1em;
 }
 
 

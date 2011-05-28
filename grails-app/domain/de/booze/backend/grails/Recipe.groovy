@@ -133,7 +133,7 @@ class Recipe {
 
     SortedSet rests
 
-    static hasMany = [rests: RecipeRest, hops: RecipeHop, malts: RecipeMalt, additives: RecipeAdditive]
+    static hasMany = [rests: RecipeRest, hops: RecipeHop, malts: RecipeMalt]
 
     static transients = ['doColdMashing']
   

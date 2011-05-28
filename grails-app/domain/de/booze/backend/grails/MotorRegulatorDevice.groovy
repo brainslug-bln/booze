@@ -17,7 +17,7 @@
  *
  **/
 package de.booze.backend.grails
-import de.booze.tasks.MotorDeviceSoftOnTask
+import de.booze.tasks.MotorRegulatorDeviceTask
 
 /**
  *
@@ -59,9 +59,9 @@ class MotorRegulatorDevice extends Device {
   /**
    * Task for softOn upspinning
    */
-  MotorDeviceSoftOnTask softOnTimer
+  MotorRegulatorDeviceTask motorRegulatorDeviceTask
   
-  static transients = ["softOnTimer"]
+  static transients = ["softOnTimer", "motorRegulatorDeviceTask"]
   
   static hasMany = [temperatureSensors: TemperatureSensorDevice,
     pressureSensors: PressureSensorDevice]
@@ -72,28 +72,28 @@ class MotorRegulatorDevice extends Device {
 
   public void enable() {
     if(this.softOn && this.softOn > 0) {
-      this.setSpeed(0);
-      this.softOnTimer = new Timer();
-      this.softOnTimer.schedule(new MotorDeviceSoftOnTask(this), 0, 50);
+      this.writeSpeed(0);
+      this.motorRegulatorDeviceTask = new Timer();
+      this.motorRegulatorDeviceTask.schedule(new MotorRegulatorDeviceTask(this), 0, 50);
     }
     else {
-      this.setSpeed(100);
+      this.writeSpeed(100);
     }
   }
   
   public void disable() {
-    if(this.softOnTimer) {
-      this.softOnTimer.cancel();
-      this.softOnTimer = null;
+    if(this.motorRegulatorDeviceTask) {
+      this.motorRegulatorDeviceTask.cancel();
+      this.motorRegulatorDeviceTask = null;
     }
-    this.setSpeed(0);
+    this.writeSpeed(0);
   }
   
   /**
    * Sets the motor device speed in percent
    * of the maximum value
    */
-  public void setSpeed(int speed) {
+  public void writeSpeed(int speed) {
     driverInstance.setSpeed(speed);
   }
 
@@ -101,7 +101,23 @@ class MotorRegulatorDevice extends Device {
    * Returns the motor device speed in percent
    * of the maximum value
    */
-  public int getSpeed() {
+  public int readSpeed() {
     return driverInstance.getSpeed();
+  }
+  
+  public Double readAveragePressure() {
+    Double p = 0
+    this.pressureSensors.each() { it ->
+      p = it.readPressure()
+    }
+    return p/this.pressureSensors.size()
+  }
+  
+  public Double readAverageTemperature() {
+    Double t = 0
+    this.temperatureSensors.each() { it ->
+      t = it.readTemperature()
+    }
+    return t/this.temperatureSensors.size()
   }
 }

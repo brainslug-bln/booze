@@ -21,7 +21,7 @@ package de.booze.events
 
 import grails.converters.*
 import grails.util.GrailsNameUtils
-import de.booze.grails.RecipeRest
+import de.booze.backend.grails.RecipeRest
 
 /**
  * Event for rest messages

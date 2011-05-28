@@ -10,6 +10,7 @@ class MotorDeviceMode {
 
   final static Integer MODE_ON = 0
   final static Integer MODE_INTERVAL = 1
+  final static Integer MODE_OFF = 2
   
   Integer mode
   

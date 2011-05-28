@@ -98,5 +98,12 @@ class BoozeMotorDriver extends AbstractMotorDriver {
   public void disable() throws Exception {
     iow.setBit(port, bit)
   }
+  
+  /**
+   * Device shutdown
+   */
+  public void shutdown() throws Exception {
+    this.disable()
+  }
 }
 

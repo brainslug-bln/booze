@@ -24,7 +24,7 @@ import java.lang.Math.*
 import grails.util.GrailsNameUtils
 import de.booze.process.BrewProcess
 import de.booze.events.BrewRestEvent
-import de.booze.grails.RecipeRest
+import de.booze.backend.grails.RecipeRest
 import de.booze.tasks.CheckStepTask
 
 /**

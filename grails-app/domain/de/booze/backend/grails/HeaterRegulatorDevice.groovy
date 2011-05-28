@@ -28,7 +28,7 @@ class HeaterRegulatorDevice extends Device {
    * Sets the heater power in percent
    * of the maximum value
    */
-  public void setPower(int power) {
+  public void writePower(int power) {
     driverInstance.setPower(power);
   }
 
@@ -36,7 +36,7 @@ class HeaterRegulatorDevice extends Device {
    * Returns the heater power in percent
    * of the maximum value
    */
-  public int getPower() {
+  public int readPower() {
     return driverInstance.getPower();
   }
 }

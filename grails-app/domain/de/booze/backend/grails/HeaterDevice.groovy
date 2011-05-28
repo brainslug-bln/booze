@@ -68,18 +68,18 @@ class HeaterDevice extends Device {
   /**
    * Sets the device power if a regulator is available
    */
-  public void setPower(int s) {
+  public void writePower(int s) {
     if(this.hasRegulator()) {
-      this.regulator.setPower(s);
+      this.regulator.writePower(s);
     }
   }
   
   /**
    * Returns the device power if a regulator is available
    */
-  public int getSpeed() {
+  public int readSpeed() {
     if(this.hasRegulator()) {
-      return this.regulator.getPower()
+      return this.regulator.readPower()
     }
   }
    

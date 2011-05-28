@@ -35,70 +35,71 @@ import de.booze.driverInterfaces.DriverOption
  */
 class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
 
-    /**
-     * Logger instance
-     */
-    private Logger log = Logger.getLogger(getClass().getName());
+  /**
+   * Logger instance
+   */
+  private Logger log = Logger.getLogger(getClass().getName());
 
-    /**
-     * Controller instance
-     */
-    private IoWarriorController iow;
+  /**
+   * Controller instance
+   */
+  private IoWarriorController iow;
 
-    /**
-     * PCF8591 address (0..7)
-     */
-    private int pcf8591Address;
+  /**
+   * PCF8591 address (0..7)
+   */
+  private int pcf8591Address;
 
-    /**
-     * Acutal speed in percent
-     */
-    private Integer speed = 0;
+  /**
+   * Acutal speed in percent
+   */
+  private Integer speed = 0;
   
-    /**
-     * Driver options
-     */
-    private static availableOptions = [new DriverOption("pcf8591Address", 
+  /**
+   * Driver options
+   */
+  private static availableOptions = [new DriverOption("pcf8591Address", 
                                              "de.booze.drivers.motorRegulators.BoozeMotorRegulator.pcf8591Address.description",
                                              "/d/")]
 
-    /**
-     * Constructor
-     *
-     * Gets an IOWController instance and registers the PCF8591 adc
-     *
-     */
-    public BoozeMotorRegulatorDriver(Map o) throws Exception, IllegalArgumentException {
+  /**
+   * Constructor
+   *
+   * Gets an IOWController instance and registers the PCF8591 adc
+   *
+   */
+  public BoozeMotorRegulatorDriver(Map o) throws Exception, IllegalArgumentException {
         
-        // Try to get an IoWarrior instance
-        this.iow = IoWarriorController.getInstance()
+    // Try to get an IoWarrior instance
+    this.iow = IoWarriorController.getInstance()
         
-        this.setOptions(o);
+    this.setOptions(o);
 
-        // Try to initially set the output value to 0
-        this.iow.setPcf8591OutputValue(pcf8591Address, 0)
-    }
+    // Try to initially set the output value to 0
+    this.iow.setPcf8591OutputValue(pcf8591Address, 0)
+  }
 
-    /**
-     * Set the speed for this controller in percent
-     *
-     * @param int speed
-     */
-    public void setSpeed(Integer speed) throws IllegalArgumentException {
-        if(speed > 0 && speed < 100) {
-            this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(speed * 2.54))
-            this.speed = speed;
-        }
-        else {
-            throw IllegalArgumentException("Motor speed must be between 0 and 100");
-        }
+  /**
+   * Set the speed for this controller in percent
+   *
+   * @param int speed
+   */
+  public void setSpeed(Integer speed) throws IllegalArgumentException {
+    if(speed > 0 && speed < 100) {
+      this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(speed * 2.54))
+      this.speed = speed;
     }
+    else {
+      throw IllegalArgumentException("Motor speed must be between 0 and 100");
+    }
+  }
 
-    /**
-     * Returns the actual speed
-     */
-    public Integer getSpeed() {
-        return this.speed;
-    }
+  /**
+   * Returns the actual speed
+   */
+  public Integer getSpeed() {
+    return this.speed;
+  }
+    
 }
 

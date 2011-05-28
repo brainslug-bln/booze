@@ -33,7 +33,7 @@ abstract class AbstractHeaterRegulatorDriver extends AbstractDriver {
   /**
    * Sets the heater power in percent
    */
-  abstract public void setPower(Integer power) throws Exception
+  abstract public void setPower(Integer power) throws Exception, IllegalArgumentException
 
   ;
 

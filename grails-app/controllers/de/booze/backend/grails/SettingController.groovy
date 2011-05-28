@@ -1,4 +1,5 @@
 package de.booze.backend.grails
+import grails.converters.JSON
 
 class SettingController {
 
@@ -6,7 +7,9 @@ class SettingController {
      * List available settings
      * @responseType HTML
      */
-    def index = { }
+    def list = { 
+      [settings: Setting.list()]
+    }
 
     /**
      * Delete a setting
@@ -21,7 +24,7 @@ class SettingController {
      * @responseType HTML
      */
     def create = {
-
+      [settingInstance: new Setting()]
     }
 
     /**
@@ -29,7 +32,35 @@ class SettingController {
      * @responseType HTML
      */
     def save = {
+      Setting setting = new Setting()
+      setting.properties = params.setting
+      log.error(params.setting)
+      if(setting.validate()) {
+        
+        try {
+          setting.save()
+          redirect(controller: "setting", action:"edit", id:setting.id)
+        }
+        catch(Exception e) {
+          log.error(e)
+          flash.message = g.message(code:"setting.save.failed")
+        }
+      } 
+      log.error(setting)
+      render(view:"create", model:[settingInstance: setting])
+    }
+    
+    def edit = {
 
+      if(params.id  && Setting.exists(params.id)) {
+        try {
+          return [settingInstance: Setting.get(params.id)]
+        }
+        catch(Exception e) { }
+      }
+      
+      flash.message = message(code:"setting.edit.notFound")
+      redirect(action:"list")
     }
 
     /**
@@ -37,7 +68,23 @@ class SettingController {
      * @responseType JSON
      */
     def update = {
-
+      if(!params?.setting?.id || !Setting.exists(params?.setting?.id)) {
+        render([success: false, error: g.message(code: "setting.update.notFound")] as JSON)
+        return
+      }
+      
+      Setting setting = Setting.get(params.setting.id)
+      setting.properties = params.setting
+      if(setting.validate()) {
+        try {
+          setting.save()
+          render([success: true] as JSON)
+        }
+        catch(Exception e) {
+          log.error("Saving setting failed: ${e}")
+        }
+      }
+      render([success: false, tab: params.tab, html: g.render(template:params.tab, bean: setting)] as JSON)
     }
 
     /**

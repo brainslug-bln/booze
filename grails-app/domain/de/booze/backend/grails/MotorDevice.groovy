@@ -32,6 +32,10 @@ class MotorDevice extends Device {
 
   Long secondsOn = 0
   Date lastEnableTime
+  
+  boolean useForMashing
+  boolean useForCooking
+  boolean useForDraining
 
   /**
    * Regulator device to regulate the motor's speed
@@ -51,11 +55,6 @@ class MotorDevice extends Device {
     regulator(nullable: true)
     targetTemperature(nullable: true)
     targetPressure(nullable: true)
-    /*softOn(nullable: true, max: 5000, validator: { val,obj ->
-        if(val && val != 0 && !obj.regulator) {
-          return ["motorDevice.softOn.noRegulator"]
-        }
-    })*/
   }
 
   /** 
@@ -91,18 +90,18 @@ class MotorDevice extends Device {
   /**
    * Sets the device speed if a regulator is available
    */
-  public void setSpeed(int s) {
+  public void writeSpeed(int s) {
     if(this.hasRegulator()) {
-      this.regulator.setSpeed(s);
+      this.regulator.writeSpeed(s);
     }
   }
   
   /**
    * Returns the device speed if a regulator is available
    */
-  public int getSpeed() {
+  public int readSpeed() {
     if(this.hasRegulator()) {
-      return this.regulator.getSpeed()
+      return this.regulator.readSpeed()
     }
   }
    

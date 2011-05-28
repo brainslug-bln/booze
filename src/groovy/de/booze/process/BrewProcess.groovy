@@ -50,7 +50,6 @@ class BrewProcess implements Serializable {
   MotorDevice cookingMixer
   MotorDevice mashingPump
   MotorDevice cookingPump
-  MotorDevice whirlpoolPump
   MotorDevice drainPump
   
   Setting setting
@@ -60,8 +59,11 @@ class BrewProcess implements Serializable {
   
   MotorRegulator mashingPumpRegulator
   MotorRegulator mashingMixerRegulator
+  MotorRegulator cookingPumpRegulator
+  MotorRegulator cookingMixerRegulator
+  MotorRegulator drainPumpRegulator
   
-  PressureRegulator pressureMonitor
+  PressureMonitor pressureMonitor
 
   Long protocolId
   Timer protocolTimer
@@ -100,13 +102,16 @@ class BrewProcess implements Serializable {
     this.setting = s
 
     // Init motor devices
-    [this.mashingMixer, this.cookingMixer, this.mashingPump, this.cookingPump, this.whirpoolPump, this.drainPump].each() {it ->
+    ["mashingMixer", "cookingMixer", "mashingPump", "cookingPump", "whirpoolPump", "drainPump"].each() {it ->
       try {
-        it.initDevice()
-        it.disable()
+        if(this[it] != null) {
+          this[it].initDevice()
+          this[it].disable()
+          this[it+"Regulator"] = new MotorRegulator(this[it])
+        }
       }
       catch (Exception e) {
-        throw new Exception("Could not initialize motor device '${it.name}': ${e}")
+        throw new Exception("Could not initialize motor device '${this[it].name}': ${e}")
       }
     }
     
@@ -153,14 +158,6 @@ class BrewProcess implements Serializable {
 
     // Fetch a new DeviceSwitcher instance
     this.devSwitcher = DeviceSwitcher.getInstance()
-
-    // Init the pump and mixer regulators for mashing if set
-    if(this.mashingPump) {
-      this.mashingPumpRegulator = new MotorRegulator(this.mashingPump);
-    }
-    if(this.mashingMixer) {
-      this.mashingMixerRegulator = new MotorRegulator(this.mashingMixer);
-    }
 
     // Create a new protocol instance
     /*Protocol protocol = new Protocol([recipeName: this.recipe.name,
@@ -305,6 +302,10 @@ class BrewProcess implements Serializable {
         this.finalCookingTime = this.finalCookingTime + this.actualStep.getCookingTime();
         this.actualStep = new BrewCookingFinishedStep()
         break;
+        
+      case "de.booze.steps.BrewCookingFinishedStep":
+        this.actualStep = new BrewCoolingStep(this)
+        break;
     }
 
   }
@@ -319,17 +320,17 @@ class BrewProcess implements Serializable {
   /**
    * Elongates the meshing step by a given time
    */
-  public void elongateMeshing(Long time) throws Exception {
-    log.debug("elongate meshing for ${time} seconds;")
+  public void elongateMashing(Long time) throws Exception {
+    log.debug("elongate mashing for ${time} seconds;")
     if (this.actualStep.getClass().getName() == "de.booze.steps.BrewInitCookingStep") {
-      this.actualStep = new BrewElongateMeshingStep(this, time, this.recipe.meshTemperature)
+      this.actualStep = new BrewElongateMashingStep(this, time, this.recipe.mashingTemperature)
     }
   }
 
   /**
    * Elongates the cooking step by a given time
    */
-  public void elongateCooking(Long time, Double temperature) throws Exception {
+  public void elongateCooking(Long time) throws Exception {
     log.debug("elongate cooking for ${time} seconds;")
     if (this.actualStep.getClass().getName() == "de.booze.steps.BrewCookingFinishedStep") {
       this.actualStep = new BrewElongateCookingStep(this, time, temperature)
@@ -407,18 +408,48 @@ class BrewProcess implements Serializable {
     // all regulators
     log.debug("cancelling brew process")
 
-    if (this.protocolTimer) {
+    /*if (this.protocolTimer) {
       this.protocolTimer.cancel()
     }
 
     def pt = new ProtocolTask(this)
     pt.run()
-
+    */
+   
+    this.shutdownDevices();
+  }
+  
+  /** 
+   * Shut down all devices and regulators
+   */
+  private void shutdownDevices() {
     this.actualStep.pause();
-
-    this.pumpRegulator.disable();
-
-    this.temperatureRegulator.stop();
+    
+    // Disable regulators and monitors
+    this.pressureMonitor.stop();
+    this.temperatureRegulator.disable()();
+    
+    // Disable all motor regulators
+    ["mashingPump", "mashingMixer", "cookingPump", "cookingMixer", "drainPump"].each() { it ->
+      if(this[it+"Regulator"] != null) {
+        this[it+"Regulator"].disable()
+      }
+    }
+    
+    // Shut down heaters
+    this.heaters.each() { it ->
+      it.shutdown();
+    }
+    
+    // Shut down pressure sensors
+    this.pressureSensors.each() { it ->
+      it.shutdown();
+    }
+    
+    // Shut down temperature sensors
+    this.temperatureSensors.each() { it ->
+      it.shutdown();
+    }    
   }
 
   /**
@@ -432,23 +463,33 @@ class BrewProcess implements Serializable {
   /**
    * Changes the temperature offset for temperature regulator
    */
-  public void setTemperatureOffset(Double offset) {
-    this.temperatureRegulator.setOffset(offset);
+  public void setHysteresis(Double h) {
+    this.temperatureRegulator.setHyteresis(h);
   }
 
   /**
-   * Forces the pump to a particular pump mode
-   * overriding the recipe's pump mode
+   * Forces a motor to a particular motor mode
+   * overriding the setting's motor mode
    */
-  public void forcePumpMode(PumpMode pumpMode) {
-    this.pumpRegulator.forcePumpMode(pumpMode);
+  public void forceMotorMode(String motor, MotorDeviceMode mdm) {
+    try {
+      this[motor+"Regulator"].forceMode(mdm)
+    }
+    catch(Exception e) {
+      log.error("Could not force mode for motor: ${motor}")
+    }
   }
 
   /**
-   * Removes any forced pump mode
+   * Removes a forced motor mode
    */
-  public void unforcePumpMode() {
-    this.pumpRegulator.unforcePumpMode();
+  public void unforceMotorMode(String motor) {
+    try {
+      this[motor+"Regulator"].unforceMode()
+    }
+    catch(Exception e) {
+      log.error("Could not unforce mode for motor: ${motor}")
+    }
   }
 }
 
