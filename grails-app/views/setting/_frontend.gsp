@@ -19,10 +19,7 @@
     </div>
     
     <div class="column50percent">
-      <div class="row">
-          <label for="setting.dateCreated"><g:message code="setting.dateCreated.label" /></label>
-          <span class="immutable"><g:formatDate format="dd.MM.yyyy" date="${it?.dateCreated?it.dateCreated:(new Date())}" /></span>
-      </div>
+      
     </div>
     
     <div class="buttonbar">

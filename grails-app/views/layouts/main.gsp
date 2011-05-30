@@ -4,6 +4,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <title><g:layoutTitle default="Booze" /></title>
 
+  <core:settingsFontSize />
   <link href="${resource(dir:'css',file:'main.css')}" rel="stylesheet" />
   <link href="${resource(dir:'/css/yaml/core/',file:'base.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'navigation.css')}" rel="stylesheet" type="text/css" />
@@ -46,6 +47,7 @@
       <div class="clearfix"></div>
       <!-- begin: #footer -->
       <div id="footer" class="ui-widget ui-widget-content ui-corner-all">
+        <div id="statusMessage" class="statusMessage">FICKEN</div>
         <div class="content">&copy;2011 Andreas Kotsias</div>
       </div>
       

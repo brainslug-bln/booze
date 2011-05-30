@@ -35,10 +35,17 @@
     .page_margins { width: 70em;  min-width: inherit; max-width: none; background: #fff; }
     .page { padding: 10px 15px 10px 10px; }
     #main { margin: 10px 0; background: #fff; float: left; width: 100%}
-    #footer { margin: 0 0 10px 0; background: #fff; float: left; width: 100%; color:#666; background: #f9f9f9; border-top: 5px #efefef solid; font-size: 0.9em; text-align: right;}
+    #footer { margin: 0 0 10px 0; background: #fff; float: left; width: 100%; color:#666; background: #f9f9f9; border-top: 5px #efefef solid; font-size: 0.9em;}
+    
     #footer .content {
         padding: 0.5em 1em;
+        width: 37%;
+        margin: 0;
+        float: left;
+        text-align: right;
     }
+    #footer .statusMessage {float: left; width: 57%; padding: 0.5em 1em; margin: 0; color: green;}
+    
     /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
     #nav ul { margin-left: 20px; }
 
@@ -88,10 +95,10 @@
         float: left;
     }
 
-    .contentbox .leftColumn { float: left; width: 19em}
-    .contentbox .rightColumn { width: auto; margin: 0 0 0 19em}
+    .contentbox .leftColumn { float: left; width: 30%;}
+    .contentbox .rightColumn { width: 67%; margin: 0 0 0 30%;}
     .contentbox .leftColumn_content { padding: 0; float: left; }
-    .contentbox .rightColumn_content { padding: 0 20px 0 10px; padding: 0.5em 1em 0.5em 1em; float: left; }
+    .contentbox .rightColumn_content { float: left; padding: 0.5em 1em 0.5em 1em; float: left; width: 100%;}
 
     /*#leftnav {
         background: none;

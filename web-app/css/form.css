@@ -1,12 +1,14 @@
 .form {
     float: left;  
+    width: 100%;
 }
 
 .form .column50percent {
-    width: 50%;
+    width: 46%;
     margin: 0;
     padding: 0;
     float: left;
+    margin-right: 4%;
 }
 
 .form .column33percent {
@@ -79,7 +81,7 @@
 
 .form .sliderButton {
   float: left;
-  width: 6%
+  width: 14px;
 }
 
 .form .sliderIndicator {

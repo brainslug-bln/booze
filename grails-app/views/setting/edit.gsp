@@ -40,8 +40,7 @@
           <div id="pressureSensorsTabContent" style="display: none;">
           </div>
           
-          <div class="clear" style="clear: both; width: 100%">&nbsp;</div>
-          <div id="frontendTabContent">
+          <div id="frontendTabContent" style="display: none;">
             <g:render template="frontend" bean="${settingInstance}" />
           </div>
         </div>

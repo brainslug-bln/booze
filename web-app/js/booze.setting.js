@@ -54,6 +54,9 @@ BoozeSetting.prototype.update = function(form, options) {
 
   $.post(APPLICATION_ROOT+"/setting/update", $(form).serialize(), 
     function(data) {
+      if(data.message) {
+          booze.showStatusMessage(data.message);
+      }
       if(data.success) {
         if(options && options.tabToShow) {
           booze.setting.displayTab(options.tabToShow);

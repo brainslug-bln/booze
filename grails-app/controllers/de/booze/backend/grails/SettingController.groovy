@@ -39,6 +39,7 @@ class SettingController {
         
         try {
           setting.save()
+          flash.message = g.message(code:"setting.save.saved")
           redirect(controller: "setting", action:"edit", id:setting.id)
         }
         catch(Exception e) {
@@ -78,7 +79,7 @@ class SettingController {
       if(setting.validate()) {
         try {
           setting.save()
-          render([success: true] as JSON)
+          render([success: true, message: g.message(code:"setting.update.saved")] as JSON)
         }
         catch(Exception e) {
           log.error("Saving setting failed: ${e}")

@@ -38,6 +38,9 @@
           
           <div id="pressureSensorsTabContent" style="display: none;">
           </div>
+          
+          <div id="frontendTabContent" style="display: none;">
+          </div>
         </div>
       </div>
       

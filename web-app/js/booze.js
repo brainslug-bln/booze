@@ -30,6 +30,10 @@
 function Booze() {
 }
 
+Booze.prototype.showStatusMessage = function(msg) {
+    $('#statusMessage').html(msg);
+}
+
 var booze = new Booze();
 
 /**
@@ -48,5 +52,7 @@ Element.prototype.getOuterHtml = function() {
 String.prototype.startsWith = function(str) {
     return (this.match("^"+str)==str);
 };
+
+
 
 

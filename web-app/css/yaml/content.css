@@ -28,7 +28,7 @@
 
   /* (en) reset font size for all elements to standard (16 Pixel) */
   /* (de) Alle Schriftgrößen auf Standardgröße (16 Pixel) zurücksetzen */
-  html * { font-size:12px; }
+  /*html * { font-size:12px; }*/
 
  /**
   * (en) reset monospaced elements to font size 16px in all browsers
