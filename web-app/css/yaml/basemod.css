@@ -44,7 +44,7 @@
         float: left;
         text-align: right;
     }
-    #footer .statusMessage {float: left; width: 57%; padding: 0.5em 1em; margin: 0; color: green;}
+    #footer .statusMessage {font-weight: bold; float: left; width: 57%; padding: 0.5em 1em; margin: 0; color: green;}
     
     /* (en) navigation: horizontal adjustment | (de) horizontale Ausrichtung  */
     #nav ul { margin-left: 20px; }
@@ -100,57 +100,8 @@
     .contentbox .leftColumn_content { padding: 0; float: left; }
     .contentbox .rightColumn_content { float: left; padding: 0.5em 1em 0.5em 1em; float: left; width: 100%;}
 
-    /*#leftnav {
-        background: none;
-        border: none;
-        margin: 0;
-        padding: 0;
-    }
 
-    #leftnav ul {
-        margin: 0;
-        padding: 0;
-        border: none;
-        -moz-border-radius: 0;
-        webkit-border-radius: 0;
-        border-radius: 0;
-        background: none;
-    }
-
-    #leftnav ul li {
-        background: #d7ebf9 url(../../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #2779aa;
-        padding: 0 !important;
-        border-top: 1px solid #aed0ea;
-        border-bottom: 1px solid #aed0ea !important;
-        border-right: 1px solid #aed0ea;
-        border-left: none;
-        margin: 0 !important;
-        width: 18em;
-        font-size: 0.9em;
-        -moz-border-radius-topleft: 0;
-        -webkit-border-top-left-radius: 0;
-        border-top-left-radius: 0;
-        -moz-border-radius-topright: 0;
-        -webkit-border-top-right-radius: 0;
-        border-top-right-radius: 0;
-
-    }
-
-    #leftnav ul li:last-child {
-      -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
-    }
-
-    #leftnav ul li.ui-state-hover, #leftnav ul li.ui-state-active {
-      background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_50_3baae3_1x400.png) 50% 50% repeat-x;
-      font-weight: bold;
-      color: #ffffff;
-    }
-    #leftnav li.ui-state-hover a {
-        color: #ffffff;
-    }*/
-
-
-    #leftnav ul {
+    .leftNav ul {
         list-style-type: none;
         margin: 0.5em 0em 1em 0em;
         padding: 0;
@@ -160,7 +111,7 @@
         float: left;
     }
 
-    #leftnav ul li {
+    .leftNav ul li {
         float: left;
         background: #d7ebf9 url(../../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x; font-weight: bold; color: #2779aa;
         padding: 1em 1em 1em 1em;
@@ -173,30 +124,30 @@
         margin: 0;
     }
 
-    #leftnav ul li a {
+    .leftNav ul li a {
         color: #2779AA;
     }
 
-    #leftnav ul li:last-child {
+    .leftNav ul li:last-child {
         -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
     }
 
-    #leftnav ul li.active, #leftnav ul li.active:hover {
+    .leftNav ul li.active, .leftNav ul li.active:hover {
         background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_50_3baae3_1x400.png) 50% 50% repeat-x;
         width: 82%;
         -moz-border-radius-topright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
         -moz-border-radius-bottomright: 6px; -webkit-border-bottom-right-radius: 6px; border-bottom-right-radius: 6px;
     }
 
-    #leftnav ul li:hover {
+    .leftNav ul li:hover {
         background: #3baae3 url(../../images/jquery-ui/ui-bg_glass_100_e4f1fb_1x400.png) 50% 50% repeat-x;
     }
 
-    #leftnav ul li:hover a {
+    .leftNav ul li:hover a {
         text-decoration: none;
     }
 
-    #leftnav ul li.active a {
+    .leftNav ul li.active a {
         color: #ffffff;
         text-decoration: none;
     }

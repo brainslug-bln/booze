@@ -31,7 +31,11 @@ function Booze() {
 }
 
 Booze.prototype.showStatusMessage = function(msg) {
-    $('#statusMessage').html(msg);
+  $('#statusMessage').clearQueue("fx");
+  $('#statusMessage').html(msg);
+  $('#statusMessage').slideDown("slow");
+  $('#statusMessage').delay(5000);
+  $('#statusMessage').slideUp("slow");
 }
 
 var booze = new Booze();

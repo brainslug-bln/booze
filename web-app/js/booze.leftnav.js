@@ -25,18 +25,18 @@
  * @author Andreas Kotsias <akotsias@esnake.de>
  * @copyright Andreas Kotsias <akotsias@esnake.de>
  */
-function BoozeLeftNav() {
-    this.tabs = $("#leftnav").children("ul").first().children();
+function BoozeLeftNav(navId) {
+    this.tabs = $("#"+navId).children("ul").first().children();
     for(var i=0; i<this.tabs.length; i++) {
-        $(this.tabs[i]).click({tab: this.tabs[i]}, this.tabClick);
+        $(this.tabs[i]).click({nav: this, tab: this.tabs[i]}, this.tabClick);
     }
 }
 
 BoozeLeftNav.prototype.tabClick = function(event) {
     event.stopPropagation();
     event.preventDefault();
-    for(var i=0; i<booze.leftnav.tabs.length; i++) {
-        $(booze.leftnav.tabs[i]).removeClass("active");
+    for(var i=0; i<event.data.nav.tabs.length; i++) {
+        $(event.data.nav.tabs[i]).removeClass("active");
     }
     $(event.data.tab).addClass("active");
 
@@ -48,8 +48,3 @@ BoozeLeftNav.prototype.tabClick = function(event) {
 
     $($(event.data.tab).children("a").first().attr("rel")).show();
 }
-
-
-$(document).ready(function() {
-    booze.leftnav = new BoozeLeftNav();
-});

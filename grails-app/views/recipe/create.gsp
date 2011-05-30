@@ -8,13 +8,13 @@
 
       <div class="leftColumn">
         <div id="leftColumn_content" class="leftColumn_content">
-          <div id="leftnav">
+          <div class="leftNav" id="recipeNav">
             <ul>
               <li class="active"><a href="#" rel="#commonData"><g:message code="recipe.edit.commonData" /></a></li>
-              <li class="disabled"><a href="#" rel="#mashing"><g:message code="recipe.edit.mashing" /></a></li>
-              <li class="disabled"><a href="#" rel="#cooking"><g:message code="recipe.edit.cooking" /></a></li>
-              <li class="disabled"><a href="#" rel="#fermentation"><g:message code="recipe.edit.fermentation" /></a></li>
-              <li class="disabled"><a href="#" rel="#images"><g:message code="recipe.edit.images" /></a></li>
+              <li class="ui-state-disabled"><a href="#" rel="#mashing"><g:message code="recipe.edit.mashing" /></a></li>
+              <li class="ui-state-disabled"><a href="#" rel="#cooking"><g:message code="recipe.edit.cooking" /></a></li>
+              <li class="ui-state-disabled"><a href="#" rel="#fermentation"><g:message code="recipe.edit.fermentation" /></a></li>
+              <li class="ui-state-disabled"><a href="#" rel="#images"><g:message code="recipe.edit.images" /></a></li>
             </ul>
           </div>
           <div class="clearfix"></div>

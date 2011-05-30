@@ -8,7 +8,7 @@
 
       <div class="leftColumn">
         <div id="leftColumn_content" class="leftColumn_content">
-          <div id="leftnav">
+          <div class="leftNav" id="recipeNav">
             <ul>
               <li class="active"><a href="#" rel="#calculateFare"><g:message code="recipe.edit.commonData" /></a></li>
               <li><a href="#" rel="#correctWort"><g:message code="recipe.edit.meshing" /></a></li>

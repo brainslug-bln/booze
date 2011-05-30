@@ -24,7 +24,7 @@
  * @copyright Andreas Kotsias <akotsias@esnake.de>
  */
 function BoozeSetting() {
-  this.tabs = $("#leftnav").children("ul").first().children();
+  this.tabs = $("#settingNav").children("ul").first().children();
 }
 
 /**

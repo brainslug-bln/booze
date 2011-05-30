@@ -28,6 +28,7 @@
   <g:javascript src="booze.setting.js" />
   <g:javascript src="booze.calculator.js" />
   <g:javascript src="booze.form.js" />
+  <g:javascript src="booze.leftnav.js" />
   
   <g:layoutHead />
 
@@ -47,7 +48,7 @@
       <div class="clearfix"></div>
       <!-- begin: #footer -->
       <div id="footer" class="ui-widget ui-widget-content ui-corner-all">
-        <div id="statusMessage" class="statusMessage">FICKEN</div>
+        <div class="statusMessage"><span id="statusMessage"></span></div>
         <div class="content">&copy;2011 Andreas Kotsias</div>
       </div>
       
