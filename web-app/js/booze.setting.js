@@ -51,7 +51,7 @@ BoozeSetting.prototype.initEdit = function() {
  * Options: {tabToShow: LI-Element}
  */
 BoozeSetting.prototype.update = function(form, options) {
-
+  
   $.post(APPLICATION_ROOT+"/setting/update", $(form).serialize(), 
     function(data) {
       booze.clearStatusMessage();
@@ -68,7 +68,7 @@ BoozeSetting.prototype.update = function(form, options) {
           $("#"+data.tab+"TabContent").html(data.html);
         }
         if(data.error) {
-          // TODO: Implement error reporting to the user
+          booze.showStatusMessage(data.error);
           console.log(data.error)
         }
       }
@@ -106,6 +106,59 @@ BoozeSetting.prototype.displayTab = function(tabToShow) {
     $("#" + $(tabToShow).children("a").first().attr("rel") + "TabContent").show();
     
     booze.setting.activeTab = tabToShow;
+}
+
+BoozeSetting.prototype.formSubmit = function(event) {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  booze.setting.update(event.data.form);
+}
+
+BoozeSetting.prototype.fetchDriverOptions = function() {
+  
+  var driver = $('#driverSelector').val()
+  if(driver == "") {
+    $('#driverOptions').slideUp();
+  }
+  
+  $.get(APPLICATION_ROOT+"/setting/getDriverOptions", {driver: driver}, 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+          booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#driverOptions').html(data.html);
+        $('#driverOptions').slideDown();
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.createDevice = function(type) {
+  $.get(APPLICATION_ROOT+"/setting/create"+type, {}, 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+          booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#deviceEditor').html(data.html);
+        $('#deviceEditor').slideDown();
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
 }
 
 

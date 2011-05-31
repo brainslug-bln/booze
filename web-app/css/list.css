@@ -1,0 +1,53 @@
+.itemList {
+    width: 100%;
+    padding: 0 !important;
+    float: left;
+}
+
+.itemList ul {
+    list-style: none;
+    float: left;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.itemList li {
+    float: left;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    border-bottom: 1px #AED0EA solid;
+}
+
+.itemList li:hover {
+    background: #3baae3 url(../images/jquery-ui/ui-bg_glass_100_e4f1fb_1x400.png) 50% 50% repeat-x;
+}
+
+.itemList li:last-child {
+    border-bottom: none;
+}
+
+.itemList li div {
+    display: block;
+    float: left;
+    padding: 0.5em 1em;
+}
+
+.itemList .pagination {
+    background: url("../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png") repeat-x scroll 50% 50% #D7EBF9;
+    text-align: center;
+    font-weight: bold;
+    padding: 0.5em 0 0.5em 0;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    color: #2779AA;
+    width: 100%;
+}
+
+.itemList li.pagination:hover {
+    background: #3baae3 url(../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x;
+}

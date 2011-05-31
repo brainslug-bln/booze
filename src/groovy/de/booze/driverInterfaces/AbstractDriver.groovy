@@ -29,14 +29,7 @@ abstract class AbstractDriver {
      * Map that contains the names of variables
      * which contain driver options
      */
-    abstract private static DriverOption[] availableOptions;
-    
-    /**
-     * Getter for options
-     */
-    public DriverOption[] getAvailableOptions() {
-        return this.availableOptions;
-    }
+    abstract public static DriverOption[] availableOptions;
     
     public void shutdown() {
       
@@ -63,16 +56,16 @@ abstract class AbstractDriver {
     /**
      * Checks if a single option is valid for this driver
      */
-    public static boolean checkOption(String name, String value) throws IllegalArgumentException {
-        availableOptions.each() { it ->
-            if(it.name == name) {
-                if(value ==~ it.validator) {
+    public static boolean checkOption(Class myClass, String name, String value) throws IllegalArgumentException {
+        for(int i=0; i<myClass.availableOptions.size(); i++) {
+            if(myClass.availableOptions[i].name == name) {
+                if(value ==~ myClass.availableOptions[i].validator) {
                     return true
                 }
                 return false
             }
         }
-        throw IllegalArgumentException("Driver option '$name' not found")
+        throw new IllegalArgumentException(new String("Driver option '$name' not found"))
     }
 }
 

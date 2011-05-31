@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.drivers.heaters
 
@@ -56,12 +56,13 @@ class BoozeHeaterDriver extends AbstractHeaterDriver {
   /**
    * Driver options
    */
-  private static availableOptions = [new DriverOption("port", 
-                                                     "de.booze.drivers.heaters.BoozeHeater.port.description",
-                                                     "/d/"),
+  public static availableOptions = [
+    new DriverOption("port", 
+                     "de.booze.drivers.heaters.BoozeHeater.port.description",
+                     "/d/"),
     new DriverOption("bit", 
-                                                     "de.booze.drivers.heaters.BoozeHeater.bit.description",
-                                                     "/d/")]
+                     "de.booze.drivers.heaters.BoozeHeater.bit.description",
+                     "/d/")]
 
 
   /**

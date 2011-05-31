@@ -58,7 +58,7 @@ class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
   /**
    * Driver options
    */
-  private static availableOptions = [new DriverOption("pcf8591Address", 
+  public static availableOptions = [new DriverOption("pcf8591Address", 
                                              "de.booze.drivers.motorRegulators.BoozeMotorRegulator.pcf8591Address.description",
                                              "/d/")]
 

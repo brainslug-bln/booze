@@ -1,0 +1,42 @@
+.deviceList {
+  margin-bottom: 2em;
+}
+
+.deviceList li {
+  padding: 0.5em 1em 0.5em 1em;
+  width: auto;
+}
+
+.deviceList li div {
+  padding: 0;
+  float: left;
+  width: 100%;
+  line-height: 1em;
+}
+
+.deviceList div.name {
+  font-weight: bold;
+}
+
+.deviceList div.driver, .deviceList div.regulator {
+  font-size: 0.9em;
+  font-weigt: normal;
+}
+
+.deviceList .pagination {
+  padding: 0;
+  height: 1em;
+}
+
+.deviceList a {
+  font-weight: bold;
+}
+
+.deviceEditor {
+  float: left;
+}
+
+.deviceEditor .form {
+  padding: 1em;
+  width: auto;
+}

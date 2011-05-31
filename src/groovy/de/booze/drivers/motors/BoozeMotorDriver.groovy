@@ -58,7 +58,7 @@ class BoozeMotorDriver extends AbstractMotorDriver {
   /**
    * Driver options
    */
-  private static availableOptions = [new DriverOption("port", 
+  public static availableOptions = [new DriverOption("port", 
                                                  "de.booze.drivers.heaters.BoozeMotor.port.description",
                                                  "/d/"),
                                      new DriverOption("bit", 

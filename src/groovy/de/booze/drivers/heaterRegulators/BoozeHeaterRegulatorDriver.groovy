@@ -56,7 +56,7 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
     /**
      * Driver options
      */
-    private static availableOptions = [new DriverOption("pcf8591Address", 
+    public static availableOptions = [new DriverOption("pcf8591Address", 
                                              "de.booze.drivers.heaterRegulators.BoozeheaterRegulator.pcf8591Address.description",
                                              "/d/")]
 

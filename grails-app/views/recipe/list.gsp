@@ -5,7 +5,7 @@
     </head>
     <body>
       <h1><g:message code="recipe.list.headline" /></h1>
-      <div class="singleColumn recipeList">
+      <div class="singleColumn itemList recipeList">
         <ul>
           <g:each in="${recipes}">
           <li class="ui-widget-content">

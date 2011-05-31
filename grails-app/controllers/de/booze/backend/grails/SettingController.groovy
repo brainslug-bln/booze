@@ -1,7 +1,10 @@
 package de.booze.backend.grails
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
 
 class SettingController {
+  
+  def settingService
 
     /**
      * List available settings
@@ -90,10 +93,30 @@ class SettingController {
     }
 
     /**
-     * Test a setting
      * @responseType JSON
      */
-    def test = {
-
+    def getDriverOptions = {
+      Class driverClass
+      
+      try {
+        def myClassLoader = AH.application.mainContext.getClassLoader()
+        driverClass = Class.forName(params.driver, false, myClassLoader)
+      }
+      catch(Exception e) {
+        log.error(e)
+        render([success: false, error: g.message(code:"setting.driver.notFound")] as JSON)
+        return
+      }
+    
+      render([success: true, html: g.render( template:"driverOptions", model: [optionValues: params.optionValues, options: driverClass.availableOptions, driver: params.driver] )] as JSON)
+    }
+    
+    /**
+     * @responseType JSON
+     */
+    def createHeater = {
+      HeaterDevice heater = new HeaterDevice(params.heater)      
+      render([success: true, html: g.render(template:"createHeater", 
+              model:[heater: heater, drivers: settingService.getDeviceDrivers("de.booze.drivers.heaters"), driverOptionValues: params.driverOptionValues])] as JSON)
     }
 }

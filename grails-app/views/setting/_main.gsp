@@ -169,4 +169,13 @@ $(function() {
 $(function() {
         $( "#active" ).buttonset();
 });
+
+
+$(document).ready(function() {
+    <g:if test="${it?.id}">
+$("#mainForm").submit({form: "#mainForm"}, booze.setting.formSubmit);
+</g:if>
+});
+
+
 </script>
