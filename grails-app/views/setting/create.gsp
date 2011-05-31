@@ -8,7 +8,7 @@
 
       <div class="leftColumn">
         <div id="leftColumn_content" class="leftColumn_content">
-          <div id="settingNav" class="leftnav">
+          <div id="settingNav" class="leftNav">
             <ul>
               <li class="active" id="mainDataTab"><a href="#"><g:message code="setting.edit.mainData" /></a></li>
               <li id="heatersTab"><a href="#"><g:message code="setting.edit.heaters" /></a></li>

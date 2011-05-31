@@ -10,7 +10,7 @@
         <div id="leftColumn_content" class="leftColumn_content">
           <div class="leftNav" id="recipeNav">
             <ul>
-              <li class="active"><a href="#" rel="#calculateFare"><g:message code="recipe.edit.commonData" /></a></li>
+              <li class="active"><a href="#" rel="#mainData"><g:message code="recipe.edit.mainData" /></a></li>
               <li><a href="#" rel="#correctWort"><g:message code="recipe.edit.meshing" /></a></li>
               <li><a href="#" rel="#calculateAlcohol"><g:message code="recipe.edit.cooking" /></a></li>
               <li><a href="#" rel="#calculatePressure"><g:message code="recipe.edit.fermentation" /></a></li>
@@ -23,7 +23,7 @@
 
       <div class="rightColumn">
         <div class="rightColumn_content">
-          <div id="commonData">
+          <div id="mainData">
             <g:render template="mainData" bean="${recipeInstance}" />
           </div>
           

@@ -37,7 +37,7 @@
 
 $(function() {
     $( "#frontendFontSizeSlider" ).slider({
-        value:${it.frontendFontSize?:1},
+        value:${(it.frontendFontSize != null)?it.frontendFontSize:1},
         min: 0,
         max: 5,
         step: 1,

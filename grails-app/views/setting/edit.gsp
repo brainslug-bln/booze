@@ -10,7 +10,7 @@
         <div id="leftColumn_content" class="leftColumn_content">
           <div id="settingNav" class="leftNav">
             <ul>
-              <li class="active" id="main"><a href="#" rel="main"><g:message code="setting.edit.mainData" /></a></li>
+              <li class="active" id="mainTab"><a href="#" rel="main"><g:message code="setting.edit.mainData" /></a></li>
               <li id="heatersTab"><a href="#" rel="heaters"><g:message code="setting.edit.heaters" /></a></li>
               <li id="motorsTab"><a href="#" rel="motors"><g:message code="setting.edit.motors" /></a></li>
               <li id="temperatureSensorsTab"><a href="#" rel="temperatureSensors"><g:message code="setting.edit.temperatureSensors" /></a></li>
@@ -29,6 +29,7 @@
           </div>
           
           <div id="heatersTabContent" style="display: none;">
+            <g:render template="heaters" bean="${settingInstance}" />
           </div>
           
           <div id="motorsTabContent" style="display: none;">

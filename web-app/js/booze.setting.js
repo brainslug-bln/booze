@@ -54,6 +54,7 @@ BoozeSetting.prototype.update = function(form, options) {
 
   $.post(APPLICATION_ROOT+"/setting/update", $(form).serialize(), 
     function(data) {
+      booze.clearStatusMessage();
       if(data.message) {
           booze.showStatusMessage(data.message);
       }

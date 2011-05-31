@@ -43,7 +43,7 @@ class SettingController {
           redirect(controller: "setting", action:"edit", id:setting.id)
         }
         catch(Exception e) {
-          log.error(e)
+          log.error("Saving setting failed: ${e}")
           flash.message = g.message(code:"setting.save.failed")
         }
       } 
@@ -82,7 +82,8 @@ class SettingController {
           render([success: true, message: g.message(code:"setting.update.saved")] as JSON)
         }
         catch(Exception e) {
-          log.error("Saving setting failed: ${e}")
+          flash.message = g.message(code:"setting.update.failed")
+          log.error("Updating setting failed: ${e}")
         }
       }
       render([success: false, tab: params.tab, html: g.render(template:params.tab, bean: setting)] as JSON)
