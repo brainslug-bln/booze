@@ -25,47 +25,57 @@ package de.booze.driverInterfaces
  */
 abstract class AbstractDriver {
     
-    /**
-     * Map that contains the names of variables
-     * which contain driver options
-     */
-    abstract public static DriverOption[] availableOptions;
+  /**
+   * Map that contains the names of variables
+   * which contain driver options
+   */
+  abstract public static DriverOption[] availableOptions;
     
-    public void shutdown() {
+  public void shutdown() {
       
-    }
+  }
     
-    /**
-     * Sets driver options
-     * 
-     * Options are given as key:value pairs in a map
-     */
-    public void setOptions(Map o) throws IllegalArgumentException {
+  /**
+   * Sets driver options
+   * 
+   * Options are given as key:value pairs in a map
+   */
+  public void setOptions(Map o) throws IllegalArgumentException {
         
-        // Check every single option
-        o.each() { it ->
-            if(!getClass().checkOption(it)) {
-                throw new IllegalArgumentException("Invalid value '${it.value}' for option ${it.name}");
-            }
-            else {
-                this[it.name] = this[it.name].getClass().getInstance(it.value);
-            }
-        }
+    // Check every single option
+    o.each() { it ->
+      if(!getClass().checkOption(it)) {
+        throw new IllegalArgumentException("Invalid value '${it.value}' for option ${it.name}");
+      }
+      else {
+        this[it.name] = this[it.name].getClass().getInstance(it.value);
+      }
     }
+  }
     
-    /**
-     * Checks if a single option is valid for this driver
-     */
-    public static boolean checkOption(Class myClass, String name, String value) throws IllegalArgumentException {
-        for(int i=0; i<myClass.availableOptions.size(); i++) {
-            if(myClass.availableOptions[i].name == name) {
-                if(value ==~ myClass.availableOptions[i].validator) {
-                    return true
-                }
-                return false
-            }
+  /**
+   * Checks if a single option is valid for this driver
+   */
+  public static boolean checkOption(Class myClass, String name, String value) throws IllegalArgumentException {
+    for(int i=0; i<myClass.availableOptions.size(); i++) {
+      if(myClass.availableOptions[i].name == name) {
+        System.out.println("Checking ${value} against ${myClass.availableOptions[i].validator}")
+        if(value ==~ myClass.availableOptions[i].validator) {
+          return true
         }
-        throw new IllegalArgumentException(new String("Driver option '$name' not found"))
+        return false
+      }
     }
+    throw new IllegalArgumentException(new String("Driver option '$name' not found"))
+  }
+    
+  public static boolean hasOption(Class myClass, optionName) {
+    for(int i=0; i<myClass.availableOptions.size(); i++) {
+      if(myClass.availableOptions[i].name == optionName) {
+        return true
+      }
+    }
+    return false
+  }
 }
 

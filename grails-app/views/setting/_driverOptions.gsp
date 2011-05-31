@@ -1,11 +1,11 @@
-<g:each in="${options}" var="option">
+<setting:eachDriverOption driver="${driver}">
   <div class="row">
-    <label for="${option.name.encodeAsHTML()}"><g:message code="${option.messageCode}" /></label>
+    <label for="${it.name.encodeAsHTML()}"><g:message code="${it.messageCode}" /></label>
     <g:if test="${checkOptions}">
-      <div class="errors" id="errors_${option.name}">
-         <setting:checkDriverOption driver="${driver}" option="${option}" />
+      <div class="errors" id="errors_${it.name}">
+         <setting:checkDriverOption driver="${driver}" option="${it}" />
       </div>
     </g:if>
-    <input type="text" name="driverOptionValues.${option.name}" maxlength="254" onkeyup="$('#errors_${option.name}').slideUp(100)" />
+    <input type="text" name="driverOptionValues.${it.name}" value="${setting.driverOptionValue(option: it, values: driverOptionValues)}" maxlength="254" onkeyup="$('#errors_${it.name}').slideUp(100)" />
   </div>
-</g:each>
+</setting:eachDriverOption>

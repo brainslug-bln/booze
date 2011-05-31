@@ -141,8 +141,10 @@ BoozeSetting.prototype.fetchDriverOptions = function() {
     }, "json")
 }
 
-BoozeSetting.prototype.createDevice = function(type) {
-  $.get(APPLICATION_ROOT+"/setting/create"+type, {}, 
+BoozeSetting.prototype.editDevice = function(type, options) {
+  if(!options) options = {};
+  
+  $.post(APPLICATION_ROOT+"/setting/edit"+type, options, 
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
@@ -153,6 +155,31 @@ BoozeSetting.prototype.createDevice = function(type) {
         $('#deviceEditor').slideDown();
       }
       else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.saveDevice = function(event) {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  $.post(APPLICATION_ROOT+"/setting/save"+event.data.type, $('#deviceEditorForm').serialize(), 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+          booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#deviceEditor').slideUp();
+        $('#deviceList').html(data.html);
+      }
+      else {
+        $('#deviceEditor').html(data.html);
+        
         if(data.error) {
           booze.showStatusMessage(data.error);
           console.log(data.error)

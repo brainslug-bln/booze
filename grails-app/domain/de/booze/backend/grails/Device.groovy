@@ -27,65 +27,92 @@ import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
  */
 class Device implements Serializable {
 
-    /**
-     * Device name
-     */
-    String name
+  /**
+   * Device name
+   */
+  String name
 
-    /**
-     * Device driver class name
-     */
-    String driver
+  /**
+   * Device driver class name
+   */
+  String driver
 
-    /**
-     * Device options
-     */
-    String options
+  /**
+   * Device options
+   */
+  String options
 
 
-    static constraints = {
-        name(nullable: false, blank: false, size: 1..255)
-        driver(nullable: false, blank: false, size: 1..500)
-        options(nullable: false, blank: false, size: 1..5000, validator: { val, obj ->
-            if(!obj.driver) return true
+  static constraints = {
+    name(nullable: false, blank: false, size: 1..255)
+    driver(nullable: false, blank: false, size: 1..500)
+    options(nullable: false, blank: false, size: 1..5000, validator: { val, obj ->
+        if(!obj.driver) return true
 
-            def myClassLoader = AH.application.mainContext.getClassLoader()
-
-            def optionMap = JSON.parse(val)
-            optionMap.each() { key, value ->
-                def myClass = Class.forName(obj.driver, false, myClassLoader)
-                if(myClass.checkOption(key, value)) {
-                    return true
-                }
-                else {
-                    return ["driver.${obj.driver}.${key}.invalid"]
-                }
-            }
-        })
-    }
-
-    /**
-     * (Transient) driver instance
-     */
-    def driverInstance
-
-    static transients = ['driverInstance']
-
-    /**
-     * Init the device driver
-     * Store an instance of it in the transient driverInstance
-     */
-    def initDevice() {
         def myClassLoader = AH.application.mainContext.getClassLoader()
-        def myClass = Class.forName(driver, false, myClassLoader)
-        driverInstance = myClass.newInstance(JSON.parse(options));
-    }
+        def optionMap = obj.decodeOptions()
+        List error = []
+        
+        optionMap.each() { key, value ->
+          def myClass = Class.forName(obj.driver, false, myClassLoader)
+          if(!myClass.checkOption(myClass, key, value)) {
+            error.add("driver."+obj.driver+"."+key+".invalid")
+          }
+        }
+        
+        if(error.size() > 0) {
+          return error
+        }
+        return true
+      })
+  }
 
-    /**
-     * Gracefully shut down a driver instance
-     */
-    def shutdown() {
-        driverInstance.shutdown()
-        driverInstance = null
+  /**
+   * (Transient) driver instance
+   */
+  def driverInstance
+
+  static transients = ['driverInstance']
+
+  /**
+   * Init the device driver
+   * Store an instance of it in the transient driverInstance
+   */
+  def initDevice() {
+    def myClassLoader = AH.application.mainContext.getClassLoader()
+    def myClass = Class.forName(driver, false, myClassLoader)
+    driverInstance = myClass.newInstance(JSON.parse(options));
+  }
+
+  /**
+   * Gracefully shut down a driver instance
+   */
+  def shutdown() {
+    driverInstance.shutdown()
+    driverInstance = null
+  }
+    
+  def decodeOptions() {
+    return JSON.parse(options)
+  }
+  
+  def encodeOptions(params) {
+    if(!driver || driver == "") {
+      options = [:]
+      return
     }
+    
+    Map checkedOptions = [:]
+ 
+    def myClassLoader = AH.application.mainContext.getClassLoader()
+    def myClass = Class.forName(driver, false, myClassLoader)
+    
+    params.each() { key, value ->
+      if(myClass.hasOption(myClass, key)) {
+        checkedOptions[key] = value
+      }
+    }
+    
+    options = checkedOptions.encodeAsJSON()
+  }
 }
