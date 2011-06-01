@@ -33,6 +33,7 @@
           </div>
           
           <div id="motorsTabContent" style="display: none;">
+            <g:render template="motors" bean="${settingInstance}" />
           </div>
           
           <div id="temperatureSensorsTabContent" style="display: none;">

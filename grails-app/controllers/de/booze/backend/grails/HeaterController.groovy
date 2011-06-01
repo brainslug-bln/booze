@@ -88,8 +88,6 @@ class HeaterController {
       }
     }
     
-    log.error(heater.errors)
-
     model.putAll([checkOptions: true, setting: setting, heater: heater, drivers: settingService.getDeviceDrivers("de.booze.drivers.heaters"), driverOptionValues: heater.decodeOptions()])
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
   }

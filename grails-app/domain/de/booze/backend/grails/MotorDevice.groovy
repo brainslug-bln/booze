@@ -33,28 +33,17 @@ class MotorDevice extends Device {
   Long secondsOn = 0
   Date lastEnableTime
   
-  boolean useForMashing
-  boolean useForCooking
-  boolean useForDraining
-
   /**
    * Regulator device to regulate the motor's speed
    */
   MotorRegulatorDevice regulator
   
-  /**
-   * Operation mode (interval, permanently on)
-   */
-  MotorDeviceMode mode
-
   static transients = ["secondsOn", "lastEnableTime"]
                   
   static belongsTo = [setting: Setting]
 
   static constraints = {
     regulator(nullable: true)
-    targetTemperature(nullable: true)
-    targetPressure(nullable: true)
   }
 
   /** 

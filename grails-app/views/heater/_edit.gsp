@@ -28,7 +28,7 @@
       <div class="errors" id="heatersTab_errors_driver">
          <g:renderErrors bean="${heater}" field="driver" as="list" />
       </div>
-      <select id="driverSelector" name="heater.driver" onclick="$('#heatersTab_errors_driver').slideUp(100)">
+      <select id="heatersTab_driverSelector" name="heater.driver" onclick="$('#heatersTab_errors_driver').slideUp(100)">
         <option value="" <g:if test="${!heater.driver}">selected="selected"</g:if> ></option>
         <g:each in="${drivers}" var="driver">
           <option value="${driver.encodeAsHTML()}"

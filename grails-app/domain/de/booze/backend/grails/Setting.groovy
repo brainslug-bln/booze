@@ -50,13 +50,14 @@ class Setting {
    */
   Integer frontendFontSize = 0;
   
-  MotorDevice mashingMixer
-  MotorDevice cookingMixer
-  MotorDevice mashingPump
-  MotorDevice cookingPump
-  MotorDevice drainPump
+  MotorTask mashingMixer
+  MotorTask cookingMixer
+  MotorTask mashingPump
+  MotorTask cookingPump
+  MotorTask drainPump
   
   static hasMany = [heaters: HeaterDevice,
+                    motors: MotorDevice, 
                     pressureSensors: PressureSensorDevice,
                     temperatureSensors: TemperatureSensorDevice]
 

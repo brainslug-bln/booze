@@ -46,11 +46,11 @@ class BrewProcess implements Serializable {
   List pressureSensors = []
   List heaters = []
   
-  MotorDevice mashingMixer
-  MotorDevice cookingMixer
-  MotorDevice mashingPump
-  MotorDevice cookingPump
-  MotorDevice drainPump
+  MotorTask mashingMixer
+  MotorTask cookingMixer
+  MotorTask mashingPump
+  MotorTask cookingPump
+  MotorTask drainPump
   
   Setting setting
 

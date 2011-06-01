@@ -18,7 +18,7 @@
  **/
 
 package de.booze.tasks
-import de.booze.backend.grails.MotorRegulatorDevice
+import de.booze.backend.grails.MotorTask
 
 /**
  * Task which periodically runs the step's
@@ -36,7 +36,10 @@ class MotorRegulatorDeviceTask extends TimerTask {
    */
   Date startDate
   
-  MotorRegulatorDevice mr
+  /**
+   * Calling motor task
+   */
+  MotorTask mt
   
   /**
    * Pressure/temperature adapted speed
@@ -52,9 +55,9 @@ class MotorRegulatorDeviceTask extends TimerTask {
   /**
    * Constructor
    */
-  public MotorRegulatorDeviceTask(MotorRegulatorDevice r) {
-    this.mr = r;
-    this.adaptedSpeed = this.mr.targetSpeed
+  public MotorRegulatorDeviceTask(MotorTask m) {
+    this.mt = m;
+    this.adaptedSpeed = this.mt.targetSpeed
   }
 
   /**
@@ -65,17 +68,17 @@ class MotorRegulatorDeviceTask extends TimerTask {
       this.startDate = new Date()
     }
     
-    if(this.mr.targetPressure) {
-      if(this.mr.readAveragePressure() > (this.mr.targetPressure + 100)) {
-        if(this.mr.pressureRegulationDirection) {
+    if(this.mt.targetPressure) {
+      if(this.mt.readAveragePressure() > (this.mt.targetPressure + 100)) {
+        if(this.mt.pressureRegulationDirection) {
           this.decreaseSpeed()
         }
         else {
           this.increaseSpeed()
         }
       }
-      else if(this.mr.readAveragePressure() < (this.mr.targetPressure - 100)) {
-        if(this.mr.pressureRegulationDirection) {
+      else if(this.mt.readAveragePressure() < (this.mt.targetPressure - 100)) {
+        if(this.mt.pressureRegulationDirection) {
           this.increaseSpeed()
         }
         else {
@@ -83,17 +86,17 @@ class MotorRegulatorDeviceTask extends TimerTask {
         }
       }
     }
-    else (this.mr.targetTemperature) {
-      if(this.mr.readAverageTemperature() > (this.mr.targetTemperature + 1)) {
-        if(this.mr.temperatureRegulationDirection) {
+    else (this.mt.targetTemperature) {
+      if(this.mt.readAverageTemperature() > (this.mt.targetTemperature + 1)) {
+        if(this.mt.temperatureRegulationDirection) {
           this.decreaseSpeed()
         }
         else {
           this.increaseSpeed()
         }
       }
-      else if(this.mr.readAverageTemperature() < (this.mr.targetTemperature - 1)) {
-        if(this.mr.temperatureRegulationDirection) {
+      else if(this.mt.readAverageTemperature() < (this.mt.targetTemperature - 1)) {
+        if(this.mt.temperatureRegulationDirection) {
           this.increaseSpeed()
         }
         else {
@@ -102,14 +105,14 @@ class MotorRegulatorDeviceTask extends TimerTask {
       }
     }
     
-    if(this.mr.softOn) {
+    if(this.mt.motor.hasRegulator() && this.mt.motor.regulator?.softOn) {
       Integer timeRun = (new Date()).getTime() - this.startDate.getTime();
-      if(this.timeRun < this.mr.softOn) {
+      if(this.timeRun < this.mt.motor.regulator?.softOn) {
         this.adaptedSpeed = Math.round(this.spinupTime/timeRun * this.adaptedSpeed);
       }
     }
     
-    this.mr.setSpeed(this.adaptedSpeed);
+    this.mt.motor.writeSpeed(this.adaptedSpeed);
   }
   
   /**
