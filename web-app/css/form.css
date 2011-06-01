@@ -27,13 +27,13 @@
 }
 
 .form label {
-    width: 100%;
+    width: 95%;
     font-weight: bold;
     float: left;
 }
 
 .form input {
-    width: 90%;
+    width: 95%;
     float: left;
 }
 
@@ -43,7 +43,7 @@
 
 .form textarea {
     float: left;
-    width: 90%;
+    width: 95%;
 }
 
 .form input.checkbox {
@@ -118,7 +118,10 @@
 
 .form .buttonbar {
   float: left;
-  width: 100%;
+  width: 95%;
+}
+
+.form .buttonbar input {
   margin-bottom: 1em;
 }
 

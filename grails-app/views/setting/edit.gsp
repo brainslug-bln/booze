@@ -36,9 +36,11 @@
           </div>
           
           <div id="temperatureSensorsTabContent" style="display: none;">
+            <g:render template="temperatureSensors" bean="${settingInstance}" />
           </div>
           
           <div id="pressureSensorsTabContent" style="display: none;">
+            <g:render template="pressureSensors" bean="${settingInstance}" />
           </div>
           
           <div id="frontendTabContent" style="display: none;">

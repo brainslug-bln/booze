@@ -93,6 +93,9 @@ class Device implements Serializable {
   }
     
   def decodeOptions() {
+    if(!options) {
+      return [:]
+    }
     return JSON.parse(options)
   }
   

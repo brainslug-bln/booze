@@ -110,6 +110,7 @@ BoozeSetting.prototype.displayTab = function(tabToShow) {
   $("#" + $(tabToShow).children("a").first().attr("rel") + "TabContent").show();
     
   booze.setting.activeTab = tabToShow;
+  console.log(booze.setting.activeTab);
 }
 
 BoozeSetting.prototype.formSubmit = function(event) {
@@ -119,11 +120,12 @@ BoozeSetting.prototype.formSubmit = function(event) {
   booze.setting.update(event.data.form);
 }
 
-BoozeSetting.prototype.fetchDriverOptions = function() {
+BoozeSetting.prototype.fetchDriverOptions = function(event) {
+  try { prefix = event.data.prefix } catch(e) { prefix = ""}
   
-  var driver = $('#driverSelector').val()
+  var driver = $('#'+booze.setting.activeTab.id+'_'+prefix+'driverSelector').val()
   if(driver == "") {
-    $('#driverOptions').slideUp();
+    $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').slideUp();
   }
   
   $.get(APPLICATION_ROOT+"/setting/getDriverOptions", {
@@ -135,8 +137,8 @@ BoozeSetting.prototype.fetchDriverOptions = function() {
       booze.showStatusMessage(data.message);
     }
     if(data.success) {
-      $('#driverOptions').html(data.html);
-      $('#driverOptions').slideDown();
+      $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').html(data.html);
+      $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').slideDown();
     }
     else {
       if(data.error) {
@@ -147,9 +149,77 @@ BoozeSetting.prototype.fetchDriverOptions = function() {
   }, "json")
 }
 
-BoozeSetting.prototype.editDevice = function(type, options) {
+BoozeSetting.prototype.editRegulator = function(type, options) {
   if(!options) options = {};
   
+  $.post(APPLICATION_ROOT+"/"+type+"Regulator/edit", options, 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideDown();
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.cancelEditRegulator = function() {
+  $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+}
+
+BoozeSetting.prototype.deleteRegulator = function() {
+  $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+  $('#'+booze.setting.activeTab.id+'_hasRegulatorField').val(0);
+  $('#'+booze.setting.activeTab.id+'_regulatorIdField').val("");
+  $('#'+booze.setting.activeTab.id+'_regulatorNameField').val("");
+  $('#'+booze.setting.activeTab.id+'_regulatorOptionsField').val("");
+  $('#'+booze.setting.activeTab.id+'_regulatorDriverField').val("");
+  $('#'+booze.setting.activeTab.id+'_regulatorNameHref').hide();
+  $('#'+booze.setting.activeTab.id+'_noRegulatorHref').show();
+}
+
+BoozeSetting.prototype.saveRegulator = function(event) {
+  event.stopPropagation();
+  event.preventDefault();
+  
+  $.post(APPLICATION_ROOT+"/"+event.data.type+"Regulator/save", $('#'+booze.setting.activeTab.id+'_regulatorEditorForm').serialize(), 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#'+booze.setting.activeTab.id+'_hasRegulatorField').val(1);
+        $('#'+booze.setting.activeTab.id+'_regulatorNameField').val(data.regulator.name)
+        $('#'+booze.setting.activeTab.id+'_regulatorOptionsField').val(data.regulator.options)
+        $('#'+booze.setting.activeTab.id+'_regulatorDriverField').val(data.regulator.driver)
+        $('#'+booze.setting.activeTab.id+'_regulatorNameHref').html(data.regulator.name)
+        $('#'+booze.setting.activeTab.id+'_regulatorNameHref').show();
+        $('#'+booze.setting.activeTab.id+'_noRegulatorHref').hide();
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+      }
+      else {
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
+        
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.editDevice = function(type, options) {
+  if(!options) options = {};
+    
   $.post(APPLICATION_ROOT+"/"+type+"/edit", options, 
     function(data) {
       booze.clearStatusMessage();
@@ -157,9 +227,9 @@ BoozeSetting.prototype.editDevice = function(type, options) {
         booze.showStatusMessage(data.message);
       }
       if(data.success) {
-        $('#deviceEditor').html(data.html);
-        $('#deviceList').slideUp()
-        $('#deviceEditor').slideDown();
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
+        $('#'+booze.setting.activeTab.id+'_deviceList').slideUp()
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').slideDown();
       }
       else {
         if(data.error) {
@@ -171,27 +241,28 @@ BoozeSetting.prototype.editDevice = function(type, options) {
 }
 
 BoozeSetting.prototype.cancelEditDevice = function() {
-  $('#deviceEditor').slideUp();
-  $('#deviceList').slideDown();
+  $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
+  $('#'+booze.setting.activeTab.id+'_deviceList').slideDown();
 }
 
 BoozeSetting.prototype.saveDevice = function(event) {
+
   event.stopPropagation();
   event.preventDefault();
   
-  $.post(APPLICATION_ROOT+"/"+event.data.type+"/save", $('#deviceEditorForm').serialize(), 
+  $.post(APPLICATION_ROOT+"/"+event.data.type+"/save", $('#'+booze.setting.activeTab.id+'_deviceEditorForm').serialize(), 
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
         booze.showStatusMessage(data.message);
       }
       if(data.success) {
-        $('#deviceList').html(data.html);
-        $('#deviceEditor').slideUp();
-        $('#deviceList').slideDown();
+        $('#'+booze.setting.activeTab.id+'_deviceList').html(data.html);
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
+        $('#'+booze.setting.activeTab.id+'_deviceList').slideDown();
       }
       else {
-        $('#deviceEditor').html(data.html);
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
         
         if(data.error) {
           booze.showStatusMessage(data.error);
