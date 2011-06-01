@@ -21,6 +21,7 @@
     border-right: none;
     border-top: none;
     border-bottom: 1px #AED0EA solid;
+    cursor: pointer;
 }
 
 .itemList li:hover {

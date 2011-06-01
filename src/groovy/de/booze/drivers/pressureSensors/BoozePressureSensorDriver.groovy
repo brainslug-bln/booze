@@ -93,19 +93,19 @@ class BoozePressureSensorDriver extends AbstractPressureSensorDriver {
      */
     public static availableOptions = [new DriverOption("pcf8591Address", 
                                                     "de.booze.drivers.heaters.BoozePressureSensor.pcf8591Address.description",
-                                                     "/d/"),
+                                                     /[0-9]/),
                                        new DriverOption("pcf8591Channel", 
                                                      "de.booze.drivers.heaters.BoozePressureSensor.pcf8591Channel.description",
-                                                     "/d/"),
+                                                     /[0-9]/),
                                        new DriverOption("minimum", 
                                                      "de.booze.drivers.heaters.BoozePressureSensor.minimum.description",
-                                                     "/d+/"),
+                                                     /[0-9]+/),
                                        new DriverOption("maximum", 
                                                      "de.booze.drivers.heaters.BoozePressureSensor.maximum.description",
-                                                     "/d+/"),
+                                                     /[0-9]+/),
                                        new DriverOption("measurementTimeout", 
                                                      "de.booze.drivers.heaters.BoozePressureSensor.measurementTimeout.description",
-                                                     "/d/",
+                                                     /[0-9]+/,
                                                      "100")]
 
     /**

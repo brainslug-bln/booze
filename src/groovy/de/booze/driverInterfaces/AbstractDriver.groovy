@@ -59,7 +59,6 @@ abstract class AbstractDriver {
   public static boolean checkOption(Class myClass, String name, String value) throws IllegalArgumentException {
     for(int i=0; i<myClass.availableOptions.size(); i++) {
       if(myClass.availableOptions[i].name == name) {
-        System.out.println("Checking ${value} against ${myClass.availableOptions[i].validator}")
         if(value ==~ myClass.availableOptions[i].validator) {
           return true
         }

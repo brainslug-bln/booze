@@ -59,10 +59,10 @@ class BoozeHeaterDriver extends AbstractHeaterDriver {
   public static availableOptions = [
     new DriverOption("port", 
                      "de.booze.drivers.heaters.BoozeHeater.port.description",
-                     "/d/"),
+                     /[0-3]/),
     new DriverOption("bit", 
                      "de.booze.drivers.heaters.BoozeHeater.bit.description",
-                     "/d/")]
+                     /[0-7]/)]
 
 
   /**

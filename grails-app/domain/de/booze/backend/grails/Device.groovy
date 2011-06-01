@@ -112,7 +112,6 @@ class Device implements Serializable {
         checkedOptions[key] = value
       }
     }
-    
     options = checkedOptions.encodeAsJSON()
   }
 }

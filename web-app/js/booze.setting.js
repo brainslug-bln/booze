@@ -32,7 +32,7 @@ function BoozeSetting() {
  */
 BoozeSetting.prototype.initCreate = function() {
   for(var i=1; i<this.tabs.length; i++) {
-      $(this.tabs[i]).addClass("ui-state-disabled");
+    $(this.tabs[i]).addClass("ui-state-disabled");
   }
 }
 
@@ -41,7 +41,9 @@ BoozeSetting.prototype.initCreate = function() {
  */
 BoozeSetting.prototype.initEdit = function() {
   for(var i=0; i<this.tabs.length; i++) {
-    $(this.tabs[i]).click({tab: this.tabs[i]}, this.tabClick);
+    $(this.tabs[i]).click({
+      tab: this.tabs[i]
+      }, this.tabClick);
   }
   this.activeTab = this.tabs[0];
 }
@@ -56,7 +58,7 @@ BoozeSetting.prototype.update = function(form, options) {
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
-          booze.showStatusMessage(data.message);
+        booze.showStatusMessage(data.message);
       }
       if(data.success) {
         if(options && options.tabToShow) {
@@ -84,7 +86,9 @@ BoozeSetting.prototype.tabClick = function(event) {
     
   // Identify active tab form and update
   var at = $(booze.setting.activeTab).children("a").first().attr("rel");
-  booze.setting.update($("#"+at+"Form"), {tabToShow: event.data.tab});
+  booze.setting.update($("#"+at+"Form"), {
+    tabToShow: event.data.tab
+    });
 }
 
 /**
@@ -92,20 +96,20 @@ BoozeSetting.prototype.tabClick = function(event) {
  */
 BoozeSetting.prototype.displayTab = function(tabToShow) {
   
-    for(var i=0; i<booze.setting.tabs.length; i++) {
-        $(booze.setting.tabs[i]).removeClass("active");
-    }
-    $(tabToShow).addClass("active");
+  for(var i=0; i<booze.setting.tabs.length; i++) {
+    $(booze.setting.tabs[i]).removeClass("active");
+  }
+  $(tabToShow).addClass("active");
 
-    var tabContents = $("#settingTabsContent").children();
+  var tabContents = $("#settingTabsContent").children();
     
-    for(var i=0; i<tabContents.length; i++) {
-        $(tabContents[i]).hide();
-    }
+  for(var i=0; i<tabContents.length; i++) {
+    $(tabContents[i]).hide();
+  }
 
-    $("#" + $(tabToShow).children("a").first().attr("rel") + "TabContent").show();
+  $("#" + $(tabToShow).children("a").first().attr("rel") + "TabContent").show();
     
-    booze.setting.activeTab = tabToShow;
+  booze.setting.activeTab = tabToShow;
 }
 
 BoozeSetting.prototype.formSubmit = function(event) {
@@ -122,36 +126,39 @@ BoozeSetting.prototype.fetchDriverOptions = function() {
     $('#driverOptions').slideUp();
   }
   
-  $.get(APPLICATION_ROOT+"/setting/getDriverOptions", {driver: driver}, 
-    function(data) {
-      booze.clearStatusMessage();
-      if(data.message) {
-          booze.showStatusMessage(data.message);
+  $.get(APPLICATION_ROOT+"/setting/getDriverOptions", {
+    driver: driver
+  }, 
+  function(data) {
+    booze.clearStatusMessage();
+    if(data.message) {
+      booze.showStatusMessage(data.message);
+    }
+    if(data.success) {
+      $('#driverOptions').html(data.html);
+      $('#driverOptions').slideDown();
+    }
+    else {
+      if(data.error) {
+        booze.showStatusMessage(data.error);
+        console.log(data.error)
       }
-      if(data.success) {
-        $('#driverOptions').html(data.html);
-        $('#driverOptions').slideDown();
-      }
-      else {
-        if(data.error) {
-          booze.showStatusMessage(data.error);
-          console.log(data.error)
-        }
-      }
-    }, "json")
+    }
+  }, "json")
 }
 
 BoozeSetting.prototype.editDevice = function(type, options) {
   if(!options) options = {};
   
-  $.post(APPLICATION_ROOT+"/setting/edit"+type, options, 
+  $.post(APPLICATION_ROOT+"/"+type+"/edit", options, 
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
-          booze.showStatusMessage(data.message);
+        booze.showStatusMessage(data.message);
       }
       if(data.success) {
         $('#deviceEditor').html(data.html);
+        $('#deviceList').slideUp()
         $('#deviceEditor').slideDown();
       }
       else {
@@ -163,19 +170,25 @@ BoozeSetting.prototype.editDevice = function(type, options) {
     }, "json")
 }
 
+BoozeSetting.prototype.cancelEditDevice = function() {
+  $('#deviceEditor').slideUp();
+  $('#deviceList').slideDown();
+}
+
 BoozeSetting.prototype.saveDevice = function(event) {
   event.stopPropagation();
   event.preventDefault();
   
-  $.post(APPLICATION_ROOT+"/setting/save"+event.data.type, $('#deviceEditorForm').serialize(), 
+  $.post(APPLICATION_ROOT+"/"+event.data.type+"/save", $('#deviceEditorForm').serialize(), 
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
-          booze.showStatusMessage(data.message);
+        booze.showStatusMessage(data.message);
       }
       if(data.success) {
-        $('#deviceEditor').slideUp();
         $('#deviceList').html(data.html);
+        $('#deviceEditor').slideUp();
+        $('#deviceList').slideDown();
       }
       else {
         $('#deviceEditor').html(data.html);
@@ -190,5 +203,5 @@ BoozeSetting.prototype.saveDevice = function(event) {
 
 
 $(document).ready(function() {
-    booze.setting = new BoozeSetting();
+  booze.setting = new BoozeSetting();
 });

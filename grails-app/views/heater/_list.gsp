@@ -4,14 +4,14 @@
     <li>
       <div><g:message code="setting.heater.noHeatersInfo" /></div>
       <div>&nbsp;</div>
-      <div><a href="#" onclick="booze.setting.editDevice('Heater', {'setting.id': '${it.id}'})"><g:message code="setting.heater.add" /></a></div>
+      <div><a href="#" onclick="booze.setting.editDevice('heater', {'setting.id': '${it.id}'})"><g:message code="setting.heater.add" /></a></div>
     </li>
   </g:if>
 
   <g:each in="${it.heaters}" var="heater">
-    <li>
+    <li onclick="booze.setting.editDevice('heater', {'heater.id':'${heater.id}', 'setting.id':'${it.id}'})">
       <div class="name"><g:fieldValue bean="${heater}" field="name" /></div>
-      <div class="driver"><g:fieldValue bean="${heater}" field="driver" /></div>
+      <div class="driver">${heater.driver.tokenize(".").last().encodeAsHTML()}</div>
       <div class="regulator">
         <g:if test="${heater.regulator}">
           <g:message code="setting.heater.regulator" args="${[heater?.regulator?.name?.encodeAsHTML()]}" />

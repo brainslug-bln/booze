@@ -5,14 +5,15 @@
   <div class="form">  
     <div class="column50percent">
       <div class="contentbox itemList deviceList" id="deviceList">
-        <g:render template="listHeaters" bean="${it}" />
+        <g:render template="/heater/list" bean="${it}" />
+      </div>
+      <div id="deviceEditor" class="contentbox deviceEditor" style="display: none">
+        
       </div>
     </div>
     
     <div class="column50percent">
-      <div id="deviceEditor" class="contentbox deviceEditor" style="display: none">
-        
-      </div>
+      
     </div>
     
     <div class="clear">&nbsp;</div>

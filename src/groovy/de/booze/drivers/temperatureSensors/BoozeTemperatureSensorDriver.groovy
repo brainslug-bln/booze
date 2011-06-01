@@ -69,17 +69,17 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
      */
     public static availableOptions = [new DriverOption("pcf8591Address", 
                                              "de.booze.drivers.heaters.BoozeTemperaturSensor.pcf8591Address.description",
-                                                 "/d/"),
+                                                 /[0-9]/),
                                        new DriverOption("pcf8591Channel", 
                                                  "de.booze.drivers.heaters.BoozeTemperaturSensor.pcf8591Channel.description",
-                                                 "/d/"),
+                                                 /[0-9]/),
                                        new DriverOption("minimum", 
                                                  "de.booze.drivers.heaters.BoozeTemperaturSensor.minimum.description",
-                                                 "/d+/",
+                                                 /[0-9]+/,
                                                  "0"),
                                        new DriverOption("maximum", 
                                                  "de.booze.drivers.heaters.BoozeTemperaturSensor.maximum.description",
-                                                 "/d+/",
+                                                 /[0-9]+/,
                                                  "110")]
 
     /**

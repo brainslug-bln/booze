@@ -16,8 +16,9 @@ class SettingTagLib {
       log.error(e)
       return
     }
-      
-    if(!driverClass.checkOption(driverClass, attrs.option.name, attrs.optionValue)) {
+    def value = (attrs.optionValues.containsKey(attrs.option.name))?attrs.optionValues[attrs.option.name]:""
+
+    if(!driverClass.checkOption(driverClass, attrs.option.name, value)) {
       out << g.message(code:"setting.driver.invalidValue")
     }
   }
