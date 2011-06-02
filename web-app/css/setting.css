@@ -3,12 +3,12 @@
 }
 
 .deviceList li {
-  padding: 0.5em 1em 0.5em 1em;
   width: auto;
+  width: 100%;
 }
 
 .deviceList li div {
-  padding: 0;
+  padding: 2% 5% 2% 5%;
   float: left;
   width: 100%;
   line-height: 1em;
@@ -16,16 +16,35 @@
 
 .deviceList div.name {
   font-weight: bold;
+  width: 74%;
+}
+
+.deviceList div.deleteButton {
+  width: 6%;
+}
+
+.deviceList .createLink {
+  text-align: left;
+}
+
+.deviceList .createLink .ui-icon {
+  margin-right: 0.5em;
+}
+
+.deviceList .createLink .createText {
+  float: left;
+  padding-top: 0.15em;
+  font-size: 0.9em;
 }
 
 .deviceList div.driver, .deviceList div.regulator {
   font-size: 0.9em;
   font-weigt: normal;
+  width: 90%;
 }
 
 .deviceList .pagination {
   padding: 0;
-  height: 1em;
 }
 
 .deviceList a {

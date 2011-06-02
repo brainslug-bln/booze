@@ -110,7 +110,6 @@ BoozeSetting.prototype.displayTab = function(tabToShow) {
   $("#" + $(tabToShow).children("a").first().attr("rel") + "TabContent").show();
     
   booze.setting.activeTab = tabToShow;
-  console.log(booze.setting.activeTab);
 }
 
 BoozeSetting.prototype.formSubmit = function(event) {
@@ -264,6 +263,29 @@ BoozeSetting.prototype.saveDevice = function(event) {
       else {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
         
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.deleteDevice = function(type, options) {
+  if(!options) options = {};
+    
+  $.post(APPLICATION_ROOT+"/"+type+"/delete", options, 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
+        $('#'+booze.setting.activeTab.id+'_deviceList').html(data.html)
+        $('#'+booze.setting.activeTab.id+'_deviceList').slideDown()
+      }
+      else {
         if(data.error) {
           booze.showStatusMessage(data.error);
           console.log(data.error)

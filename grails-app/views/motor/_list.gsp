@@ -3,16 +3,14 @@
   <g:if test="${it.motors.size() < 1}">
     <li>
       <div><g:message code="setting.motor.noMotorsInfo" /></div>
-      <div>&nbsp;</div>
-      <div><a href="#" onclick="booze.setting.editDevice('motor', {'setting.id': '${it.id}'})"><g:message code="setting.motor.add" /></a></div>
     </li>
   </g:if>
 
   <g:each in="${it.motors}" var="motor">
-    <li onclick="booze.setting.editDevice('motor', {'motor.id':'${motor.id}', 'setting.id':'${it.id}'})">
-      <div class="name"><g:fieldValue bean="${motor}" field="name" /></div>
-      <div class="driver">${motor.driver.tokenize(".").last().encodeAsHTML()}</div>
-      <div class="regulator">
+    <li>
+      <div class="name" onclick="booze.setting.editDevice('motor', {'motor.id':'${motor.id}', 'setting.id':'${it.id}'})"><g:fieldValue bean="${motor}" field="name" /></div> <div class="deleteButton" onclick="booze.setting.deleteDevice('motor', {'motor.id':'${motor.id}', 'setting.id':'${it.id}'}); return false;"><span class="ui-icon ui-icon-circle-minus"></span></div>
+      <div class="driver" onclick="booze.setting.editDevice('motor', {'motor.id':'${motor.id}', 'setting.id':'${it.id}'})">${motor.driver.tokenize(".").last().encodeAsHTML()}</div>
+      <div class="regulator" onclick="booze.setting.editDevice('motor', {'motor.id':'${motor.id}', 'setting.id':'${it.id}'})">
         <g:if test="${motor.regulator}">
           <g:message code="setting.motor.regulator" args="${[motor?.regulator?.name?.encodeAsHTML()]}" />
         </g:if>
@@ -23,5 +21,7 @@
     </li>
   </g:each>
 
-  <li class="pagination">&nbsp;</li>
+  <li class="pagination">
+    <div class="createLink" onclick="booze.setting.editDevice('motor', {'setting.id':'${it.id}'});"><span class="left ui-icon ui-icon-circle-plus"></span> <span class="createText">Heizelement hinzufügen</span></div>
+  </li>
 </ul>

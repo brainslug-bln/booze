@@ -92,5 +92,30 @@ class MotorController {
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
   }
   
-  
+  def delete = {
+    MotorDevice motor = new MotorDevice()
+    Setting setting
+     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
+    if(params.motor?.id && MotorDevice.exists(params.motor?.id)) {
+      motor = MotorDevice.get(params.motor?.id)
+    }
+    
+    def model
+    try {
+      setting.removeFromMotors(motor)
+      setting.save()
+      motor.delete()
+      model = [success: true, message: g.message(code:"setting.motor.delete.deleted"), html:g.render(template:"list", bean: setting)]
+    }
+    catch(Exception e) {
+      log.error(e)
+      model = [success: false, error: g.message(code: "setting.temperaturSensor.delete.failed")]
+    }
+    
+    render(model as JSON)
+  }
 }

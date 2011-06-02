@@ -69,5 +69,31 @@ class PressureSensorController {
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
   }
   
+  def delete = {
+    PressureSensorDevice ps = new PressureSensorDevice()
+    Setting setting
+     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
+    if(params.pressureSensor?.id && PressureSensorDevice.exists(params.pressureSensor?.id)) {
+      ps = PressureSensorDevice.get(params.pressureSensor?.id)
+    }
+    
+    def model
+    try {
+      setting.removeFromPressureSensors(ps)
+      setting.save()
+      ps.delete()
+      model = [success: true, message: g.message(code:"setting.pressureSensor.delete.deleted"), html:g.render(template:"list", bean: setting)]
+    }
+    catch(Exception e) {
+      log.error(e)
+      model = [success: false, error: g.message(code: "setting.temperaturSensor.delete.failed")]
+    }
+    
+    render(model as JSON)
+  }
   
 }

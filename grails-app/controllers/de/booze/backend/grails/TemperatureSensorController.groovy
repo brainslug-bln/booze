@@ -69,5 +69,30 @@ class TemperatureSensorController {
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
   }
   
-  
+  def delete = {
+    TemperatureSensorDevice ts = new TemperatureSensorDevice()
+    Setting setting
+     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
+    if(params.temperatureSensor?.id && TemperatureSensorDevice.exists(params.temperatureSensor?.id)) {
+      ts = TemperatureSensorDevice.get(params.temperatureSensor?.id)
+    }
+    
+    def model
+    try {
+      setting.removeFromTemperatureSensors(ts)
+      setting.save()
+      ts.delete()
+      model = [success: true, message: g.message(code:"setting.temperatureSensor.delete.deleted"), html:g.render(template:"list", bean: setting)]
+    }
+    catch(Exception e) {
+      log.error(e)
+      model = [success: false, error: g.message(code: "setting.temperaturSensor.delete.failed")]
+    }
+    
+    render(model as JSON)
+  }
 }

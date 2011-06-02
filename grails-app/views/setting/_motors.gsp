@@ -13,6 +13,11 @@
     </div>
     
     <div class="column50percent">
+      
+      <div class="contentbox deviceEditor" id="motorsTab_tasks">
+        <g:render template="motorTask" model="${[setting: it, type: 'mashingPump']}" />
+      </div>
+      
       <div class="contentbox deviceEditor" id="motorsTab_regulatorEditor" style="display: none">
         
       </div>
