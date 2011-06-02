@@ -52,6 +52,7 @@
       
       <input type="hidden" id="motorsTab_hasRegulatorField" name="motor.hasRegulator" value="<g:if test='${motor.regulator}'>1</g:if><g:else>0</g:else>" />
       <input type="hidden" id="motorsTab_regulatorNameField" name="regulator.name" value="${fieldValue(bean: motor.regulator, field:'name')}" />
+      <input type="hidden" id="motorsTab_regulatorSoftOnField" name="regulator.softOn" value="${fieldValue(bean: motor.regulator, field:'softOn')}" />
       <input type="hidden" id="motorsTab_regulatorOptionsField" name="regulator.options" value="${fieldValue(bean: motor.regulator, field:'options')}" />
       <input type="hidden" id="motorsTab_regulatorDriverField" name="regulator.driver" value="${fieldValue(bean: motor.regulator, field:'driver')}" />
     </div>

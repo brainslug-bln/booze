@@ -110,4 +110,18 @@ class SettingController {
     
     render([success: true, html: g.render( template:"driverOptions", model: [options: driverClass.availableOptions, driver: params.driver] )] as JSON)
   }
+  
+  /**
+   * @responseType JSON
+   */
+  def createMotorTask = {
+    if(!params?.setting?.id || !Setting.exists(params?.setting?.id)) {
+      render([success: false, error: g.message(code: "setting.createMotorTask.notFound")] as JSON)
+      return
+    }
+    
+    Setting setting = Setting.read(params.setting.id)
+    
+    render([success: true, html: g.render(template: 'motorTaskData', model: [type: params.type, setting: setting])] as JSON)
+  }
 }

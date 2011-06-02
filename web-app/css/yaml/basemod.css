@@ -76,6 +76,7 @@
     .contentbox {
         border: 1px solid #aed0ea;
         -moz-border-radius: 6px; -webkit-border-radius: 6px; border-radius: 6px;
+        margin-bottom: 1em;
     }
 
     .contentbox h1 {

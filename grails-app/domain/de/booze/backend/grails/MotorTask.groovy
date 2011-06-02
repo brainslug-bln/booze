@@ -4,6 +4,12 @@ import de.booze.tasks.MotorRegulatorDeviceTask
 class MotorTask {
 
   /**
+   * Regulation mode
+   * speed / temperature / pressure regulated
+   */
+  Integer regulationMode = MotorTask.REGULATION_MODE_OFF
+  
+  /**
    * Target temperature (°C) to achieve by regulating up or
    * down the motor device
    */
@@ -44,6 +50,11 @@ class MotorTask {
    * Task for softOn upspinning
    */
   MotorRegulatorDeviceTask motorRegulatorDeviceTask
+  
+  public final static Integer REGULATION_MODE_OFF = 0
+  public final static Integer REGULATION_MODE_SPEED = 1
+  public final static Integer REGULATION_MODE_TEMPERATURE = 2
+  public final static Integer REGULATION_MODE_PRESSURE = 3
   
   static transients = ["motorRegulatorDeviceTask"]
 

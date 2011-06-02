@@ -22,6 +22,6 @@
   </g:each>
 
   <li class="pagination">
-    <div class="createLink" onclick="booze.setting.editDevice('motor', {'setting.id':'${it.id}'});"><span class="left ui-icon ui-icon-circle-plus"></span> <span class="createText">Heizelement hinzufügen</span></div>
+    <div class="createLink" onclick="booze.setting.editDevice('motor', {'setting.id':'${it.id}'});"><span class="left ui-icon ui-icon-circle-plus"></span> <span class="createText">Motor hinzufügen</span></div>
   </li>
 </ul>

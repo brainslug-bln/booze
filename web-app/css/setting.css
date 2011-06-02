@@ -53,6 +53,11 @@
 
 .deviceEditor {
   float: left;
+  width: 100%;
+}
+
+.deviceEditor select {
+  width: 90%;
 }
 
 .deviceEditor .form {

@@ -124,7 +124,7 @@ BoozeSetting.prototype.fetchDriverOptions = function(event) {
   
   var driver = $('#'+booze.setting.activeTab.id+'_'+prefix+'driverSelector').val()
   if(driver == "") {
-    $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').slideUp();
+    $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').hide();
   }
   
   $.get(APPLICATION_ROOT+"/setting/getDriverOptions", {
@@ -137,7 +137,7 @@ BoozeSetting.prototype.fetchDriverOptions = function(event) {
     }
     if(data.success) {
       $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').html(data.html);
-      $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').slideDown();
+      $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').show();
     }
     else {
       if(data.error) {
@@ -159,7 +159,8 @@ BoozeSetting.prototype.editRegulator = function(type, options) {
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
-        $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideDown();
+        $('#'+booze.setting.activeTab.id+'_tabOptions').hide();
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').show();
       }
       else {
         if(data.error) {
@@ -172,10 +173,11 @@ BoozeSetting.prototype.editRegulator = function(type, options) {
 
 BoozeSetting.prototype.cancelEditRegulator = function() {
   $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+        $('#'+booze.setting.activeTab.id+'_tabOptions').show();
 }
 
 BoozeSetting.prototype.deleteRegulator = function() {
-  $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+  $('#'+booze.setting.activeTab.id+'_regulatorEditor').hide();
   $('#'+booze.setting.activeTab.id+'_hasRegulatorField').val(0);
   $('#'+booze.setting.activeTab.id+'_regulatorIdField').val("");
   $('#'+booze.setting.activeTab.id+'_regulatorNameField').val("");
@@ -183,6 +185,8 @@ BoozeSetting.prototype.deleteRegulator = function() {
   $('#'+booze.setting.activeTab.id+'_regulatorDriverField').val("");
   $('#'+booze.setting.activeTab.id+'_regulatorNameHref').hide();
   $('#'+booze.setting.activeTab.id+'_noRegulatorHref').show();
+  $('#'+booze.setting.activeTab.id+'_tabOptions').show();
+  $('#'+booze.setting.activeTab.id+'_regulatorSoftOnField').val("");
 }
 
 BoozeSetting.prototype.saveRegulator = function(event) {
@@ -203,7 +207,9 @@ BoozeSetting.prototype.saveRegulator = function(event) {
         $('#'+booze.setting.activeTab.id+'_regulatorNameHref').html(data.regulator.name)
         $('#'+booze.setting.activeTab.id+'_regulatorNameHref').show();
         $('#'+booze.setting.activeTab.id+'_noRegulatorHref').hide();
-        $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
+        $('#'+booze.setting.activeTab.id+'_regulatorEditor').hide();
+        $('#'+booze.setting.activeTab.id+'_tabOptions').show();
+        $('#'+booze.setting.activeTab.id+'_regulatorSoftOnField').val(data.regulator.softOn);
       }
       else {
         $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
@@ -227,8 +233,8 @@ BoozeSetting.prototype.editDevice = function(type, options) {
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
-        $('#'+booze.setting.activeTab.id+'_deviceList').slideUp()
-        $('#'+booze.setting.activeTab.id+'_deviceEditor').slideDown();
+        $('#'+booze.setting.activeTab.id+'_deviceList').hide()
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').show();
       }
       else {
         if(data.error) {
@@ -240,8 +246,9 @@ BoozeSetting.prototype.editDevice = function(type, options) {
 }
 
 BoozeSetting.prototype.cancelEditDevice = function() {
-  $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
-  $('#'+booze.setting.activeTab.id+'_deviceList').slideDown();
+  $('#'+booze.setting.activeTab.id+'_tabOptions').show();
+  $('#'+booze.setting.activeTab.id+'_deviceEditor').hide();
+  $('#'+booze.setting.activeTab.id+'_deviceList').show();
 }
 
 BoozeSetting.prototype.saveDevice = function(event) {
@@ -257,8 +264,9 @@ BoozeSetting.prototype.saveDevice = function(event) {
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_deviceList').html(data.html);
-        $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
-        $('#'+booze.setting.activeTab.id+'_deviceList').slideDown();
+        $('#'+booze.setting.activeTab.id+'_deviceEditor').hide();
+        $('#'+booze.setting.activeTab.id+'_deviceList').show();
+        $('#'+booze.setting.activeTab.id+'_tabOptions').show();
       }
       else {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
@@ -294,6 +302,50 @@ BoozeSetting.prototype.deleteDevice = function(type, options) {
     }, "json")
 }
 
+BoozeSetting.prototype.createMotorTask = function(options) {
+  if(!options) options = {};
+  
+  $.get(APPLICATION_ROOT+"/setting/createMotorTask", options, 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $("#motorTask_"+options.type+"_data").html(data.html);
+        $("#motorTask_"+options.type+"_data").show();
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }, "json")
+}
+
+BoozeSetting.prototype.selectMotorTaskRegulationMode = function(type, mode) {
+  if(mode == "temperature") {
+    $('#motorTask_'+type+'_regulationModeData_speed').hide();
+    $('#motorTask_'+type+'_regulationModeData_temperature').show();
+    $('#motorTask_'+type+'_regulationModeData_pressure').hide();
+  }
+  else if(mode == "speed") {
+    $('#motorTask_'+type+'_regulationModeData_speed').show();
+    $('#motorTask_'+type+'_regulationModeData_temperature').hide();
+    $('#motorTask_'+type+'_regulationModeData_pressure').hide();
+  }
+  else if(mode == "pressure") {
+    $('#motorTask_'+type+'_regulationModeData_speed').hide();
+    $('#motorTask_'+type+'_regulationModeData_temperature').hide();
+    $('#motorTask_'+type+'_regulationModeData_pressure').show();
+  }
+  else {
+    $('#motorTask_'+type+'_regulationModeData_speed').hide();
+    $('#motorTask_'+type+'_regulationModeData_temperature').hide();
+    $('#motorTask_'+type+'_regulationModeData_pressure').hide();
+  }
+}
 
 $(document).ready(function() {
   booze.setting = new BoozeSetting();
