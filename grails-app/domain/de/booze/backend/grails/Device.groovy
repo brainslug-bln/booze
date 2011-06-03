@@ -41,6 +41,8 @@ class Device implements Serializable {
    * Device options
    */
   String options
+  
+  static belongsTo = [setting: Setting]
 
 
   static constraints = {
@@ -65,6 +67,7 @@ class Device implements Serializable {
         }
         return true
       })
+    setting(nullable: false)
   }
 
   /**
@@ -117,4 +120,5 @@ class Device implements Serializable {
     }
     options = checkedOptions.encodeAsJSON()
   }
+  
 }

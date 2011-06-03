@@ -14,7 +14,8 @@
     </g:if>
 
     <input type="hidden" name="heater.id" value="${heater?.id}" />
-
+    <input type="hidden" name="setting.id" value="${regulator.setting.id}" />
+    
     <div class="row">
       <label for="regulator.name"><g:message code="heaterRegulatorDevice.name.label" /></label>
       <div class="errors" id="heatersTab_errors_name">

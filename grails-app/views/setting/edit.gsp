@@ -13,6 +13,7 @@
               <li class="active" id="mainTab"><a href="#" rel="main"><g:message code="setting.edit.mainData" /></a></li>
               <li id="heatersTab"><a href="#" rel="heaters"><g:message code="setting.edit.heaters" /></a></li>
               <li id="motorsTab"><a href="#" rel="motors"><g:message code="setting.edit.motors" /></a></li>
+              <li id="motorTasksTab"><a href="#" rel="motorTasks"><g:message code="setting.edit.motorTasks" /></a></li>
               <li id="temperatureSensorsTab"><a href="#" rel="temperatureSensors"><g:message code="setting.edit.temperatureSensors" /></a></li>
               <li id="pressureSensorsTab"><a href="#" rel="pressureSensors"><g:message code="setting.edit.pressureSensors" /></a></li>
               <li id="frontendTab"><a href="#" rel="frontend"><g:message code="setting.edit.frontend" /></a></li>
@@ -34,6 +35,10 @@
           
           <div id="motorsTabContent" style="display: none;">
             <g:render template="motors" bean="${settingInstance}" />
+          </div>
+          
+          <div id="motorTasksTabContent" style="display: none;">
+            <g:render template="motorTasks" bean="${settingInstance}" />
           </div>
           
           <div id="temperatureSensorsTabContent" style="display: none;">

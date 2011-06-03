@@ -48,7 +48,7 @@
       </div>
       
       <a <g:if test="${!motor.regulator}">style="display: none"</g:if> id="motorsTab_regulatorNameHref" href='#' onclick="booze.setting.editRegulator('motor', $('#motorsTab_deviceEditorForm').serialize()); return false;"><g:fieldValue bean="${motor.regulator}" field="name" /></a>
-      <a <g:if test="${motor.regulator}">style="display: none"</g:if> id="motorsTab_noRegulatorHref" href='#' onclick="booze.setting.editRegulator('motor'); return false;"><g:message code="setting.motor.edit.addRegulator" /></a>
+      <a <g:if test="${motor.regulator}">style="display: none"</g:if> id="motorsTab_noRegulatorHref" href='#' onclick="booze.setting.editRegulator('motor', $('#motorsTab_deviceEditorForm').serialize()); return false;"><g:message code="setting.motor.edit.addRegulator" /></a>
       
       <input type="hidden" id="motorsTab_hasRegulatorField" name="motor.hasRegulator" value="<g:if test='${motor.regulator}'>1</g:if><g:else>0</g:else>" />
       <input type="hidden" id="motorsTab_regulatorNameField" name="regulator.name" value="${fieldValue(bean: motor.regulator, field:'name')}" />

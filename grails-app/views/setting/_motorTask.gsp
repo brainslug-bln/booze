@@ -1,8 +1,6 @@
 <h1><g:message code="setting.motorTask.${type}" /></h1>
 
 <div class="form">
-  <form id="motorTask_${type}_editorForm">
-   
     <div class="row">
       <label for="motorTask.active"><g:message code="motorTask.active.label" /></label>
       
@@ -17,7 +15,6 @@
         <g:render template="motorTaskData" model="${[type: type, setting: setting]}" />
       </g:if>
     </div>
-  </form>
 </div>
 
 <g:javascript>

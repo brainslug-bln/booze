@@ -56,6 +56,7 @@ class MotorController {
         motor.regulator = new MotorRegulatorDevice()
       }
       motor.regulator.properties = params.regulator
+      motor.regulator.setting = setting
     }
     else {
       oldRegulator = motor.regulator

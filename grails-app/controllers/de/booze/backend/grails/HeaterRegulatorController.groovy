@@ -8,6 +8,7 @@ class HeaterRegulatorController {
 
   def edit = {
     HeaterDevice heater
+    Setting setting
     HeaterRegulatorDevice regulator = new HeaterRegulatorDevice()
      
     if(params.regulator?.id && HeaterRegulatorDevice.exists(params.regulator?.id)) {
@@ -18,7 +19,12 @@ class HeaterRegulatorController {
       heater = HeaterDevice.get(params.heater?.id)
     }
     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
     regulator.properties = params.regulator
+    regulator.setting = setting
     
     Map model = [regulator: regulator, heater: heater, drivers: settingService.getDeviceDrivers("de.booze.drivers.heaterRegulators"), driverOptionValues: regulator.decodeOptions()]
     render([success: true, html: g.render(template:"edit", model: model)] as JSON)
@@ -26,6 +32,7 @@ class HeaterRegulatorController {
   
   def save = {
     HeaterDevice heater = new HeaterDevice()
+    Setting setting
     HeaterRegulatorDevice regulator = new HeaterRegulatorDevice()
      
     if(params.regulator?.id && HeaterRegulatorDevice.exists(params.regulator?.id)) {
@@ -36,9 +43,14 @@ class HeaterRegulatorController {
       heater = HeaterDevice.get(params.heater?.id)
     }
     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
     regulator.properties = params.regulator
     regulator.encodeOptions(params.driverOptionValues)
     regulator.heater = heater
+    regulator.setting = setting
     
     Map model = [:]
     
@@ -47,8 +59,6 @@ class HeaterRegulatorController {
       return
     }
     
-    log.error(regulator.errors)
-
     model.putAll([checkOptions: true, heater: heater, regulator: regulator, drivers: settingService.getDeviceDrivers("de.booze.drivers.heaterRegulators"), driverOptionValues: regulator.decodeOptions()])
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
   }

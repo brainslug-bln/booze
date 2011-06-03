@@ -31,6 +31,7 @@
   <g:javascript src="booze.calculator.js" />
   <g:javascript src="booze.form.js" />
   <g:javascript src="booze.leftnav.js" />
+  <g:javascript src="booze.recipe.js" />
   
   <g:layoutHead />
 

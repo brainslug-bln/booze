@@ -41,5 +41,11 @@
           -->
         </div>
       </div>
+      
+      <g:javascript>
+        $(document).ready(function() {
+          booze.recipe.initCreate();
+        });
+      </g:javascript>
     </body>
 </html>

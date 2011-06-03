@@ -31,12 +31,12 @@
     <li>
       <strong>Einstellungen</strong>
       <ul>
-        <li><g:link controller="setting" action="environments">Umgebungen</g:link></li>
-        <li><g:link controller="tools" action="manualMode">Bedienung</g:link></li>
+        <li><g:link controller="setting" action="list">Umgebungen</g:link></li>
+        <li><g:link controller="setting" action="editActive">Aktive Umgebung</g:link></li>
         <li><g:link controller="tools" action="update">Updates</g:link></li>
       </ul>
     </li>
-
+<!--
     <li>
       <strong>Community</strong>
       <ul>
@@ -48,7 +48,7 @@
         </core:communityEnabled>
       </ul>
     </li>
-
+-->
     <li>
       <strong>Über</strong>
       <ul>

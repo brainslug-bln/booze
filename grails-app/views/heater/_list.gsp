@@ -1,12 +1,12 @@
 <h1><g:message code="setting.heater.installedHeaters" /></h1>
 <ul>
-  <g:if test="${it.heaters.size() < 1}">
+  <g:if test="${it.listHeaters().size() < 1}">
     <li>
       <div><g:message code="setting.heater.noHeatersInfo" /></div>
     </li>
   </g:if>
 
-  <g:each in="${it.heaters}" var="heater">
+  <g:each in="${it.listHeaters()}" var="heater">
     <li>
       <div class="name" onclick="booze.setting.editDevice('heater', {'heater.id':'${heater.id}', 'setting.id':'${it.id}'})"><g:fieldValue bean="${heater}" field="name" /></div> <div class="deleteButton" onclick="booze.setting.deleteDevice('heater', {'heater.id':'${heater.id}', 'setting.id':'${it.id}'}); return false;"><span class="ui-icon ui-icon-circle-minus"></span></div>
       <div class="driver" onclick="booze.setting.editDevice('heater', {'heater.id':'${heater.id}', 'setting.id':'${it.id}'})">${heater.driver.tokenize(".").last().encodeAsHTML()}</div>

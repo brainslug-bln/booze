@@ -24,8 +24,8 @@ class HeaterRegulatorDevice extends Device {
   static constraints = {
   }
   
-  static belongsTo = [heater:HeaterDevice]
-
+  static belongsTo = [heater: HeaterDevice]
+  
   /**
    * Sets the heater power in percent
    * of the maximum value

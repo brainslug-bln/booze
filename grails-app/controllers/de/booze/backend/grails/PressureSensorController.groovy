@@ -84,8 +84,9 @@ class PressureSensorController {
     def model
     try {
       setting.removeFromPressureSensors(ps)
-      setting.save()
       ps.delete()
+      setting.save(flush: true)
+      
       model = [success: true, message: g.message(code:"setting.pressureSensor.delete.deleted"), html:g.render(template:"list", bean: setting)]
     }
     catch(Exception e) {

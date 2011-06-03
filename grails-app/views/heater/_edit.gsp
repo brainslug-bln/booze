@@ -48,7 +48,7 @@
       </div>
       
       <a <g:if test="${!heater.regulator}">style="display: none"</g:if> id="heatersTab_regulatorNameHref" href='#' onclick="booze.setting.editRegulator('heater', $('#heatersTab_deviceEditorForm').serialize()); return false;"><g:fieldValue bean="${heater.regulator}" field="name" /></a>
-      <a <g:if test="${heater.regulator}">style="display: none"</g:if> id="heatersTab_noRegulatorHref" href='#' onclick="booze.setting.editRegulator('heater'); return false;"><g:message code="setting.heater.edit.addRegulator" /></a>
+      <a <g:if test="${heater.regulator}">style="display: none"</g:if> id="heatersTab_noRegulatorHref" href='#' onclick="booze.setting.editRegulator('heater', $('#heatersTab_deviceEditorForm').serialize()); return false;"><g:message code="setting.heater.edit.addRegulator" /></a>
       
       <input type="hidden" id="heatersTab_hasRegulatorField" name="heater.hasRegulator" value="<g:if test='${heater.regulator}'>1</g:if><g:else>0</g:else>" />
       <input type="hidden" id="heatersTab_regulatorNameField" name="regulator.name" value="${fieldValue(bean: heater.regulator, field:'name')}" />

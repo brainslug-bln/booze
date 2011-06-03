@@ -23,7 +23,7 @@ class SettingController {
   }
 
   /**
-   * Delete a setting
+   * Display the setting create dialog
    * @responseType HTML
    */
   def create = {
@@ -31,7 +31,7 @@ class SettingController {
   }
 
   /**
-   * Delete a setting
+   * Save a setting
    * @responseType HTML
    */
   def save = {
@@ -53,6 +53,10 @@ class SettingController {
     log.error(setting)
     render(view:"create", model:[settingInstance: setting])
   }
+  
+  def editActive = {
+    render(view:"edit", model:[settingInstance: Setting.findByActive(true)])
+  }
     
   def edit = {
 
@@ -68,7 +72,7 @@ class SettingController {
   }
 
   /**
-   * Delete a setting
+   * Update a setting
    * @responseType JSON
    */
   def update = {
@@ -78,17 +82,54 @@ class SettingController {
     }
       
     Setting setting = Setting.get(params.setting.id)
-    setting.properties = params.setting
-    if(setting.validate()) {
+    
+    boolean validationErrors = false
+    
+    List thingsToRemove = []
+    
+    if(params.tab == "motorTasks") {
+      ['mashingPump', 'mashingMixer', 'cookingPump', 'cookingMixer', 'drainPump'].each() { task ->
+        
+        thingsToRemove.add(setting[task])
+        
+        def newTask = null
+        
+        if(params.setting[task]?.active == "true") {
+          newTask = new MotorTask(params.setting[task])
+          
+          newTask.setting = setting
+          
+          if(!newTask.validate()) {
+            validationErrors = true
+            newTask.discard()
+          }
+        }
+        
+        setting[task] = newTask
+      }  
+    }
+    else {
+      setting.properties = params.setting
+    }
+    
+      
+    if (validationErrors == false && setting.validate()) {
       try {
-        setting.save()
-        render([success: true, message: g.message(code:"setting.update.saved")] as JSON)
+        setting.save(flush: true)
+        
+        thingsToRemove.each() { ttr ->
+          ttr?.delete(flush:true)
+        }
+        
+        render([success: true, message: g.message(code:"setting.update.saved"), tab: params.tab, html: g.render(template:params.tab, bean: setting)] as JSON)
+        return
       }
       catch(Exception e) {
         flash.message = g.message(code:"setting.update.failed")
         log.error("Updating setting failed: ${e}")
       }
     }
+    
     render([success: false, tab: params.tab, html: g.render(template:params.tab, bean: setting)] as JSON)
   }
 

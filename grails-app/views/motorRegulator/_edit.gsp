@@ -14,6 +14,7 @@
     </g:if>
 
     <input type="hidden" name="motor.id" value="${motor?.id}" />
+    <input type="hidden" name="setting.id" value="${regulator.setting.id}" />
 
     <div class="row">
       <label for="regulator.name"><g:message code="motorRegulatorDevice.name.label" /></label>

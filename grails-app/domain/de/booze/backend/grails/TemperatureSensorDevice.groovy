@@ -38,8 +38,6 @@ class TemperatureSensorDevice extends Device {
    */
   boolean referenceForCooking = false
   
-  static belongsTo = [setting: Setting]
-
   /**
    * Returns the last measured (cached) temperature in °C
    * Does NOT actually read a value from the sensor

@@ -22,6 +22,22 @@
       </div>
       <input type="text" name="temperatureSensor.name" value="${fieldValue(bean: temperatureSensor, field:'name')}" maxlength="254" onkeyup="$('#temperatureSensorsTab_errors_name').slideUp(100)" />
     </div>
+    
+    <div class="row">
+      <label for="temperatureSensor.referenceForMashing"><g:message code="temperatureSensorDevice.referenceForMashing.label" /></label>
+      <div class="errors" id="temperatureSensorsTab_errors_referenceForMashing">
+         <g:renderErrors bean="${temperatureSensor}" field="referenceForMashing" as="list" />
+      </div>
+      <g:checkBox class="checkbox" name="temperatureSensor.referenceForMashing" value="${temperatureSensor.referenceForMashing}" />
+    </div>
+    
+    <div class="row">
+      <label for="temperatureSensor.referenceForCooking"><g:message code="temperatureSensorDevice.referenceForCooking.label" /></label>
+      <div class="errors" id="temperatureSensorsTab_errors_referenceForCooking">
+         <g:renderErrors bean="${temperatureSensor}" field="referenceForCooking" as="list" />
+      </div>
+      <g:checkBox class="checkbox" name="temperatureSensor.referenceForCooking" value="${temperatureSensor.referenceForCooking}" />
+    </div>
 
     <div class="row">
       <label for="temperatureSensor.driver"><g:message code="temperatureSensorDevice.driver.label" /></label>

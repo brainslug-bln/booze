@@ -1,29 +1,39 @@
 <div class="row">
   <label for="setting.${type}.motor"><g:message code="motorTask.motor.label" /></label>
-  <select name="setting.${type}.motor">
+  <div class="errors" id="motorTasksTab_errors_${type}_motor">
+     <g:renderErrors bean="${setting[type]}" field="motor" as="list" />
+  </div>
+  
+  <select name="setting.${type}.motor.id">
       <option onclick="$('#motorTask_${type}_regulationMode').hide()" value="" <g:if test="${ !setting[type]?.motor }">checked="checked"</g:if>></option>
-    <g:each in="${setting.motors}" var="motor">
-      <option onclick="<g:if test='${motor.regulator != null}'>$('#motorTask_${type}_regulationMode').show()</g:if><g:else>$('#motorTask_${type}_regulationMode').hide()</g:else>" value="${motor.id}" <g:if test="${motor.id == setting[type]?.motor?.id }">checked="checked"</g:if>>${motor.name.encodeAsHTML()}</option>
+    <g:each in="${setting.listMotors()}" var="motor">
+      <option onclick="<g:if test='${motor.regulator != null}'>$('#motorTask_${type}_regulationMode').show()</g:if><g:else>$('#motorTask_${type}_regulationMode').hide()</g:else>" value="${motor.id}" <g:if test="${motor.id == setting[type]?.motor?.id }">selected="selected"</g:if>>${motor.name.encodeAsHTML()}</option>
     </g:each>
   </select>
 </div>
 
 <div class="row">
-  <label for="setting.${type}.mode"><g:message code="motorTask.mode.label" /></label>
-  <div class="radioset" id="motorTask_${type}_mode">
-    <input type="radio" onclick="$('#motorTask_${type}_interval').hide();" id="motorTask_${type}_mode_on" name="setting.${type}.mode.mode" value="${de.booze.backend.grails.MotorDeviceMode.MODE_ON}" <g:if test="${!setting[type]?.mode?.mode || setting[type]?.mode?.mode == de.booze.backend.grails.MotorDeviceMode.MODE_ON}">checked="checked"</g:if> /> <label for="motorTask_${type}_mode_on"><g:message code="motorDeviceMode.mode.${de.booze.backend.grails.MotorDeviceMode.MODE_ON}" /></label>
-    <input type="radio" onclick="$('#motorTask_${type}_interval').show();" id="motorTask_${type}_mode_interval" name="setting.${type}.mode.mode" value="${de.booze.backend.grails.MotorDeviceMode.MODE_INTERVAL}" <g:if test="${setting[type]?.mode?.mode == de.booze.backend.grails.MotorDeviceMode.MODE_INTERVAL}">checked="checked"</g:if> /> <label for="motorTask_${type}_mode_interval"><g:message code="motorDeviceMode.mode.${de.booze.backend.grails.MotorDeviceMode.MODE_INTERVAL}" /></label>
+  <label for="setting.${type}.cyclingMode"><g:message code="motorTask.cyclingMode.label" /></label>
+  <div class="radioset" id="motorTask_${type}_cyclingMode">
+    <input type="radio" onclick="$('#motorTask_${type}_interval').hide();" id="motorTask_${type}_cyclingMode_on" name="setting.${type}.cyclingMode" value="${de.booze.backend.grails.MotorTask.CYCLING_MODE_ON}" <g:if test="${!setting[type]?.cyclingMode || setting[type]?.cyclingMode == de.booze.backend.grails.MotorTask.CYCLING_MODE_ON}">checked="checked"</g:if> /> <label for="motorTask_${type}_cyclingMode_on"><g:message code="motorTask.cyclingMode.${de.booze.backend.grails.MotorTask.CYCLING_MODE_ON}" /></label>
+    <input type="radio" onclick="$('#motorTask_${type}_interval').show();" id="motorTask_${type}_cyclingMode_interval" name="setting.${type}.cyclingMode" value="${de.booze.backend.grails.MotorTask.CYCLING_MODE_INTERVAL}" <g:if test="${setting[type]?.cyclingMode == de.booze.backend.grails.MotorTask.CYCLING_MODE_INTERVAL}">checked="checked"</g:if> /> <label for="motorTask_${type}_cyclingMode_interval"><g:message code="motorTask.cyclingMode.${de.booze.backend.grails.MotorTask.CYCLING_MODE_INTERVAL}" /></label>
   </div>
 </div>
 
-<div class="row" id="motorTask_${type}_interval" <g:if test="${setting[type]?.mode?.mode != de.booze.backend.grails.MotorDeviceMode.MODE_INTERVAL}">style="display: none"</g:if>>
+<div class="row" id="motorTask_${type}_interval" <g:if test="${setting[type]?.cyclingMode != de.booze.backend.grails.MotorTask.CYCLING_MODE_INTERVAL}">style="display: none"</g:if>>
   <div class="column50percent">
-    <label for="setting.${type}.mode.onInterval"><g:message code="motorDeviceMode.onInterval.label" /></label>
-    <input type="text" class="small" name="setting.${type}.mode.onInterval" value="${setting[type]?.mode?.onInterval}" />
+    <label for="setting.${type}.onInterval"><g:message code="motorTask.onInterval.label" /></label>
+    <div class="errors" id="motorTasksTab_errors_${type}_onInterval">
+       <g:renderErrors bean="${setting[type]}" field="onInterval" as="list" />
+    </div>
+    <input type="text" class="small" name="setting.${type}.onInterval" value="${setting[type]?.onInterval}" />
   </div>
   <div class="column50percent">
-    <label for="setting.${type}.mode.offInterval"><g:message code="motorDeviceMode.offInterval.label" /></label>
-    <input type="text" class="small" name="setting.${type}.mode.offInterval" value="${setting[type]?.mode?.offInterval}" />
+    <label for="setting.${type}.offInterval"><g:message code="motorTask.offInterval.label" /></label>
+    <div class="errors" id="motorTasksTab_errors_${type}_offInterval">
+       <g:renderErrors bean="${setting[type]}" field="offInterval" as="list" />
+    </div>
+    <input type="text" class="small" name="setting.${type}.offInterval" value="${setting[type]?.offInterval}" />
   </div>
 </div>
 
@@ -49,13 +59,13 @@
     <div class="row">
       <div class="column50percent">
         <label for="setting.${type}.targetTemperature"><g:message code="motorTask.targetTemperature.label" /></label>
-        <input type="text" name="setting.${type}.targetTemperature" value="${setting[type]?.targetTemperature}" />
+        <input type="text" name="setting.${type}.targetTemperature" value="${formatNumber(number:setting[type]?.targetTemperature, format:'###.##')}" />
       </div>
       <div class="column50percent">
         <label for="setting.${type}.temperatureRegulationDirection"><g:message code="motorTask.temperatureRegulationDirection.label" /></label>
         <div class="radioset" id="motorTask_${type}_regulationModeData_temperature_regulationDirection">
-          <input type="radio" id="motorTask_${type}_temperature_regulation_up" name="setting.${type}.temperatureRegulationDirection" value="${true}" <g:if test="${setting[type]?.temperatureRegulationDirection == true}">checked="checked"</g:if> /> <label for="motorTask_${type}_temperature_regulation_up"><g:message code="motorTask.temperatureRegulationDirection.up" /></label>
-          <input type="radio" id="motorTask_${type}_temperature_regulation_down" name="setting.${type}.temperatureRegulationDirection" value="${false}" <g:if test="${!setting[type]?.temperatureRegulationDirection || setting[type]?.temperatureRegulationDirection == false}">checked="checked"</g:if> /> <label for="motorTask_${type}_temperature_regulation_down"><g:message code="motorTask.temperatureRegulationDirection.down" /></label>
+          <input type="radio" id="motorTask_${type}_temperature_regulation_up" name="setting.${type}.temperatureRegulationDirection" value="${de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_UP}" <g:if test="${setting[type]?.temperatureRegulationDirection == de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_UP}">checked="checked"</g:if> /> <label for="motorTask_${type}_temperature_regulation_up"><g:message code="motorTask.temperatureRegulationDirection.up" /></label>
+          <input type="radio" id="motorTask_${type}_temperature_regulation_down" name="setting.${type}.temperatureRegulationDirection" value="${de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_DOWN}" <g:if test="${!setting[type]?.temperatureRegulationDirection || setting[type]?.temperatureRegulationDirection == de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_DOWN}">checked="checked"</g:if> /> <label for="motorTask_${type}_temperature_regulation_down"><g:message code="motorTask.temperatureRegulationDirection.down" /></label>
         </div>
       </div>
     </div>
@@ -64,23 +74,23 @@
       <label for="setting.${type}.temperatureSensors"><g:message code="motorTask.temperatureSensors.label" /></label>
       <select multiple="true" size="3" name="setting.${type}.temperatureSensors">
         <g:each in="${setting.temperatureSensors}" var="temperatureSensor">
-          <option value="${temperatureSensor.id}">${temperatureSensor.name.encodeAsHTML()}</option>
+          <option value="${temperatureSensor.id}" <setting:sensorSelected selectedSensors="${setting[type]?.temperatureSensors}" sensor="${temperatureSensor}" /> >${temperatureSensor.name.encodeAsHTML()}</option>
         </g:each>
       </select>
     </div>
   </div>
   
-  <div id="motorTask_${type}_regulationModeData_pressure" <g:if test="${setting[type]?.regulationMode != de.booze.backend.grails.MotorTask.REGULATION_MODE_TEMPERATURE}">style="display: none"</g:if>>
+  <div id="motorTask_${type}_regulationModeData_pressure" <g:if test="${setting[type]?.regulationMode != de.booze.backend.grails.MotorTask.REGULATION_MODE_PRESSURE}">style="display: none"</g:if>>
     <div class="row">
       <div class="column50percent">
         <label for="setting.${type}.targetPressure"><g:message code="motorTask.targetPressure.label" /></label>
-        <input type="text" name="setting.${type}.targetPressure" value="${setting[type]?.targetPressure}" />
+        <input type="text" name="setting.${type}.targetPressure" value="${formatNumber(number:setting[type]?.targetPressure, format:'###.##')}" />
       </div>
       <div class="column50percent">
         <label for="setting.${type}.pressureRegulationDirection"><g:message code="motorTask.pressureRegulationDirection.label" /></label>
         <div class="radioset" id="motorTask_${type}_regulationModeData_pressure_regulationDirection">
-          <input type="radio" id="motorTask_${type}_pressure_regulation_up" name="setting.${type}.pressureRegulationDirection" value="${true}" <g:if test="${setting[type]?.pressureRegulationDirection == true}">checked="checked"</g:if> /> <label for="motorTask_${type}_pressure_regulation_up"><g:message code="motorTask.pressureRegulationDirection.up" /></label>
-          <input type="radio" id="motorTask_${type}_pressure_regulation_down" name="setting.${type}.pressureRegulationDirection" value="${false}" <g:if test="${!setting[type]?.pressureRegulationDirection || setting[type]?.pressureRegulationDirection == false}">checked="checked"</g:if> /> <label for="motorTask_${type}_pressure_regulation_down"><g:message code="motorTask.pressureRegulationDirection.down" /></label>
+          <input type="radio" id="motorTask_${type}_pressure_regulation_up" name="setting.${type}.pressureRegulationDirection" value="${de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_UP}" <g:if test="${setting[type]?.pressureRegulationDirection == de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_UP}">checked="checked"</g:if> /> <label for="motorTask_${type}_pressure_regulation_up"><g:message code="motorTask.pressureRegulationDirection.up" /></label>
+          <input type="radio" id="motorTask_${type}_pressure_regulation_down" name="setting.${type}.pressureRegulationDirection" value="${de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_DOWN}" <g:if test="${!setting[type]?.pressureRegulationDirection || setting[type]?.pressureRegulationDirection == de.booze.backend.grails.MotorTask.REGULATION_DIRECTION_DOWN}">checked="checked"</g:if> /> <label for="motorTask_${type}_pressure_regulation_down"><g:message code="motorTask.pressureRegulationDirection.down" /></label>
         </div>
       </div>
     </div>
@@ -89,7 +99,7 @@
       <label for="setting.${type}.pressureSensors"><g:message code="motorTask.pressureSensors.label" /></label>
       <select multiple="true" size="3" name="setting.${type}.pressureSensors">
         <g:each in="${setting.pressureSensors}" var="pressureSensor">
-          <option value="${pressureSensor.id}">${pressureSensor.name.encodeAsHTML()}</option>
+          <option value="${pressureSensor.id}" <setting:sensorSelected selectedSensors="${setting[type]?.pressureSensors}" sensor="${pressureSensor}" />>${pressureSensor.name.encodeAsHTML()}</option>
         </g:each>
       </select>
     </div>
@@ -100,7 +110,7 @@
 
 <g:javascript>
 $(function() {
-    $( "#motorTask_${type}_mode" ).buttonset();
+    $( "#motorTask_${type}_cyclingMode" ).buttonset();
 });
 $(function() {
     $( "#motorTask_${type}_regulationMode" ).buttonset();

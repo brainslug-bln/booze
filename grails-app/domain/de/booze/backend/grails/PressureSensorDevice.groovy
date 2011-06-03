@@ -30,8 +30,6 @@ class PressureSensorDevice extends Device {
   Double pressureMaxLimit
   
     
-  static belongsTo = [setting: Setting]
-
   static constraints = {
     pressureMaxLimit(nullable: false, min: 0.0 as Double, max: 10000.0 as Double)
   }

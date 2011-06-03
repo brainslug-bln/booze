@@ -50,17 +50,21 @@ class Setting {
    */
   Integer frontendFontSize = 0;
   
+  /**
+   * Refresh interval for the brew monitor in ms
+   */
+  Integer refreshInterval = 1000
+  
   MotorTask mashingMixer
   MotorTask cookingMixer
   MotorTask mashingPump
   MotorTask cookingPump
   MotorTask drainPump
   
-  static hasMany = [heaters: HeaterDevice,
-                    motors: MotorDevice, 
-                    pressureSensors: PressureSensorDevice,
-                    temperatureSensors: TemperatureSensorDevice]
-
+  static hasMany = [heaters: HeaterDevice, motors: MotorDevice, 
+                    temperatureSensors: TemperatureSensorDevice,
+                    pressureSensors: PressureSensorDevice]
+                  
   static constraints = {
     name(nullable: false, blank: false, size: 1..255, unique: true)
     description(nullable: true, blank: true, size: 0..5000)
@@ -68,6 +72,7 @@ class Setting {
     hysteresis(min: 0.5d, max: 10.0d, nullable: false)
     heatingRamp(min: 0.1d, max: 6.0d, nullable: false)
     frontendFontSize(min: 0, max: 5, nullable: false)
+    refreshInterval(min: 100, max: 10000, nullable: false)
     mashingMixer(nullable: true)
     cookingMixer(nullable: true)
     mashingPump(nullable: true)
@@ -79,5 +84,21 @@ class Setting {
     heaters cascade: "evict,refresh"
     pressureSensors cascade: "evict,refresh"
     temperatureSensors cascade: "evict,refresh"
+  }
+  
+  def listHeaters() {
+    return HeaterDevice.findAll(setting: id)
+  }
+  
+  def listMotors() {
+    return MotorDevice.findAll(setting: id)
+  }
+  
+  def listTemperatureSensors() {
+    return TemperatureSensorDevice.findAll(setting: id)
+  }
+  
+  def listPressureSensors() {
+    return PressureSensorDevice.findAll(setting: id)
   }
 }

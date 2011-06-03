@@ -16,6 +16,10 @@
       <div class="contentbox deviceEditor" id="heatersTab_regulatorEditor" style="display: none">
         
       </div>
+      
+      <div id="heatersTab_tabOptions">  
+        
+      </div>
     </div>
     
     <div class="clear">&nbsp;</div>

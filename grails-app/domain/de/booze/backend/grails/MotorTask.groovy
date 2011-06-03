@@ -18,7 +18,7 @@ class MotorTask {
   /**
    * Regulate up (true) or down (false) to minimize temperature 
    */
-  boolean temperatureRegulationDirection = false
+  Integer temperatureRegulationDirection = 1
    
   /**
    * Target pressure (mbar) to achieve by regulating up or
@@ -29,12 +29,15 @@ class MotorTask {
   /**
    * Regulate up (true) or down (false) to minimize pressure 
    */
-  boolean pressureRegulationDirection = false
+  Integer pressureRegulationDirection = 1
   
   /**
    * Target speed
    */
   Integer targetSpeed = 100
+  
+  Integer onInterval
+  Integer offInterval
   
   /**
    * This tasks motor
@@ -44,17 +47,23 @@ class MotorTask {
   /**
    * Operation mode (interval, permanently on)
    */
-  MotorDeviceMode mode
+  Integer cyclingMode
   
   /**
    * Task for softOn upspinning
    */
   MotorRegulatorDeviceTask motorRegulatorDeviceTask
   
+  public final static Integer CYCLING_MODE_ON = 0
+  public final static Integer CYCLING_MODE_INTERVAL = 1
+  
   public final static Integer REGULATION_MODE_OFF = 0
   public final static Integer REGULATION_MODE_SPEED = 1
   public final static Integer REGULATION_MODE_TEMPERATURE = 2
   public final static Integer REGULATION_MODE_PRESSURE = 3
+  
+  public final static Integer REGULATION_DIRECTION_UP = 0
+  public final static Integer REGULATION_DIRECTION_DOWN = 1
   
   static transients = ["motorRegulatorDeviceTask"]
 
@@ -65,7 +74,21 @@ class MotorTask {
   static constraints = {
     targetTemperature(nullable: true)
     targetPressure(nullable: true)
+    targetSpeed(nullable: true)
     motor(nullable: false)
+    temperatureRegulationDirection(nullable: true)
+    pressureRegulationDirection(nullable: true)
+    cyclingMode(nullable: false, inList:[CYCLING_MODE_ON, CYCLING_MODE_INTERVAL])
+    onInterval(nullable: true, validator: { val, obj ->
+        if(obj.cyclingMode && obj.cyclingMode == MotorTask.CYCLING_MODE_INTERVAL && val == null) {
+          return ['motorTask.onInterval.notNullable']
+        }
+      })
+    offInterval(nullable: true, validator: { val, obj ->
+        if(obj.cyclingMode && obj.cyclingMode == MotorTask.CYCLING_MODE_INTERVAL && val == null) {
+          return ['motorTask.offInterval.notNullable']
+        }
+      })
   }
   
   public void enable() {

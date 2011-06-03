@@ -51,4 +51,14 @@ class SettingTagLib {
       out << attrs.option.defaultValue
     }
   }
+
+  def sensorSelected = { attrs, body ->
+    if(!attrs.selectedSensors) return
+    
+    attrs.selectedSensors.each() {it ->
+      if(it.id == attrs.sensor.id) {
+        out << " selected='selected'"
+      }
+    }
+  }
 }

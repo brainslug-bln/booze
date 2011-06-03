@@ -84,8 +84,8 @@ class TemperatureSensorController {
     def model
     try {
       setting.removeFromTemperatureSensors(ts)
-      setting.save()
       ts.delete()
+      setting.save(flush: true)
       model = [success: true, message: g.message(code:"setting.temperatureSensor.delete.deleted"), html:g.render(template:"list", bean: setting)]
     }
     catch(Exception e) {

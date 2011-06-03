@@ -2,18 +2,49 @@ package de.booze.backend.grails
 
 class SettingService {
 
-    static transactional = true
+  static transactional = true
 
-    def getDeviceDrivers(String packageName) throws ClassNotFoundException, IOException {
+  def getDeviceDrivers(String packageName) throws ClassNotFoundException, IOException {
 
-      List myDriverClasses = getClasses(packageName)
-      def drivers = []
-      myDriverClasses.each {
-        drivers.add(it.packageName + "." + it.className)
+    List myDriverClasses = getClasses(packageName)
+    def drivers = []
+    myDriverClasses.each {
+      drivers.add(it.packageName + "." + it.className)
+    }
+      
+    return drivers
+  }
+  
+  def bindMotorTasks(Setting setting, Map params, List thingsToRemove) {
+    boolean validationErrors = false
+    
+    ['mashingPump', 'mashingMixer', 'cookingPump', 'cookingMixer', 'drainPump'].each() { it ->
+
+      thingsToRemove.add(setting[it])
+      thingsToRemove.add(setting[it]?.mode)
+        
+      if(params.setting[it]?.active == "true") {
+        setting[it] = new MotorTask()
+        setting[it].properties = params.setting[it]
+        setting[it].mode = new MotorDeviceMode()
+        setting[it].mode.properties = params.setting[it]?.mode
+        setting[it].setting = setting
+        
+        if (!setting[it].mode.validate() || !setting[it].validate()) {
+          validationErrors = true
+        }
+      }
+      else {
+        setting[it] = null
       }
       
-      return drivers
+      params.setting.remove(it)
     }
+    
+    return validationErrors
+  }
+    
+
     
   /**
    * Scans all classes accessible from the context class loader which belong to the given package and subpackages.

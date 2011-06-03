@@ -18,11 +18,116 @@
  **/
 
 /**
- * Booze form helper methods
+ * Booze recipe helper methods
  *
  * @author Andreas Kotsias <akotsias@esnake.de>
  */
-function BoozeForm() { }
+function BoozeRecipe() { 
+  this.tabs = $("#recipeNav").children("ul").first().children();
+}
+
+BoozeRecipe.prototype.initCreate = function() {
+  for(var i=1; i<this.tabs.length; i++) {
+    $(this.tabs[i]).addClass("ui-state-disabled");
+  }
+}
+
+/**
+ * Inits the recipe/edit environment
+ */
+BoozeRecipe.prototype.initEdit = function(recipe) {
+  for(var i=0; i<this.tabs.length; i++) {
+    $(this.tabs[i]).click({
+      tab: this.tabs[i]
+      }, this.tabClick);
+  }
+  this.activeTab = this.tabs[0];
+  this.recipeId = recipe;
+}
+
+/**
+ * Callback for tab click event
+ */
+BoozeRecipe.prototype.tabClick = function(event) {
+  event.stopPropagation();
+  event.preventDefault();
+    
+  // Identify active tab form and update
+  var at = $(booze.recipe.activeTab).children("a").first().attr("rel");
+  booze.recipe.update($("#"+at+"Form"), {
+    tabToShow: event.data.tab
+    });
+}
+
+/**
+ * Displays a tab and hides all other tabs
+ */
+BoozeRecipe.prototype.displayTab = function(tabToShow) {
+  
+  var tabName = $(tabToShow).children("a").first().attr("rel");
+  
+  $.post(APPLICATION_ROOT+"/recipe/tab", {'recipe.id': booze.recipe.recipeId, tab: tabName}, 
+    function(data) {
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        $('#'+tabName).html(data.html);
+        
+        for(var i=0; i<booze.setting.tabs.length; i++) {
+          $(booze.setting.tabs[i]).removeClass("active");
+        }
+        $(tabToShow).addClass("active");
+
+        var tabContents = $("#recipeTabsContent").children();
+
+        for(var i=0; i<tabContents.length; i++) {
+          $(tabContents[i]).hide();
+        }
+
+        $("#"+tabName).show();
+
+        booze.setting.activeTab = tabToShow;
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+    }
+  );
+}
+
+/**
+ * Updates recipe data and optionally displays a new tab
+ * Options: {tabToShow: LI-Element}
+ */
+BoozeRecipe.prototype.update = function(form, options) {
+  
+  $.post(APPLICATION_ROOT+"/recipe/update", $(form).serialize(), 
+    function(data) {
+      booze.clearStatusMessage();
+      if(data.message) {
+        booze.showStatusMessage(data.message);
+      }
+      if(data.success) {
+        if(options && options.tabToShow) {
+          booze.setting.displayTab(options.tabToShow);
+        }
+      }
+      else {
+        if(data.error) {
+          booze.showStatusMessage(data.error);
+          console.log(data.error)
+        }
+      }
+      
+      if(data.tab && data.html) {
+        $("#"+data.tab+"TabContent").html(data.html);
+      }
+    }, "json")
+}
 
 /**
  * Inserts a row into the bottom of a table using a
@@ -31,7 +136,7 @@ function BoozeForm() { }
  * @param {Element} callee
  * @type void
  */
-BoozeForm.prototype.insertRow = function(callee, template) {
+BoozeRecipe.prototype.insertRow = function(callee, template) {
     var tbody = $(callee).parent().parent().parent().parent().children('tbody').first();
 
     var tArgs = [{ index: tbody.children().length }];
@@ -46,7 +151,7 @@ BoozeForm.prototype.insertRow = function(callee, template) {
  * @param {Object} options
  * @type void
  */
-BoozeForm.prototype.deleteRow = function(callee, options) {
+BoozeRecipe.prototype.deleteRow = function(callee, options) {
     // Get tbodys
     var tbody = $(callee).parent().parent().parent().select('.tbody').first();
 
@@ -79,4 +184,7 @@ BoozeForm.prototype.deleteRow = function(callee, options) {
     }
 };
 
-booze.form = new BoozeForm();
+
+BoozeRecipe.prototype.submit = function(event) {}
+
+booze.recipe = new BoozeRecipe();

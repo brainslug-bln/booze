@@ -32,8 +32,6 @@ class HeaterDevice extends Device {
 
   static transients = ["secondsOn", "lastEnableTime"]
   
-  static belongsTo = [setting: Setting]
-
   static constraints = {
     regulator(nullable: true)
   }

@@ -66,13 +66,14 @@ BoozeSetting.prototype.update = function(form, options) {
         }
       }
       else {
-        if(data.tab && data.html) {
-          $("#"+data.tab+"TabContent").html(data.html);
-        }
         if(data.error) {
           booze.showStatusMessage(data.error);
           console.log(data.error)
         }
+      }
+      
+      if(data.tab && data.html) {
+        $("#"+data.tab+"TabContent").html(data.html);
       }
     }, "json")
 }

@@ -13,11 +13,50 @@ class RecipeController {
         [recipeInstanceList: Recipe.list(params), recipeInstanceTotal: Recipe.count()]
     }
 
-    def create = { 
-        session.recipe = new Recipe();
+    /**
+     * Display the setting create dialog
+     * @responseType HTML
+     */
+    def create = {
+      [recipeInstance: new Recipe()]
+    }
+
+    /**
+     * Save a setting
+     * @responseType HTML
+     */
+    def save = {
+      Recipe recipe = new Recipe()
+      
+      recipe.properties = params.recipe
+      
+      // Generate a unique id for this recipe from various variables
+      Random random = new Random((new Date()).getTime());
+      recipe.globalId = (random.next(40) + recipe.name + recipe.description + recipe.cookingTime + recipe.originalWort).encodeAsMD5();
+        
+      log.error(params.recipe)
+      
+      if(recipe.validate()) {
+        try {
+          recipe.save()
+          flash.message = g.message(code:"recipe.save.saved")
+          redirect(controller: "recipe", action:"edit", id:recipe.id)
+        }
+        catch(Exception e) {
+          log.error("Saving recipe failed: ${e}")
+          flash.message = g.message(code:"recipe.save.failed")
+        }
+      } 
+      
+      log.error("recipe after processing: "+recipe.errors)
+      render(view:"create", model:[recipeInstance: recipe])
     }
     
-    def save = {
+    /**
+     * Updates an existing recipe (
+     * @responseType JSON
+     */
+    def update = {
 
         // Create an instance of the command object we are going
         // to validate
@@ -68,7 +107,13 @@ class RecipeController {
      * @responseType mixed
      */
     def edit = {
-        
+      if(!params.id || !Recipe.exists(params.id)) {
+        flash.message = g.message(code:"recipe.edit.notFound")
+        redirect(action: "list")
+      }
+      
+      Recipe recipe = Recipe.get(params.id)
+      [recipeInstance: recipe]
     }
 
     /**
@@ -77,14 +122,6 @@ class RecipeController {
      */
     def delete = {
 
-    }
-
-    /**
-     * Updates an existing recipe (
-     * @responseType JSON
-     */
-    def update = {
-        
     }
 
     
@@ -114,7 +151,7 @@ class RecipeController {
 }
 
 
-class RecipeMainDataCommand implements Serializable{
+class RecipeMainDataCommand implements Serializable {
     String name
     String description
 

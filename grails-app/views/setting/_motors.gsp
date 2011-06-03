@@ -13,30 +13,11 @@
     </div>
     
     <div class="column50percent">
-      
-      <div id="motorsTab_tabOptions">
-        <div class="contentbox deviceEditor">
-          <g:render template="motorTask" model="${[setting: it, type: 'mashingPump']}" />
-        </div>
-        
-        <div class="contentbox deviceEditor">
-          <g:render template="motorTask" model="${[setting: it, type: 'mashingMixer']}" />
-        </div>
-        
-        <div class="contentbox deviceEditor">
-          <g:render template="motorTask" model="${[setting: it, type: 'cookingPump']}" />
-        </div>
-        
-        <div class="contentbox deviceEditor">
-          <g:render template="motorTask" model="${[setting: it, type: 'cookingMixer']}" />
-        </div>
-        
-        <div class="contentbox deviceEditor">
-          <g:render template="motorTask" model="${[setting: it, type: 'drainPump']}" />
-        </div>
+      <div class="contentbox deviceEditor" id="motorsTab_regulatorEditor" style="display: none">
+
       </div>
       
-      <div class="contentbox deviceEditor" id="motorsTab_regulatorEditor" style="display: none">
+      <div id="motorsTab_tabOptions">  
         
       </div>
     </div>

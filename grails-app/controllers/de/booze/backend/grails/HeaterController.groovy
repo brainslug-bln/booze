@@ -33,7 +33,6 @@ class HeaterController {
   }
   
   def save = {
-    log.error("Regler: "+HeaterRegulatorDevice.list())
 
     HeaterDevice heater = new HeaterDevice()
     Setting setting
@@ -56,6 +55,8 @@ class HeaterController {
         heater.regulator = new HeaterRegulatorDevice()
       }
       heater.regulator.properties = params.regulator
+      heater.regulator.heater = heater
+      heater.regulator.setting = setting
     }
     else {
       oldRegulator = heater.regulator
@@ -64,16 +65,16 @@ class HeaterController {
     
     Map model = [:]
     
-    if(heater.validate()) {
+    if(heater.validate() && heater.regulator.validate()) {
       try {
         // First save the device
         heater.save()
         
         // Now save the regulator association
         if(heater.regulator) {
-          heater.regulator.heater = heater
           heater.regulator.save()
         }
+        
         
         // Finally delete the old regulator association
         if(oldRegulator) {
@@ -87,6 +88,9 @@ class HeaterController {
         model.error = g.message(code: "setting.heater.save.failed")
       }
     }
+    
+    log.error(heater.errors)
+    log.error(heater.regulator.errors)
     
     model.putAll([checkOptions: true, setting: setting, heater: heater, drivers: settingService.getDeviceDrivers("de.booze.drivers.heaters"), driverOptionValues: heater.decodeOptions()])
     render([success: false, html:g.render(template:"edit", model: model)] as JSON)
@@ -107,8 +111,9 @@ class HeaterController {
     def model
     try {
       setting.removeFromHeaters(heater)
-      setting.save()
       heater.delete()
+      setting.save(flush:true)
+      
       model = [success: true, message: g.message(code:"setting.heater.delete.deleted"), html:g.render(template:"list", bean: setting)]
     }
     catch(Exception e) {

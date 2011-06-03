@@ -13,6 +13,7 @@
               <li class="active" id="mainDataTab"><a href="#"><g:message code="setting.edit.mainData" /></a></li>
               <li id="heatersTab"><a href="#"><g:message code="setting.edit.heaters" /></a></li>
               <li id="motorsTab"><a href="#"><g:message code="setting.edit.motors" /></a></li>
+              <li id="motorTasksTab"><a href="#" rel="motorTasks"><g:message code="setting.edit.motorTasks" /></a></li>
               <li id="temperatureSensorsTab"><a href="#"><g:message code="setting.edit.temperatureSensors" /></a></li>
               <li id="pressureSensorsTab"><a href="#"><g:message code="setting.edit.pressureSensors" /></a></li>
             </ul>
