@@ -98,6 +98,7 @@
 
 .form table {
     margin-bottom: 2em;
+    float: left;
 }
 
 .form table caption {

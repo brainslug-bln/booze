@@ -22,4 +22,33 @@ class CoreTagLib {
         out << "html * { font-size: ${12 + fontSizeInc}px; }"
         out << "</style>"
     }
+    
+  def fieldValueIfExists = { attrs, body ->
+    try {
+      out << attrs.bean?.getAt(attrs.field)?.encodeAsHTML()
+    }
+    catch(Exception e) {
+      out << ""
+    }
+  }
+  
+  def ifFieldExists = { attrs, body ->
+    try {
+      if(attrs.bean?.getAt(attrs.field) != null) {
+        out << body()
+      }
+    }
+    catch(Exception e) {}
+  }
+  
+  def ifNotFieldExists = { attrs, body ->
+    try {
+      if(attrs.bean?.getAt(attrs.field) == null) {
+        out << body()
+      }
+    }
+    catch(Exception e) {
+      out << body()
+    }
+  }
 }

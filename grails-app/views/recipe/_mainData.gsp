@@ -4,10 +4,7 @@
   <form id="mainDataForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
     
     <input type="hidden" name="validate" value="RecipeMainDataCommand" />
-    <g:if test="${it.getAt('id') != null}">
-      <input type="hidden" name="recipe.id" value="${it.getAt('id')?.encodeAsHTML()}" />
-    </g:if>
-    
+    <input type="hidden" name="id" value="${it.id}" />
     <input type="hidden" name="tab" value="mainData" />
 
     <div class="column50percent">
@@ -16,18 +13,17 @@
             <div class="errors" id="errors_name">
                <g:renderErrors bean="${it}" field="name" as="list" />
             </div>
-          <input type="text" name="recipe.name" value="${it.name?.encodeAsHTML()}" maxlength="254" onkeyup="$('#errors_name').slideUp(100)" />
+          <input type="text" name="name" value="${fieldValue(bean:it, field:'name')}" maxlength="254" onkeyup="$('#errors_name').slideUp(100)" />
       </div>
 
       <div class="row">
           <label for="recipe.dateCreated"><g:message code="recipe.dateCreated.label" /></label>
-          <span class="immutable">
-          <g:formatDate format="dd.MM.yyyy" date="${it?.dateCreated?it.dateCreated:(new Date())}" /></span>
+          <span class="immutable"><g:formatDate format="dd.MM.yyyy" date="${it?.dateCreated?it.dateCreated:(new Date())}" /></span>
       </div>
 
       <div class="row">
         <label for="recipe.author"><g:message code="recipe.author.label" /></label>
-        <span class="immutable"><g:if test="${it?.author}"><g:fieldValue bean="${it}" field="author" /></g:if><g:else><g:message code="recipe.author.self" /></g:else></span>
+        <span class="immutable"><g:if test="${recipe?.author}"><g:fieldValue bean="${it}" field="author" /></g:if><g:else><g:message code="recipe.author.self" /></g:else></span>
       </div>
 
       <div class="row">
@@ -35,7 +31,7 @@
           <div class="errors" id="errors_description">
              <g:renderErrors bean="${it}" field="description" as="list" />
           </div>
-        <textarea maxlength="5000" rows="3" name="recipe.description" onkeyup="$('#errors_description').slideUp(100)"><g:fieldValue bean="${it}" field="description" /></textarea>
+        <textarea maxlength="5000" rows="3" name="description" onkeyup="$('#errors_description').slideUp(100)"><g:fieldValue bean="${it}" field="description" /></textarea>
       </div>
     </div>
 
@@ -102,19 +98,28 @@
     </div>
     
     <div class="buttonbar">
-      <g:if test="${it.id}">
-                <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" onclick="booze.recipeEdit.submit()" value="${message(code:'recipe.edit.save')}" />
+      <g:if test="${it?.id}">
+        <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" value="${message(code:'recipe.edit.save')}" />
       </g:if>
       <g:else>
-        <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" onclick="booze.recipeCreate.submit()" value="${message(code:'recipe.create.next')}" />
-      </g:else>
+        <input class="ui-button ui-state-default" type="submit" id="proceedMainDataButton" value="${message(code:'recipe.create.next')}" />
+      </g:else>    
+    </div>
   </form>
 </div>
 
 <g:if test="${it.id}">
   <g:javascript>
   $(document).ready(function() {
-    $('#mainDataForm').submit({tab: 'main'}, booze.recipe.submit);
+    $('#mainDataForm').submit(booze.recipeEdit.submit);
   });
   </g:javascript>
 </g:if>
+
+<g:else>
+  <g:javascript>
+  $(document).ready(function() {
+    $('#mainDataForm').submit(booze.recipeCreate.submit);
+  });
+  </g:javascript>
+</g:else>

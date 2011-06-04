@@ -82,37 +82,102 @@ class RecipeService {
     }
   }
 
-    /**
-     * Calculate the beer color in ebc for the given recipe
-     * @param recipe
-     * @param originalWort
-     * @return Double
-     */
-    public Double calculateBeerColor(Recipe recipe, Double originalWort) {
-        Double totalFillWeight = 0.0D;
-        Double colorWeightSum = 0.0D;
+  /**
+   * Calculate the beer color in ebc for the given recipe
+   * @param recipe
+   * @param originalWort
+   * @return Double
+   */
+  public Double calculateBeerColor(Recipe recipe, Double originalWort) {
+    Double totalFillWeight = 0.0D;
+    Double colorWeightSum = 0.0D;
 
-        recipe.malts.each {
-            colorWeightSum += it.ebc * it.amount
-            totalFillWeight += it.amount;
-        }
-
-        if(totalFillWeight == 0 || colorWeightSum == 0) {
-            throw new Exception('Cannot calculate EBC without malt')
-        }
-
-        return 2 + (colorWeightSum/totalFillWeight) * originalWort / 10
+    recipe.malts.each {
+      colorWeightSum += it.ebc * it.amount
+      totalFillWeight += it.amount;
     }
 
-    /**
-     * Wrapper for calculateBeerColor which uses the original
-     * wort value from recipe
-     *
-     * @param recipe
-     * @return Double
-     */
-    public Double calculateBeerColor(Recipe recipe) {
-        return calculateBeerColor(recipe, recipe.originalWort)
+    if(totalFillWeight == 0 || colorWeightSum == 0) {
+      throw new Exception('Cannot calculate EBC without malt')
     }
 
+    return 2 + (colorWeightSum/totalFillWeight) * originalWort / 10
+  }
+
+  /**
+   * Wrapper for calculateBeerColor which uses the original
+   * wort value from recipe
+   *
+   * @param recipe
+   * @return Double
+   */
+  public Double calculateBeerColor(Recipe recipe) {
+    return calculateBeerColor(recipe, recipe.originalWort)
+  }
+
+  /**
+   * Validates only the properties corresponding to the 
+   * submitted tab
+   * 
+   * Returns true if no validation errors emerge, 
+   * otherwise false
+   */
+  public boolean validateRecipe(Recipe recipe, String tab) {
+      
+    boolean clean = true
+    
+    recipe.validate()
+    switch(tab) {
+      case 'mainData':
+        ['name', 'description'].each() { it ->
+          if(recipe.errors.getFieldErrorCount(it) > 0) {
+            clean = false
+          }
+        }
+        break;
+      
+      
+      case 'mashing':
+        ['mashingWaterVolume', 'postSpargingWort', 'lauterTemperature', 
+         'mashingTemperature', 'doColdMashing', 'preSpargingWort', 'spargingWaterVolume'].each() { it ->
+          if(recipe.errors.getFieldErrorCount(it) > 0) {
+            clean = false
+          }
+        }
+        recipe.rests?.each() { it ->
+          if(!it.validate()) {
+            clean = false
+          }
+        }
+        recipe.malts?.each() { it ->
+          if(!it.validate()) {
+            clean = false
+          }
+        }
+        break;
+        
+      case 'cooking':
+        ['cookingTime', 'originalWort', 'postIsomerization'].each() { it ->
+          if(recipe.errors.getFieldErrorCount(it) > 0) {
+            clean = false
+          }
+        }
+        recipe.hops?.each() { it ->
+          if(!it.validate()) {
+            clean = false
+          }
+        }
+        break;
+        
+      case 'fermentation':
+        ['yeast', 'fermentationTemperature', 'alcohol',
+         'bottlingWort', 'storingTime', 'storingTemperature'].each() { it ->
+          if(recipe.errors.getFieldErrorCount(it) > 0) {
+            clean = false
+          }
+        }
+    }
+    
+    return clean
+  }
 }

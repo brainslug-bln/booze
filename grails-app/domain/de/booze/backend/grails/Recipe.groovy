@@ -165,7 +165,7 @@ class Recipe {
         fermentationTemperature(min: 0.0 as Double, max: 50 as Double, nullable: false)
         storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
         storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
-        yeast(nullable: false, size: 5..2000)
+        yeast(nullable: false, blank: false, size: 3..2000)
     }
 
     static mapping = {

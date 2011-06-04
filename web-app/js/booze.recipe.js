@@ -71,6 +71,8 @@ BoozeRecipeCreate.prototype.tabClick = function(event) {
  */
 BoozeRecipeCreate.prototype.update = function(form, options) {
   
+  //var action = $(form).find("[name=tab]").first().val().capitalize();
+  
   // Submit form data to the server
   $.post(APPLICATION_ROOT+"/recipe/save", $(form).serialize(), 
   
@@ -86,8 +88,9 @@ BoozeRecipeCreate.prototype.update = function(form, options) {
       }
       
       if(data.success) {
+        
         if(options && options.tabToShow) {
-          booze.setting.displayTab(options.tabToShow);
+          booze.recipeCreate.displayTab(options.tabToShow);
         }
       }
       else {
@@ -109,7 +112,6 @@ BoozeRecipeCreate.prototype.displayTab = function(tabToShow) {
   for(var i=0; i<booze.recipeCreate.tabs.length; i++) {
     $(booze.recipeCreate.tabs[i]).removeClass("active");
   }
-  
   // Update ui-state
   $(tabToShow).removeClass("ui-state-disabled");
   $(tabToShow).addClass("active");
@@ -126,9 +128,20 @@ BoozeRecipeCreate.prototype.displayTab = function(tabToShow) {
   
 }
 
-BoozeRecipeCreate.prototype.submit = function() {
+BoozeRecipeCreate.prototype.submit = function(event) {
+  event.stopPropagation();
+  event.preventDefault();
+  
   // Identify active tab form and update
   var at = $(booze.recipeCreate.activeTab).children("a").first().attr("rel");
+  
+  if(event.data && event.data.finalSave) {
+    $('#'+at+'Form').find("[name=finalSave]").first().val(1);
+  }
+  else {
+    $('#'+at+'Form').find("[name=finalSave]").first().val(0);
+  }
+  
   booze.recipeCreate.update($('#'+at+'Form'), {
     tabToShow: $(booze.recipeCreate.activeTab).next()
   });
