@@ -22,7 +22,7 @@
       </div>
 
       <div class="rightColumn">
-        <div class="rightColumn_content" id="recipeTabContent">
+        <div class="rightColumn_content" id="recipeTabsContent">
           <div id="mainData">
             <g:render template="mainData" bean="${recipeInstance}" />
           </div>

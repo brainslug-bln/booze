@@ -20,8 +20,8 @@
 package de.booze.regulation
 
 import org.apache.log4j.Logger
-import de.booze.backend.grails.MotorDeviceMode
 import de.booze.tasks.MotorRegulatorTask
+import de.booze.backend.grails.MotorTask
 
 /**
  * Controls motor on/off regulation
@@ -37,7 +37,7 @@ class MotorRegulator {
   /**
    * Motor device
    */
-  def motor
+  private MotorTask motorTask
 
   /**
    * Default logger
@@ -47,49 +47,32 @@ class MotorRegulator {
   /**
    * Constructor
    */
-  public MotorRegulator(def motor) {
-    this.motor = motor;
+  public MotorRegulator(MotorTask motorTask) {
+    this.motorTask = motorTask;
   }
 
 
-  /**
-   * Returns the actual motor Mode
-   */
-  public MotorDeviceMode getMotorMode() {
-    return this.motor.mode;
-  }
-
-  /**
-   * Overrides the actual motor mode
-   *
-   * @param MotorMode
-   */
-  public void forceMode(MotorDeviceMode dm) {
-    this.forcedMode = dm;
-    this.enable();
-  }
-
-  /**
-   * Clears a forced motor mode
-   */
-  public void unforceMode() {
-    this.forcedMode = null;
-    this.enable()
-  }
-
-  /**
-   * Returns true if the actual motor mode is forced
-   */
-  public MotorDeviceMode getForcedMode() {
-    return this.forcedMode;
-  }
-
-  /**
-   * Returns true if the device mode is forced
-   */
-  public boolean forced() {
-    return (this.forcedMode != null);
-  }
+//  /**
+//   * Clears a forced motor mode
+//   */
+//  public void unforceMode() {
+//    this.forcedMode = null;
+//    this.enable()
+//  }
+//
+//  /**
+//   * Returns true if the actual motor mode is forced
+//   */
+//  public MotorDeviceMode getForcedMode() {
+//    return this.forcedMode;
+//  }
+//
+//  /**
+//   * Returns true if the device mode is forced
+//   */
+//  public boolean forced() {
+//    return (this.forcedMode != null);
+//  }
 
   /**
    * Enables this motor and starts
@@ -99,16 +82,16 @@ class MotorRegulator {
 
     this.disable();
 
-    def dm = this.forcedMode ?: this.motor.mode;
+    //def dm = this.forcedMode ?: this.motor.mode;
 
-    if (pm && pm?.mode == MotorDeviceMode.MODE_ON) {
+    if (this.motorTask.cyclingMode == MotorTask.CYCLING_MODE_ON) {
       log.debug("enabling motor continuus")
-      this.motor.enable();
+      this.motorTask.motor.enable();
     }
-    else if (pm && pm?.mode == MotorDeviceMode.MODE_INTERVAL) {
+    else if (this.motorTask.cyclingMode == MotorTask.CYCLING_MODE_INTERVAL) {
       log.debug("enabling motor interval")
       this.timer = new Timer();
-      this.timer.schedule(new MotorRegulatorTask(this.motor), 100, 1000);
+      this.timer.schedule(new MotorRegulatorTask(this.motorTask), 100, 1000);
     }
 
   }
@@ -130,7 +113,7 @@ class MotorRegulator {
       }
     }
 
-    this.motor.disable();
+    this.motorTask.motor.disable();
   }
 }
 

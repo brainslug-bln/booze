@@ -141,25 +141,7 @@ class Recipe {
         name(size: 3..255, nullable: false, blank: false)
         globalId(size: 1..255, nullable: false, blank: false, unique: true)
         description(size: 0..5000, nullable: true, blank: true)
-        author(nullable: true)
-        alcohol(nullable: true)
-        originalWort(nullable: true)
-        preSpargingWort(nullable: true)
-        postSpargingWort(nullable: true)
-        bottlingWort(nullable: true)
-        cookingTime(nullable: true)
-        mashingTemperature(nullable: true)
-        mashingWaterVolume(nullable: true)
-        spargingWaterVolume(nullable: true)
-        spargingTemperature(nullable: true)
-        lauterTemperature(nullable: true)
-        postIsomerization(nullable: true)
-        fermentationTemperature(nullable: true)
-        storingTime(nullable: true)
-        storingTemperature(nullable: true)
-        yeast(nullable: true)
-        
-        /*author(size:1..255, nullable: true, blank: true)
+        author(size:1..255, nullable: true, blank: true)
         alcohol(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
         preSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
         postSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
@@ -183,7 +165,7 @@ class Recipe {
         fermentationTemperature(min: 0.0 as Double, max: 50 as Double, nullable: false)
         storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
         storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
-        yeast(nullable: false, size: 5..2000)*/
+        yeast(nullable: false, size: 5..2000)
     }
 
     static mapping = {

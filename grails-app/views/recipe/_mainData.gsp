@@ -4,7 +4,11 @@
   <form id="mainDataForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
     
     <input type="hidden" name="validate" value="RecipeMainDataCommand" />
-    <input type="hidden" name="recipe.id" value="${it.id}" />
+    <g:if test="${it.getAt('id') != null}">
+      <input type="hidden" name="recipe.id" value="${it.getAt('id')?.encodeAsHTML()}" />
+    </g:if>
+    
+    <input type="hidden" name="tab" value="mainData" />
 
     <div class="column50percent">
       <div class="row">
@@ -12,17 +16,18 @@
             <div class="errors" id="errors_name">
                <g:renderErrors bean="${it}" field="name" as="list" />
             </div>
-          <input type="text" name="recipe.name" value="${it.name.encodeAsHTML()}" maxlength="254" onkeyup="$('#errors_name').slideUp(100)" />
+          <input type="text" name="recipe.name" value="${it.name?.encodeAsHTML()}" maxlength="254" onkeyup="$('#errors_name').slideUp(100)" />
       </div>
 
       <div class="row">
           <label for="recipe.dateCreated"><g:message code="recipe.dateCreated.label" /></label>
-          <span class="immutable"><g:formatDate format="dd.MM.yyyy" date="${it?.dateCreated?it.dateCreated:(new Date())}" /></span>
+          <span class="immutable">
+          <g:formatDate format="dd.MM.yyyy" date="${it?.dateCreated?it.dateCreated:(new Date())}" /></span>
       </div>
 
       <div class="row">
         <label for="recipe.author"><g:message code="recipe.author.label" /></label>
-        <span class="immutable"><g:if test="${recipe?.author}"><g:fieldValue bean="${it}" field="author" /></g:if><g:else><g:message code="recipe.author.self" /></g:else></span>
+        <span class="immutable"><g:if test="${it?.author}"><g:fieldValue bean="${it}" field="author" /></g:if><g:else><g:message code="recipe.author.self" /></g:else></span>
       </div>
 
       <div class="row">
@@ -95,6 +100,14 @@
         </span> 
       </div>
     </div>
+    
+    <div class="buttonbar">
+      <g:if test="${it.id}">
+                <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" onclick="booze.recipeEdit.submit()" value="${message(code:'recipe.edit.save')}" />
+      </g:if>
+      <g:else>
+        <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" onclick="booze.recipeCreate.submit()" value="${message(code:'recipe.create.next')}" />
+      </g:else>
   </form>
 </div>
 

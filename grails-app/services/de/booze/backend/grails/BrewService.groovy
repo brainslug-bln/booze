@@ -98,25 +98,25 @@ class BrewService {
 
         MotorRegulator mr = this.brewProcess[it+"Regulator"]
 
-        MotorDeviceMode mdm
-        
-        if (mr.forced()) {
-          myMotor["forced"] = true;
-          mdm = mr.getForcedMode()
-        }
-        else {
-          myMotor["forced"] = false;
-          mdm = mr.getMotorMode()
-        }
-
-        if (!mdm) {
-          myMotor["mode"] = MotorDeviceMode.MODE_OFF
-          myMotor["message"] = taglib.message(code: "motorDeviceMode.mode.${MotorDeviceMode.MODE_OFF}");
-        }
-        else if (mdm) {
-          myMotor["mode"] = mdm.mode
-          myMotor["message"] = taglib.motorDeviceModeName(motorMode: mdm);
-        }
+//        MotorDeviceMode mdm
+//        
+//        if (mr.forced()) {
+//          myMotor["forced"] = true;
+//          mdm = mr.getForcedMode()
+//        }
+//        else {
+//          myMotor["forced"] = false;
+//          mdm = mr.getMotorMode()
+//        }
+//
+//        if (!mdm) {
+//          myMotor["mode"] = MotorDeviceMode.MODE_OFF
+//          myMotor["message"] = taglib.message(code: "motorDeviceMode.mode.${MotorDeviceMode.MODE_OFF}");
+//        }
+//        else if (mdm) {
+//          myMotor["mode"] = mdm.mode
+//          myMotor["message"] = taglib.motorDeviceModeName(motorMode: mdm);
+//        }
         
         status.motors.add(myMotor);
       }

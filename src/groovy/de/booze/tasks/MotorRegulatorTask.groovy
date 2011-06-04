@@ -20,6 +20,7 @@
 package de.booze.tasks
 
 import org.apache.log4j.Logger
+import de.booze.backend.grails.MotorTask
 
 /**
  *
@@ -31,23 +32,11 @@ class MotorRegulatorTask extends TimerTask {
    * Logger instance
    */
   private Logger log = Logger.getLogger(getClass().getName());
-
-  /**
-   * ON-interval (seconds)
-   * (for interval motor mode)
-   */
-  private Integer onInterval;
-
-  /**
-   * OFF-interval (seconds)
-   * (for interval motor mode)
-   */
-  private Integer offInterval;
-
+ 
   /**
    * Motor device
    */
-  def motor
+  MotorTask motorTask
 
   /**
    * Start time for the actual interval
@@ -62,8 +51,8 @@ class MotorRegulatorTask extends TimerTask {
   /**
    * Constructor
    */
-  public MotorRegulatorTask(motor) {
-    this.motor = motor;
+  public MotorRegulatorTask(MotorTask motorTask) {
+    this.motorTask = motorTask;
   }
 
   /**
@@ -78,15 +67,15 @@ class MotorRegulatorTask extends TimerTask {
         return
       }
 
-      if (this.motor.enabled()) {
-        if ((this.actualIntervalStart.getTime() + (this.motor.mode.onInterval * 1000)) < (new Date().getTime())) {
-          this.motor.disable();
+      if (this.motorTask.motor.enabled()) {
+        if ((this.actualIntervalStart.getTime() + (this.motorTask.onInterval * 1000)) < (new Date().getTime())) {
+          this.motorTask.motor.disable();
           this.actualIntervalStart = new Date();
         }
       }
       else {
-        if ((this.actualIntervalStart.getTime() + (this.motor.mode.offInterval * 1000)) < (new Date().getTime())) {
-          this.motor.enable();
+        if ((this.actualIntervalStart.getTime() + (this.motorTask.offInterval * 1000)) < (new Date().getTime())) {
+          this.motorTask.motor.enable();
           this.actualIntervalStart = new Date();
         }
       }

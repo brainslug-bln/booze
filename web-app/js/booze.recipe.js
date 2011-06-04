@@ -18,99 +18,73 @@
  **/
 
 /**
- * Booze recipe helper methods
+ * Booze recipe/create helper methods
  *
  * @author Andreas Kotsias <akotsias@esnake.de>
  */
-function BoozeRecipe() { 
+function BoozeRecipeCreate() { 
   this.tabs = $("#recipeNav").children("ul").first().children();
-}
-
-BoozeRecipe.prototype.initCreate = function() {
-  for(var i=1; i<this.tabs.length; i++) {
-    $(this.tabs[i]).addClass("ui-state-disabled");
-  }
-}
-
-/**
- * Inits the recipe/edit environment
- */
-BoozeRecipe.prototype.initEdit = function(recipe) {
+  
+  // Bind tab click event
   for(var i=0; i<this.tabs.length; i++) {
     $(this.tabs[i]).click({
       tab: this.tabs[i]
       }, this.tabClick);
+      
+    // Disable all tabs except the first
+    if(i > 0) {
+      $(this.tabs[i]).addClass("ui-state-disabled");
+    }
   }
+  
+  // Store active tab for later use
   this.activeTab = this.tabs[0];
-  this.recipeId = recipe;
 }
 
 /**
  * Callback for tab click event
+ * 
+ * Check if a clicked tab is disabled,
+ * if not submit the tab's form data
  */
-BoozeRecipe.prototype.tabClick = function(event) {
+BoozeRecipeCreate.prototype.tabClick = function(event) {
   event.stopPropagation();
   event.preventDefault();
     
-  // Identify active tab form and update
-  var at = $(booze.recipe.activeTab).children("a").first().attr("rel");
-  booze.recipe.update($("#"+at+"Form"), {
+  // Check if clicked tab is disabled
+  if(!$(event.data.tab).hasClass("ui-state-disabled")) {
+    
+    // Identify active tab form and update
+    var at = $(booze.recipeCreate.activeTab).children("a").first().attr("rel");
+    booze.recipeCreate.update($("#"+at+"Form"), {
     tabToShow: event.data.tab
     });
-}
-
-/**
- * Displays a tab and hides all other tabs
- */
-BoozeRecipe.prototype.displayTab = function(tabToShow) {
-  
-  var tabName = $(tabToShow).children("a").first().attr("rel");
-  
-  $.post(APPLICATION_ROOT+"/recipe/tab", {'recipe.id': booze.recipe.recipeId, tab: tabName}, 
-    function(data) {
-      if(data.message) {
-        booze.showStatusMessage(data.message);
-      }
-      if(data.success) {
-        $('#'+tabName).html(data.html);
-        
-        for(var i=0; i<booze.setting.tabs.length; i++) {
-          $(booze.setting.tabs[i]).removeClass("active");
-        }
-        $(tabToShow).addClass("active");
-
-        var tabContents = $("#recipeTabsContent").children();
-
-        for(var i=0; i<tabContents.length; i++) {
-          $(tabContents[i]).hide();
-        }
-
-        $("#"+tabName).show();
-
-        booze.setting.activeTab = tabToShow;
-      }
-      else {
-        if(data.error) {
-          booze.showStatusMessage(data.error);
-          console.log(data.error)
-        }
-      }
-    }
-  );
+  }
+  else {
+    console.log("inactive tab clicked");
+  }
 }
 
 /**
  * Updates recipe data and optionally displays a new tab
  * Options: {tabToShow: LI-Element}
  */
-BoozeRecipe.prototype.update = function(form, options) {
+BoozeRecipeCreate.prototype.update = function(form, options) {
   
-  $.post(APPLICATION_ROOT+"/recipe/update", $(form).serialize(), 
+  // Submit form data to the server
+  $.post(APPLICATION_ROOT+"/recipe/save", $(form).serialize(), 
+  
     function(data) {
       booze.clearStatusMessage();
       if(data.message) {
         booze.showStatusMessage(data.message);
       }
+      
+      if(data.html) {
+        // Update the activeTab content
+        $('#'+$(booze.recipeCreate.activeTab).children("a").first().attr("rel")).html(data.html);
+      }
+      
       if(data.success) {
         if(options && options.tabToShow) {
           booze.setting.displayTab(options.tabToShow);
@@ -122,12 +96,44 @@ BoozeRecipe.prototype.update = function(form, options) {
           console.log(data.error)
         }
       }
-      
-      if(data.tab && data.html) {
-        $("#"+data.tab+"TabContent").html(data.html);
-      }
     }, "json")
 }
+
+/**
+ * Displays a tab and hides all other tabs
+ */
+BoozeRecipeCreate.prototype.displayTab = function(tabToShow) {
+  
+  var tabName = $(tabToShow).children("a").first().attr("rel");
+  
+  for(var i=0; i<booze.recipeCreate.tabs.length; i++) {
+    $(booze.recipeCreate.tabs[i]).removeClass("active");
+  }
+  
+  // Update ui-state
+  $(tabToShow).removeClass("ui-state-disabled");
+  $(tabToShow).addClass("active");
+  
+  var tabContents = $("#recipeTabsContent").children();
+    
+  for(var i=0; i<tabContents.length; i++) {
+    $(tabContents[i]).hide();
+  }
+
+  $("#" + $(tabToShow).children("a").first().attr("rel")).show();
+    
+  booze.recipeCreate.activeTab = tabToShow;
+  
+}
+
+BoozeRecipeCreate.prototype.submit = function() {
+  // Identify active tab form and update
+  var at = $(booze.recipeCreate.activeTab).children("a").first().attr("rel");
+  booze.recipeCreate.update($('#'+at+'Form'), {
+    tabToShow: $(booze.recipeCreate.activeTab).next()
+  });
+}
+
 
 /**
  * Inserts a row into the bottom of a table using a
@@ -136,7 +142,7 @@ BoozeRecipe.prototype.update = function(form, options) {
  * @param {Element} callee
  * @type void
  */
-BoozeRecipe.prototype.insertRow = function(callee, template) {
+BoozeRecipeCreate.prototype.insertRow = function(callee, template) {
     var tbody = $(callee).parent().parent().parent().parent().children('tbody').first();
 
     var tArgs = [{ index: tbody.children().length }];
@@ -151,7 +157,7 @@ BoozeRecipe.prototype.insertRow = function(callee, template) {
  * @param {Object} options
  * @type void
  */
-BoozeRecipe.prototype.deleteRow = function(callee, options) {
+BoozeRecipeCreate.prototype.deleteRow = function(callee, options) {
     // Get tbodys
     var tbody = $(callee).parent().parent().parent().select('.tbody').first();
 
@@ -185,6 +191,6 @@ BoozeRecipe.prototype.deleteRow = function(callee, options) {
 };
 
 
-BoozeRecipe.prototype.submit = function(event) {}
-
-booze.recipe = new BoozeRecipe();
+$(document).ready(function() {
+  booze.recipeCreate = new BoozeRecipeCreate();
+});

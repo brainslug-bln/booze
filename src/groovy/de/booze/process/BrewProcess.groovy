@@ -46,12 +46,6 @@ class BrewProcess implements Serializable {
   List pressureSensors = []
   List heaters = []
   
-  MotorTask mashingMixer
-  MotorTask cookingMixer
-  MotorTask mashingPump
-  MotorTask cookingPump
-  MotorTask drainPump
-  
   Setting setting
 
   DeviceSwitcher devSwitcher
@@ -88,33 +82,11 @@ class BrewProcess implements Serializable {
     // Cache devices
     this.temperatureSensors = s.temperatureSensors.toList()
     this.pressureSensors = s.pressureSensors.toList()
-    
     this.heaters = s.heaters.toList()
-    this.mashingMixer = s.mashingMixer
-    this.cookingMixer = s.cookingMixer
-    this.mashingPump = s.mashingPump
-    this.cookingPump = s.cookingPump
-    this.whirlpoolPump = s.whirpoolPump
-    this.drainPump = s.drainPump
-
+    this.motors = s.motors.toList()
+    
     this.recipe = r
-    
     this.setting = s
-
-    // Init motor devices
-    ["mashingMixer", "cookingMixer", "mashingPump", "cookingPump", "whirpoolPump", "drainPump"].each() {it ->
-      try {
-        if(this[it] != null) {
-          this[it].initDevice()
-          this[it].disable()
-          this[it+"Regulator"] = new MotorRegulator(this[it])
-        }
-      }
-      catch (Exception e) {
-        throw new Exception("Could not initialize motor device '${this[it].name}': ${e}")
-      }
-    }
-    
 
     // Init the temperature regulator
     this.temperatureRegulator = new TemperatureRegulator()
@@ -128,6 +100,31 @@ class BrewProcess implements Serializable {
       }
       catch (Exception e) {
         throw new Exception("Could not initialize heater with name '${it.name}': ${e}")
+      }
+    }
+    
+    // Init motors
+    this.motors.each {
+      try {
+        it.initDevice()
+        it.disable()
+      }
+      catch (Exception e) {
+        throw new Exception("Could not initialize motor with name '${it.name}': ${e}")
+      }
+    }
+    
+    // Init motor regulators
+    ["mashingMixer", "cookingMixer", "mashingPump", "cookingPump", "whirpoolPump", "drainPump"].each() {it ->
+      try {
+        if(this.setting[it+"Task"] != null) {
+          this.setting[it+"Task"]?.initDevice()
+          this.setting[it+"Task"]?.disable()
+          this[it+"Regulator"] = new MotorRegulator(this.setting[it+"Task"])
+        }
+      }
+      catch (Exception e) {
+        throw new Exception("Could not initialize motor device '${this.setting[it+"Task"].name}': ${e}")
       }
     }
 
@@ -467,30 +464,30 @@ class BrewProcess implements Serializable {
     this.temperatureRegulator.setHyteresis(h);
   }
 
-  /**
-   * Forces a motor to a particular motor mode
-   * overriding the setting's motor mode
-   */
-  public void forceMotorMode(String motor, MotorDeviceMode mdm) {
-    try {
-      this[motor+"Regulator"].forceMode(mdm)
-    }
-    catch(Exception e) {
-      log.error("Could not force mode for motor: ${motor}")
-    }
-  }
-
-  /**
-   * Removes a forced motor mode
-   */
-  public void unforceMotorMode(String motor) {
-    try {
-      this[motor+"Regulator"].unforceMode()
-    }
-    catch(Exception e) {
-      log.error("Could not unforce mode for motor: ${motor}")
-    }
-  }
+//  /**
+//   * Forces a motor to a particular motor mode
+//   * overriding the setting's motor mode
+//   */
+//  public void forceMotorMode(String motor, MotorDeviceMode mdm) {
+//    try {
+//      this[motor+"Regulator"].forceMode(mdm)
+//    }
+//    catch(Exception e) {
+//      log.error("Could not force mode for motor: ${motor}")
+//    }
+//  }
+//
+//  /**
+//   * Removes a forced motor mode
+//   */
+//  public void unforceMotorMode(String motor) {
+//    try {
+//      this[motor+"Regulator"].unforceMode()
+//    }
+//    catch(Exception e) {
+//      log.error("Could not unforce mode for motor: ${motor}")
+//    }
+//  }
 }
 
 
