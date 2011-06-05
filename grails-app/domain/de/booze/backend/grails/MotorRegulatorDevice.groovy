@@ -28,8 +28,6 @@ class MotorRegulatorDevice extends Device {
    */
   Integer softOn
   
-  static transients = ["softOnTimer"]
-  
   static belongsTo = [motor: MotorDevice]
 
   static constraints = {

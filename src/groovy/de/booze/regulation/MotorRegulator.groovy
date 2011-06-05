@@ -22,6 +22,7 @@ package de.booze.regulation
 import org.apache.log4j.Logger
 import de.booze.tasks.MotorRegulatorTask
 import de.booze.backend.grails.MotorTask
+import de.booze.backend.grails.MotorDevice
 
 /**
  * Controls motor on/off regulation
@@ -51,28 +52,41 @@ class MotorRegulator {
     this.motorTask = motorTask;
   }
 
+  public void forceCyclingMode(Integer mode, Integer onInterval, Integer offInterval) {
+    this.forcedCyclingMode = mode
+    this.forcedOnInterval = onInterval
+    this.forcedOffInterval = offInterval
+    
+    this.enable()
+  }
+  
+  public void forceCyclingMode(Integer mode) throws IllegalArgumentException {
+    if(mode == MotorTask.CYCLING_MODE_INTERVAL) {
+      throw new IllegalArgumentException("You must supply an on/off interval for interval cycling mode");
+    }
+  }
 
-//  /**
-//   * Clears a forced motor mode
-//   */
-//  public void unforceMode() {
-//    this.forcedMode = null;
-//    this.enable()
-//  }
-//
-//  /**
-//   * Returns true if the actual motor mode is forced
-//   */
-//  public MotorDeviceMode getForcedMode() {
-//    return this.forcedMode;
-//  }
-//
-//  /**
-//   * Returns true if the device mode is forced
-//   */
-//  public boolean forced() {
-//    return (this.forcedMode != null);
-//  }
+  /**
+   * Clears a forced motor mode
+   */
+  public void unforceCyclingMode() {
+    this.forcedCyclingMode = this.forcedOnInterval = this.forcedOffInterval = null;
+    this.enable()
+  }
+
+  /**
+   * Returns true if the actual cyclling mode is forced
+   */
+  public Map getForcedCyclingMode() {
+    return this.getActualCyclingMode;
+  }
+
+  /**
+   * Returns true if the cycling mode is forced
+   */
+  public boolean forced() {
+    return (this.forcedCyclingMode != null);
+  }
 
   /**
    * Enables this motor and starts
@@ -82,16 +96,20 @@ class MotorRegulator {
 
     this.disable();
 
-    //def dm = this.forcedMode ?: this.motor.mode;
+    def dm = this.getActualCyclingMode()
 
-    if (this.motorTask.cyclingMode == MotorTask.CYCLING_MODE_ON) {
+    if (dm == MotorTask.CYCLING_MODE_ON) {
       log.debug("enabling motor continuus")
       this.motorTask.motor.enable();
     }
-    else if (this.motorTask.cyclingMode == MotorTask.CYCLING_MODE_INTERVAL) {
+    else if (dm == MotorTask.CYCLING_MODE_INTERVAL) {
       log.debug("enabling motor interval")
       this.timer = new Timer();
-      this.timer.schedule(new MotorRegulatorTask(this.motorTask), 100, 1000);
+      this.timer.schedule(new MotorRegulatorTask(this), 100, 1000);
+    }
+    else {
+      log.debug("disabling motor for cycling mode OFF")
+      this.motorTask.motor.disable()
     }
 
   }
@@ -114,6 +132,32 @@ class MotorRegulator {
     }
 
     this.motorTask.motor.disable();
+  }
+  
+  /**
+   * Returns the motor associated to this regulator
+   */
+  public MotorDevice getMotor() {
+    return this.motorTask.motor;
+  }
+  
+  /**
+   * Returns the actual (forced or not) cycling
+   * mode for this regulator
+   */
+  public Map getActualCyclingMode() {
+    Map cm = [:]
+    if(this.forcedCyclingMode) {
+      cm = [mode: this.forcedCyclingMode,
+            onInterval: this.forcedOnInterval,
+            offInterval: this.forcedOffInterval]
+    }
+    else {
+      cm = [mode: this.motorTask.cyclingMode,
+            onInterval: this.motorTask.onInterval,
+            offInterval: this.motorTask.offInterval]
+    }
+    return cm
   }
 }
 

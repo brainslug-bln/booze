@@ -20,7 +20,8 @@
 package de.booze.tasks
 
 import org.apache.log4j.Logger
-import de.booze.backend.grails.MotorTask
+import de.booze.regulation.MotorRegulator
+import de.booze.backend.grails.MotorDevice
 
 /**
  *
@@ -36,7 +37,7 @@ class MotorRegulatorTask extends TimerTask {
   /**
    * Motor device
    */
-  MotorTask motorTask
+  MotorRegulator motorRegulator
 
   /**
    * Start time for the actual interval
@@ -51,8 +52,8 @@ class MotorRegulatorTask extends TimerTask {
   /**
    * Constructor
    */
-  public MotorRegulatorTask(MotorTask motorTask) {
-    this.motorTask = motorTask;
+  public MotorRegulatorTask(MotorRegulator mr) {
+    this.motorRegulator = mr;
   }
 
   /**
@@ -60,6 +61,10 @@ class MotorRegulatorTask extends TimerTask {
    */
   public void run() {
     try {
+      
+      MotorDevice motor = this.motorRegulator.getMotor(); 
+      Map cm = this.motorRegulator.getActualCyclingMode();
+      
       // Save the first run time, start disabled
       if (this.virgin) {
         this.virgin = false;
@@ -67,21 +72,21 @@ class MotorRegulatorTask extends TimerTask {
         return
       }
 
-      if (this.motorTask.motor.enabled()) {
-        if ((this.actualIntervalStart.getTime() + (this.motorTask.onInterval * 1000)) < (new Date().getTime())) {
-          this.motorTask.motor.disable();
+      if (motor.enabled()) {
+        if ((this.actualIntervalStart.getTime() + (cm.onInterval * 1000)) < (new Date().getTime())) {
+          motor.disable();
           this.actualIntervalStart = new Date();
         }
       }
       else {
-        if ((this.actualIntervalStart.getTime() + (this.motorTask.offInterval * 1000)) < (new Date().getTime())) {
-          this.motorTask.motor.enable();
+        if ((this.actualIntervalStart.getTime() + (cm.offInterval * 1000)) < (new Date().getTime())) {
+          motor.enable();
           this.actualIntervalStart = new Date();
         }
       }
     }
     catch (Exception e) {
-      log.error("Could not access motor");
+      log.error("Could not access motor ${e}");
     }
   }
 }

@@ -21,13 +21,13 @@
  * Booze recipe/create helper methods
  *
  * @author Andreas Kotsias <akotsias@esnake.de>
+ * 
+ * @param {String} mode Save mode; Possible values are "save" for recipe creation or "update" for updating an existing recipe
  */
 function BoozeRecipe(mode) { 
   
   /**
    * Save mode
-   * Possible values are "save" for recipe creation
-   * or "update" for updating an existing recipe
    */
   this.mode = mode;
   
@@ -58,6 +58,8 @@ function BoozeRecipe(mode) {
  * 
  * Check if a clicked tab is disabled,
  * if not submit the tab's form data
+ * 
+ * @param {Event} event Calling event
  */
 BoozeRecipe.prototype.tabClick = function(event) {
   event.stopPropagation();
@@ -73,7 +75,7 @@ BoozeRecipe.prototype.tabClick = function(event) {
     });
   }
   else {
-    console.log("inactive tab clicked");
+    booze.logger.info("inactive tab clicked");
   }
 }
 
@@ -81,6 +83,9 @@ BoozeRecipe.prototype.tabClick = function(event) {
  * Updates recipe data and optionally displays a new tab
  * 
  * Options: {tabToShow: LI-Element}
+ * 
+ * @param {Form Element} form Form to submit
+ * @param {Object} Hashmap with options
  */
 BoozeRecipe.prototype.update = function(form, options) {
   
@@ -95,18 +100,20 @@ BoozeRecipe.prototype.update = function(form, options) {
         booze.showStatusMessage(data.message);
       }
       
+      // Redirect to a new page if set
       if(data.redirect) {
         window.location.href = data.redirect;
         return
       }
       
+      // Replace the active's tab content if set
       if(data.html) {
         // Update the activeTab content
         $('#'+$(booze.recipe.activeTab).children("a").first().attr("rel")).html(data.html);
       }
       
+      // Optionally display a new tab on success
       if(data.success) {
-        
         if(options && options.tabToShow) {
           booze.recipe.displayTab(options.tabToShow);
         }
@@ -114,7 +121,7 @@ BoozeRecipe.prototype.update = function(form, options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
+          booze.logger.error(data.error)
         }
       }
     }, "json")
@@ -122,10 +129,10 @@ BoozeRecipe.prototype.update = function(form, options) {
 
 /**
  * Displays a tab and hides all other tabs
+ * 
+ * @param {Element} tabToShow Tab to show
  */
 BoozeRecipe.prototype.displayTab = function(tabToShow) {
-  
-  var tabName = $(tabToShow).children("a").first().attr("rel");
   
   for(var i=0; i<booze.recipe.tabs.length; i++) {
     $(booze.recipe.tabs[i]).removeClass("active");
@@ -146,6 +153,11 @@ BoozeRecipe.prototype.displayTab = function(tabToShow) {
   
 }
 
+/**
+ * Submits the form of the active tab
+ * 
+ * @param {Event} event Calling event
+ */
 BoozeRecipe.prototype.submit = function(event) {
   event.stopPropagation();
   event.preventDefault();
@@ -177,7 +189,8 @@ BoozeRecipe.prototype.submit = function(event) {
  * Inserts a row into the bottom of a table using a
  * tr with class "newRowTemplate
  *
- * @param {Element} callee
+ * @param {Element} callee Calling element
+ * @param {string} template ID of the template to use
  * @type void
  */
 BoozeRecipe.prototype.insertRow = function(callee, template) {
@@ -224,7 +237,7 @@ BoozeRecipe.prototype.deleteRow = function(callee, options) {
         }
     }
     else {
-        booze.notifier.notify(booze.messageSource.message("js.booze.recipe.removeRow.lastRowLeft"), {duration: 5000});
+        //booze.showStatusMessage(booze.messageSource.message("js.booze.recipe.removeRow.lastRowLeft"), {duration: 5000});
     }
 };
 

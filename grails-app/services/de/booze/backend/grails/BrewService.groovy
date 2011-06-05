@@ -49,14 +49,14 @@ class BrewService {
                   heaters: []];
 
     try {
-      log.debug("Reading outer temperature sensors")
+      log.debug("Reading temperature sensors")
       this.brewProcess.temperatureSensors.each {
-        def t = it.readTemperatureImmediate();
+        // Round temperature to .5 steps
+        def t = Math.round(it.readTemperatureImmediate()*2d)/2d;
         status.temperatureSensors.add([id: it.id,
                 temperature: t,
-                label: taglib.message(code: "default.formatter.degrees.celsius", args: [taglib.formatNumber(number: outerT, format: "##0.0")])]);
+                label: taglib.message(code: "default.formatter.degrees.celsius", args: [taglib.formatNumber(number: t, format: "##0.0")])]);
       }
-
     }
     catch(Exception e) {
       log.error("Error reading temperature sensors: ${e}");
@@ -67,7 +67,7 @@ class BrewService {
     try {
       log.debug("Reading pressure sensors")
       this.brewProcess.pressureSensors.each {
-        def pressure = it.readPressure();
+        def pressure = Math.round(it.readPressure()*2d)/2d;
         status.pressureSensors.add([id: it.id,
                 pressure: pressure,
                 label: taglib.message(code: "default.formatter.mbar", args: [taglib.formatNumber(number: pressure, format: "###0.0")])]);
@@ -78,11 +78,14 @@ class BrewService {
       e.printStackTrace()
     }
 
-
     try {
       log.debug("Reading heater status")
       this.brewProcess.heaters.each {
-        status.heaters.add([id: it.id, enabled: it.enabled()]);
+        Map h = [id: it.id, enabled: it.enabled()];
+        if(it.hasRegulator()) {
+          h.power = it.readPower();
+        }
+        status.heaters.add(h);
       }
     }
     catch(Exception e) {
@@ -90,56 +93,37 @@ class BrewService {
       e.printStackTrace()
     }
 
-    status.pumps = []
+    status.motors = []
     ["mashingMixer", "mashingPump", "cookingMixer", "cookingPump", "drainPump"].each() { ->
-      try {
-        def myMotor = [id: it, enabled: this.brewProcess[it].enabled()]
-        log.debug("Reading motor status: ${it}")
+      MotorRegulator mr = this.brewProcess[it+"Regulator"] 
+      if(mr) {
+        try {
+          log.debug("Reading motor status: ${mr.motor}")
 
-        MotorRegulator mr = this.brewProcess[it+"Regulator"]
+          def myMotor = [id: it, 
+                         enabled: mr.motorTask.motor.enabled(),
+                         hasForcedCyclingMode:mr.forcedCyclingMode(), 
+                         cyclingMode: mr.getActualCyclingMode,
+                         message: taglib.message(code: "motorDeviceMode.mode.${MotorDeviceMode.MODE_OFF}")]
+                       
+          if(mr.motorTask.motor.hasRegulator()) {
+            myMotor.power = mr.motorTask.motor.readPower();
+          }
 
-//        MotorDeviceMode mdm
-//        
-//        if (mr.forced()) {
-//          myMotor["forced"] = true;
-//          mdm = mr.getForcedMode()
-//        }
-//        else {
-//          myMotor["forced"] = false;
-//          mdm = mr.getMotorMode()
-//        }
-//
-//        if (!mdm) {
-//          myMotor["mode"] = MotorDeviceMode.MODE_OFF
-//          myMotor["message"] = taglib.message(code: "motorDeviceMode.mode.${MotorDeviceMode.MODE_OFF}");
-//        }
-//        else if (mdm) {
-//          myMotor["mode"] = mdm.mode
-//          myMotor["message"] = taglib.motorDeviceModeName(motorMode: mdm);
-//        }
-        
-        status.motors.add(myMotor);
-      }
-      catch(Exception e) {
-        log.error("Error reading motor status: ${e}");
-        e.printStackTrace()
+          status.motors.add(myMotor);
+        }
+        catch(Exception e) {
+          log.error("Error reading motor status: ${e}");
+          e.printStackTrace()
+        }
       }
      }
 
 
     // Read actual used reference sensors
-    if (this.brewProcess.temperatureRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_INNER) {
-      status.temperatureReference = taglib.message(code: "recipe.referenceSensors.inner");
-    }
-    else if (this.brewProcess.temperatureRegulator.getReferenceSensors() == Recipe.TEMPERATURE_REFERENCE_OUTER) {
-      status.temperatureReference = taglib.message(code: "recipe.referenceSensors.outer");
-    }
-    else {
-      status.temperatureReference = taglib.message(code: "recipe.referenceSensors.both");
-    }
+    status.referenceSensors = this.brewProcess.temperatureRegulator.getReferenceSensors()
 
     status.targetTemperature = this.brewProcess.temperatureRegulator.getTemperature();
-
 
     status.actualStep = this.brewProcess.getActualStep().getInfo(this.taglib);
 

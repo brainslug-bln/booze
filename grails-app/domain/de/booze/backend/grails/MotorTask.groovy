@@ -56,6 +56,7 @@ class MotorTask {
   
   public final static Integer CYCLING_MODE_ON = 0
   public final static Integer CYCLING_MODE_INTERVAL = 1
+  public final static Integer CYCLING_MODE_OFF = 1
   
   public final static Integer REGULATION_MODE_OFF = 0
   public final static Integer REGULATION_MODE_SPEED = 1
