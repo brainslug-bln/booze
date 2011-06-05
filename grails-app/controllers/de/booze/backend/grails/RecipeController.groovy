@@ -27,9 +27,6 @@ class RecipeController {
     
   
   /**
-   * Due to the way grails handles commandObjects
-   * we cannot bind and validate them manually.
-   * So we need a controller action for every CO
    */
   def save = {
     session.recipe.properties = params
@@ -65,53 +62,39 @@ class RecipeController {
 
     
   /**
-   * Updates an existing recipe (
-   * @responseType JSON
    */
   def update = {
-
-    // Create an instance of the command object we are going
-    // to validate
-    try {
-      def validCOs = ['RecipeMainDataCommand', 'RecipeMashingCommand', 'RecipeCookingCommand', 'RecipeFermentationCommand']
-      if(!params.validate || !validCOs.contains(params.validate)) {
-        throw new Exception("Requested command object not found")
-      }
-      Class myClass = Class.forName(params.validate)
-      def co = myClass.newInstance()
-      co.properties = params
-    }
-    catch(Exception e) {
-      render([success:false, error:g.message(code:"recipe.save.commandObjectNotFound", args:[params.validate.encodeAsHTML(), e])] as JSON)
+    Recipe recipe = Recipe.get(params.id)
+    if(!recipe) {
+      render([success:false, error:g.message(code:"recipe.update.notFound")] as JSON)
       return
     }
-
-    if(co.validate()) {
-      session.recipe.properties = co;
-
-      if(params.finalSave) {
-        // Finally save the whole recipe
-        try {
-          session.recipe.save()
-          render([success:true, redirect: createLink(controller:"recipe", action:"edit", id:session.recipe.id)] as JSON)
-        }
-        catch(Exception e) {
-          render([success:false, error:g.message(code:"recipe.save.finalSaveFailed", args:[e])] as JSON)
-        }
+    
+    if(params.tab == "cooking") {
+      recipe.hops.clear()
+    }
+    
+    if(params.tab == 'mashing') {
+      recipe.malts.clear()
+      recipe.rests.clear()
+    }
+    
+    recipe.properties = params
+      
+    if(recipeService.validateRecipe(recipe, params.tab)) {
+      if(recipe.save(flush: true)) {
+        
+        render([success:true, 
+                html: g.render(template:params.tab, bean:recipe),
+                message: g.message(code:"recipe.update.saved")] as JSON)
+        return
       }
       else {
-        // Render the  next dialog, persist recipe changes to session
-        try {
-          render([success:true, html: g.render(template:params.next, bean:session.recipe)] as JSON)
-        }
-        catch(Exception e) {
-          render([success:false, error:g.message(code:"recipe.save.nextDialogFailed", args:[params.next, e])] as JSON)
-        }
+        render([success:false, error:g.message(code:"recipe.update.failed"), html: g.render(template:params.tab, bean:recipe)] as JSON)
       }
     }
-    else {
-      render([success:false, html: g.render(template:params.validate, bean:co)] as JSON)
-    }
+      
+    render([success:false, html: g.render(template:params.tab, bean:recipe)] as JSON)
   }
 
   /**

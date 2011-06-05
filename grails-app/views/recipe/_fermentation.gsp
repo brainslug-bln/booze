@@ -1,7 +1,7 @@
 <h2><g:message code="recipe.edit.fermentation" /></h2>
 
 <div class="form">
-  <form id="fermentationForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
+  <form id="fermentationForm">
     <input type="hidden" name="validate" value="RecipeFermentationCommand" />
     <input type="hidden" name="id" value="${it.id}" />
     <input type="hidden" name="tab" value="fermentation" />
@@ -60,28 +60,22 @@
 
     <div class="buttonbar">
       <g:if test="${it?.id}">
-        <input class="ui-button ui-state-default" type="button" id="saveFermentationButton" value="${message(code:'recipe.edit.save')}" />
+        <input class="ui-button ui-state-default right" type="button" name="fermentationSubmitButton" id="submitFermentationButton" value="${message(code:'recipe.edit.save')}" />
       </g:if>
       <g:else>
         <input type="hidden" name="finalSave" value="0" />
-        <input class="ui-button ui-state-default" type="submit" name="fermentationSubmitButton" id="proceedFermentationButton" value="${message(code:'recipe.edit.save')}" />
+        <input class="ui-button ui-state-default right" type="button" name="fermentationSubmitButton" id="submitFermentationButton" value="${message(code:'recipe.edit.save')}" />
       </g:else>    
     </div>
   </form>
 </div>
 
 <script type="text/javascript">
-
-<g:if test="${it.id}">
-  $(document).ready(function() {
-    $('#fermentationForm').submit(booze.recipeEdit.submit);
-  });
-</g:if>
-
-<g:else>
-  $(document).ready(function() {
-    $('#fermentationForm').submit({finalSave: true}, booze.recipeCreate.submit);
-  });
-</g:else>
+$(document).ready(function() {
+try {
+  $('#fermentationForm').submit(booze.recipe.submit);
+  $('#submitFermentationButton').click(booze.recipe.submit);
+}catch(e){console.log(e);}
+});
 
 </script>

@@ -1,7 +1,7 @@
 <h2><g:message code="recipe.edit.mainData" /></h2>
 
 <div class="form">
-  <form id="mainDataForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
+  <form id="mainDataForm">
     
     <input type="hidden" name="validate" value="RecipeMainDataCommand" />
     <input type="hidden" name="id" value="${it.id}" />
@@ -39,7 +39,7 @@
       <div class="row">
         <label for="recipe.finalBeerVolume"><g:message code="recipe.finalBeerVolume.label" /></label>
         <span class="immutable">
-          <g:if test="${$it?.finalBeerVolume}">
+          <g:if test="${it?.finalBeerVolume}">
             <g:formatNumber number="${it?.finalBeerVolume}" format="####.#" />
           </g:if>
           <g:else>
@@ -51,8 +51,8 @@
       <div class="row">
         <label for="recipe.originalWort"><g:message code="recipe.originalWort" /></label>
         <span class="immutable">
-          <g:if test="${$it?.originalWort}">
-            <g:formatNumber number="${it?.originalWort}" format="####.00" />
+          <g:if test="${it?.originalWort}">
+            <g:formatNumber number="${it?.originalWort}" format="####.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotAvailable" />
@@ -63,8 +63,8 @@
       <div class="row">
         <label for="recipe.ibu"><g:message code="recipe.ibu.label" /></label>
         <span class="immutable">
-          <g:if test="${$it?.ibu}">
-            <g:formatNumber number="${it?.ibu}" format="####.00" />
+          <g:if test="${it?.ibu}">
+            <g:formatNumber number="${it?.ibu}" format="####.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotComputable" />
@@ -73,10 +73,10 @@
       </div>
 
       <div class="row">
-        <label for="recipe.ebu"><g:message code="recipe.ebc.label" /></label>
+        <label for="recipe.ebc"><g:message code="recipe.ebc.label" /></label>
         <span class="immutable">
-          <g:if test="${$it?.ebc}">
-            <g:formatNumber number="${it?.ebc}" format="####.00" />
+          <g:if test="${it?.ebc}">
+            <g:formatNumber number="${it?.ebc}" format="####.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotComputable" />
@@ -87,8 +87,8 @@
       <div class="row">
         <label for="recipe.alcohol"><g:message code="recipe.alcohol.label" /></label>
         <span class="immutable">
-          <g:if test="${$it?.alcohol}">
-            <g:formatNumber number="${it?.alcohol}" format="####.00" />
+          <g:if test="${it?.alcohol}">
+            <g:formatNumber number="${it?.alcohol}" format="####.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotAvailable" />
@@ -99,27 +99,19 @@
     
     <div class="buttonbar">
       <g:if test="${it?.id}">
-        <input class="ui-button ui-state-default" type="button" id="saveMainDataButton" value="${message(code:'recipe.edit.save')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitMainDataButton" value="${message(code:'recipe.edit.save')}" />
       </g:if>
       <g:else>
-        <input class="ui-button ui-state-default" type="submit" id="proceedMainDataButton" value="${message(code:'recipe.create.next')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitMainDataButton" value="${message(code:'recipe.create.next')}" />
       </g:else>    
     </div>
   </form>
 </div>
 
-<g:if test="${it.id}">
-  <g:javascript>
-  $(document).ready(function() {
-    $('#mainDataForm').submit(booze.recipeEdit.submit);
-  });
-  </g:javascript>
-</g:if>
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#mainDataForm').submit(booze.recipe.submit);
+  $('#submitMainDataButton').click(booze.recipe.submit);
+});
 
-<g:else>
-  <g:javascript>
-  $(document).ready(function() {
-    $('#mainDataForm').submit(booze.recipeCreate.submit);
-  });
-  </g:javascript>
-</g:else>
+</script>

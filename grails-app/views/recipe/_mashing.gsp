@@ -1,7 +1,7 @@
 <h2><g:message code="recipe.edit.mashing" /></h2>
 
 <div class="form">
-  <form id="mashingForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
+  <form id="mashingForm">
   
     <input type="hidden" name="validate" value="RecipeMashingCommand" />
     <input type="hidden" name="id" value="${it.id}" />
@@ -161,7 +161,7 @@
                 <input class="index" type="hidden" name="rests[${i}].indexInRests" value="${i}"/>
               </td>
               <td><input type="text" value="${formatNumber(format: '##0.0#', number: rest.temperature)}" name="rests[${i}].temperature" /></td>
-              <td><input type="text" value="${formatNumber(format: '##0.0#', number: rest.duration)}" name="rests[${i}].duration" /></td>
+              <td><input type="text" value="${formatNumber(format: '##0', number: rest.duration)}" name="rests[${i}].duration" /></td>
               <td><a href="#" onclick="booze.form.deleteRow(this); return false;" class="ui-icon-circle-minus ui-icon" title="${message(code: 'recipe.edit.delete')}"></a></td>
             </tr>
 
@@ -171,10 +171,10 @@
 
     <div class="buttonbar">
       <g:if test="${it?.id}">
-        <input class="ui-button ui-state-default" type="button" id="saveMashingButton" value="${message(code:'recipe.edit.save')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitMashingButton" value="${message(code:'recipe.edit.save')}" />
       </g:if>
       <g:else>
-        <input class="ui-button ui-state-default" type="submit" id="proceedMashingButton" value="${message(code:'recipe.create.next')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitMashingButton" value="${message(code:'recipe.create.next')}" />
       </g:else>    
     </div>
   </form>
@@ -206,17 +206,9 @@ $(function() {
         $( "#doColdMashing" ).buttonset();
 });
 
-
-<g:if test="${it.id}">
-  $(document).ready(function() {
-    $('#mashingForm').submit(booze.recipeEdit.submit);
-  });
-</g:if>
-
-<g:else>
-  $(document).ready(function() {
-    $('#mashingForm').submit(booze.recipeCreate.submit);
-  });
-</g:else>
+$(document).ready(function() {
+  $('#mashingForm').submit(booze.recipe.submit);
+  $('#submitMashingButton').click(booze.recipe.submit);
+});
 
 </script>

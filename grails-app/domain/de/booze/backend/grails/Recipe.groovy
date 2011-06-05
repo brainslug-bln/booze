@@ -21,165 +21,222 @@ package de.booze.backend.grails
 import java.util.Random
 
 class Recipe {
-
-    def toString = { name }
-
-    String name
-    String description
-
-    /**
-     * Alcolhol in vol%
-     */
-    Double alcohol
-
-    /**
-     * Final (after cooking) wort
-     * in °Plato
-     */
-    Double originalWort
-
-    /**
-     * Wort in °Plato before sparging starts
-     */
-    Double preSpargingWort
   
-    /**
-     * Wort in °Plato after sparging
-     */
-    Double postSpargingWort
+  def recipeService, hopService
 
-    /**
-     * Wort before bottling in °Plato
-     */
-    Double bottlingWort
+  def toString = { name }
 
-    /**
-     * Mashing water amount in l
-     */
-    Double mashingWaterVolume
+  String name
+  String description
 
-    /**
-     * Sparging water volume in l
-     */
-    Double spargingWaterVolume
+  /**
+   * Alcolhol in vol%
+   */
+  Double alcohol
 
-    /**
-     * Cooking time in minutes
-     */
-    Double cookingTime
+  /**
+   * Final (after cooking) wort
+   * in °Plato
+   */
+  Double originalWort
 
-    /**
-     * Temperature at which the malt is removed from
-     * the water (lautering) in °C
-     */
-    Double lauterTemperature
-
-    /**
-     * Temperature at which the malt is added
-     * to the water in °C
-     */
-    Double mashingTemperature
-
-    /**
-     * Temperature at which the sparging water
-     * is added to the mesh in °C
-     */
-    Double spargingTemperature
+  /**
+   * Wort in °Plato before sparging starts
+   */
+  Double preSpargingWort
   
-    /**
-     * Isomerization time after cooking in minutes
-     */
-    Double postIsomerization
+  /**
+   * Wort in °Plato after sparging
+   */
+  Double postSpargingWort
+
+  /**
+   * Wort before bottling in °Plato
+   */
+  Double bottlingWort
+
+  /**
+   * Mashing water amount in l
+   */
+  Double mashingWaterVolume
+
+  /**
+   * Sparging water volume in l
+   */
+  Double spargingWaterVolume
+
+  /**
+   * Cooking time in minutes
+   */
+  Double cookingTime
+
+  /**
+   * Temperature at which the malt is removed from
+   * the water (lautering) in °C
+   */
+  Double lauterTemperature
+
+  /**
+   * Temperature at which the malt is added
+   * to the water in °C
+   */
+  Double mashingTemperature
+
+  /**
+   * Temperature at which the sparging water
+   * is added to the mesh in °C
+   */
+  Double spargingTemperature
   
-    /**
-     * Fermentation temperature in °C
-     */
-    Double fermentationTemperature
+  /**
+   * Isomerization time after cooking in minutes
+   */
+  Double postIsomerization
   
-    /**
-     * Storing period in weeks
-     */  
-    Double storingTime
+  /**
+   * Fermentation temperature in °C
+   */
+  Double fermentationTemperature
   
-    /**
-     * Storing temperature in °C
-     */
-    Double storingTemperature
-
-    /**
-     * Yeast to use for fermentation
-     */
-    String yeast
-
-    Date dateCreated
-    Date lastUpdated
-
-    /**
-     * The global ID is used for identification of shared recipes
-     * on the community server
-     */
-    String globalId
-
-    /**
-     * Recipe owner
-     */
-    String author
+  /**
+   * Storing period in weeks
+   */  
+  Double storingTime
   
-    /**
-     * Transient value
-     * Do cold mashing (without pre-heating the mashing water) or not
-     */
-    boolean doColdMashing = true  
+  /**
+   * Storing temperature in °C
+   */
+  Double storingTemperature
+    
+  /**
+   * Yeast to use for fermentation
+   */
+  String yeast
 
-    SortedSet rests
+  Date dateCreated
+  Date lastUpdated
 
-    static hasMany = [rests: RecipeRest, hops: RecipeHop, malts: RecipeMalt]
+  /**
+   * The global ID is used for identification of shared recipes
+   * on the community server
+   */
+  String globalId
 
-    static transients = ['doColdMashing']
+  /**
+   * Recipe owner
+   */
+  String author
   
-    static constraints = {
-        name(size: 3..255, nullable: false, blank: false)
-        globalId(size: 1..255, nullable: false, blank: false, unique: true)
-        description(size: 0..5000, nullable: true, blank: true)
-        author(size:1..255, nullable: true, blank: true)
-        alcohol(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-        preSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
-        postSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
-        bottlingWort(min: 0.0 as Double, max: 20.0 as Double, nullable: true)
-        originalWort(min: 0.0 as Double, max: 50.0 as Double, nullable: false)
-        cookingTime(min: 0.0 as Double, max: 1000 as Double, nullable: false)
-        mashingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true, validator: {val, obj ->
-                if (val == null && obj.doColdMashing == false) {
-                    ['recipe.mashingTemperature.nullable']
-                }
-            })
-        mashingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: false)
-        spargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
-        spargingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true,  validator: {val, obj ->
-                if (val == null && obj.spargingWaterVolume != null ) {
-                    ['recipe.spargingTemperature.nullable']
-                }
-            })
-        lauterTemperature(min: 0.0 as Double, max: 100 as Double, nullable: false)
-        postIsomerization(min: 0.0 as Double, max: 1000 as Double, nullable: true)
-        fermentationTemperature(min: 0.0 as Double, max: 50 as Double, nullable: false)
-        storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
-        storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
-        yeast(nullable: false, blank: false, size: 3..2000)
-    }
+  /**
+   * Transient value
+   * Do cold mashing (without pre-heating the mashing water) or not
+   */
+  boolean doColdMashing = true  
+    
+  /**
+   * Transient property
+   * Estimated volume of beer output
+   */
+  Double finalBeerVolume
+    
+  /**
+   * Transient property
+   * Estimated IBU bitterness
+   */
+  Double ibu
+    
+  /**
+   * Transient property
+   * Estimated EBU beer color
+   */
+  Double ebc
 
-    static mapping = {
-        malts cascade: "all-delete-orphan"
-        hops cascade: "all-delete-orphan"
-        rests cascade: "all-delete-orphan"
-        columns {
-            malts lazy: false
-            hops lazy: false
-            rests lazy: false
+  SortedSet rests
+
+  static hasMany = [rests: RecipeRest, hops: RecipeHop, malts: RecipeMalt]
+
+  static transients = ['doColdMashing', 'finalBeerVolume', 'ibu', 'ebc']
+  
+  static constraints = {
+    name(size: 3..255, nullable: false, blank: false)
+    globalId(size: 1..255, nullable: false, blank: false, unique: true)
+    description(size: 0..5000, nullable: true, blank: true)
+    author(size:1..255, nullable: true, blank: true)
+    alcohol(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+    preSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
+    postSpargingWort(min: 0.0 as Double, max: 50.0 as Double, nullable: true)
+    bottlingWort(min: 0.0 as Double, max: 20.0 as Double, nullable: true)
+    originalWort(min: 0.0 as Double, max: 50.0 as Double, nullable: false)
+    cookingTime(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+    mashingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true, validator: {val, obj ->
+        if (val == null && obj.doColdMashing == false) {
+          ['recipe.mashingTemperature.nullable']
         }
-    }
+      })
+    mashingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+    spargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+    spargingTemperature(min: 0.0 as Double, max: 100 as Double, nullable: true,  validator: {val, obj ->
+        if (val == null && obj.spargingWaterVolume != null ) {
+          ['recipe.spargingTemperature.nullable']
+        }
+      })
+    lauterTemperature(min: 0.0 as Double, max: 100 as Double, nullable: false)
+    postIsomerization(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+    fermentationTemperature(min: 0.0 as Double, max: 50 as Double, nullable: false)
+    storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+    storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
+    yeast(nullable: false, blank: false, size: 3..2000)
+  }
 
-    def beforeSave = {
-        
+  static mapping = {
+    malts cascade: "all-delete-orphan"
+    hops cascade: "all-delete-orphan"
+    rests cascade: "all-delete-orphan"
+    columns {
+      malts lazy: false
+      hops lazy: false
+      rests lazy: false
     }
+  }
+
+  def calculateData = {
+    if(malts && malts.size() > 0) {
+      try {
+        ebc = recipeService.calculateBeerColor(this)
+      }
+      catch(Exception e) {
+        log.error("Could not calculate beer color: ${e}")
+      }
+    }
+    
+    if(mashingWaterVolume) {
+      try {
+        finalBeerVolume = recipeService.estimateFinalWaterAmount(this)
+      }
+      catch(Exception e) {
+        log.error("Could not estimate final beer amount: ${e}")
+      }
+    }
+    
+    if(hops && hops.size() > 0) {
+      try {
+        ibu = hopService.estimateIbu(this)
+      }
+      catch(Exception e) {
+        log.error("Could not estimate IBU: ${e}")
+      }
+    }
+  }
+  
+  def afterLoad = {
+    this.calculateData()
+  }
+  
+  def afterUpdate = {
+    this.calculateData()
+  }
+  
+  def afterInsert = {
+    this.calculateData()
+  }
 }

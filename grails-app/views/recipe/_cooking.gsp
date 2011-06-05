@@ -1,7 +1,7 @@
 <h2><g:message code="recipe.edit.cooking" /></h2>
 
 <div class="form">
-  <form id="cookingForm" method="post" action="${createLink(controller:'recipe', action:'save')}">
+  <form id="cookingForm">
 
     <input type="hidden" name="validate" value="RecipeCookingCommand" />
     <input type="hidden" name="id" value="${it.id}" />
@@ -14,6 +14,11 @@
           <g:renderErrors bean="${it}" field="cookingTime" as="list" />
         </div>
         <input class="small" type="text" name="cookingTime" value="${formatNumber(format:'####', number:it?.cookingTime)}" maxlength="10" onkeyup="$('#errors_cookingTime').slideUp(100)" />
+      </div>
+      
+      <div class="row">
+        <label for="recipe.ibu"><g:message code="recipe.ibu.label" /></label>
+        <span class="immutable"><g:formatNumber format="###.0#" number="${it?.ibu}" /></span>
       </div>
     </div>
 
@@ -79,15 +84,23 @@ hop?.validate()
 
     <div class="buttonbar">
       <g:if test="${it?.id}">
-        <input class="ui-button ui-state-default" type="button" id="saveCookingButton" value="${message(code:'recipe.edit.save')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitCookingButton" value="${message(code:'recipe.edit.save')}" />
       </g:if>
       <g:else>
-        <input class="ui-button ui-state-default" type="submit" id="proceedCookingButton" value="${message(code:'recipe.create.next')}" />
+        <input class="ui-button ui-state-default right" type="button" id="submitCookingButton" value="${message(code:'recipe.create.next')}" />
       </g:else>    
     </div>
 
   </form>
 </div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#cookingForm').submit(booze.recipe.submit);
+  $('#submitCookingButton').click(booze.recipe.submit);
+});
+
+</script>
 
 <script id="hopTemplate" type="text/x-jquery-tmpl">
   <tr class="ui-widget-content">
@@ -99,18 +112,3 @@ hop?.validate()
   </tr>
 </script>
 
-<script type="text/javascript">
-
-<g:if test="${it.id}">
-  $(document).ready(function() {
-    $('#cookingForm').submit(booze.recipeEdit.submit);
-  });
-</g:if>
-
-<g:else>
-  $(document).ready(function() {
-$('#cookingForm').submit(booze.recipeCreate.submit);
-});
-</g:else>
-
-</script>

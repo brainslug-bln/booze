@@ -2,6 +2,12 @@
     <head>
         <title><g:message code="recipe.create.headline" /></title>
         <meta name="layout" content="main" />
+        
+        <script type="text/javascript">
+          $(document).ready(function() {
+            booze.recipe = new BoozeRecipe('save');
+          });
+        </script>
     </head>
     <body>
       <h1><g:message code="recipe.create.headline" /></h1>
@@ -44,6 +50,6 @@
           </div>
           -->
         </div>
-      </div>
+      </div> 
     </body>
 </html>

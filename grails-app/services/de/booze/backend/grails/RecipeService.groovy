@@ -45,9 +45,9 @@ class RecipeService {
    */
   public Double estimateFinalWaterAmount(Recipe recipe) {
 
-    Double water = recipe.mainWaterVolume
-    if (recipe.secondWaterVolume) {
-      water += recipe.secondWaterVolume
+    Double water = recipe.mashingWaterVolume
+    if (recipe.spargingWaterVolume) {
+      water += recipe.spargingWaterVolume
     }
 
     return (water * (1 / (this.calculateAverageEvaporationFactor() * recipe.cookingTime)))
@@ -60,26 +60,29 @@ class RecipeService {
    * finalVolume
    */
   public Double calculateAverageEvaporationFactor() {
-    def c = Protocol.createCriteria()
-    def results = c.list {
-      isNotNull("finalVolume")
-    }
 
-    Double avgEvaporationFactor;
-    if (results.size() < 2) {
-      log.debug("found less then 2 valid protocol for evaporation learning")
-      return RecipeService.DEFAULT_EVAPORATION_FACTOR
-    }
-    else {
-      def factors = []
-      results.each {
-        def v1 = it.mainWaterVolume + (it.finalSecondWaterVolume ? it.finalSecondWaterVolume : 0) + (it.dilutionWaterVolume ? it.dilutionWaterVolume : 0)
-        def cookingTime = it.finalCookingTime ? it.finalCookingTime : it.targetCookingTime
-        factors.add(v1 / (it.finalVolume * cookingTime))
-      }
+    return RecipeService.DEFAULT_EVAPORATION_FACTOR
 
-      return (factors.sum() / factors.size()) as Double
-    }
+//    def c = Protocol.createCriteria()
+//    def results = c.list {
+//      isNotNull("finalVolume")
+//    }
+//    
+//    Double avgEvaporationFactor;
+//    if (results.size() < 2) {
+//      log.debug("found less then 2 valid protocol for evaporation learning")
+//      return RecipeService.DEFAULT_EVAPORATION_FACTOR
+//    }
+//    else {
+//      def factors = []
+//      results.each {
+//        def v1 = it.mainWaterVolume + (it.finalSecondWaterVolume ? it.finalSecondWaterVolume : 0) + (it.dilutionWaterVolume ? it.dilutionWaterVolume : 0)
+//        def cookingTime = it.finalCookingTime ? it.finalCookingTime : it.targetCookingTime
+//        factors.add(v1 / (it.finalVolume * cookingTime))
+//      }
+//
+//      return (factors.sum() / factors.size()) as Double
+//    }
   }
 
   /**

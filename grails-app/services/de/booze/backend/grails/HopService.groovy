@@ -36,7 +36,7 @@ class HopService {
   }
 
   private Double estimateAverageWort(Recipe recipe) {
-    Double preCookingWort = recipe.preCookingWort ? recipe.preCookingWort : (recipe.originalWort * 0.8);
-    return ((preCookingWort + recipe.originalWort) / 2) as Double;
+    Double preSpargingWort = recipe.preSpargingWort ? recipe.preSpargingWort : (recipe.originalWort * 0.8);
+    return ((preSpargingWort + recipe.originalWort) / 2) as Double;
   }
 }
