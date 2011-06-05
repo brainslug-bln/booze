@@ -1,0 +1,494 @@
+.brew {
+
+}
+
+.brew .recipeName {
+    font-size: 2.0em;
+    font-weight: bold;
+    float: left;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.brew .recipeStartTime {
+    font-size: 1.1em;
+    font-weight: bold;
+    float: right;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.brew .box {
+    width: 100%;
+    padding: 1%;
+    background-color: #eeeeee;
+    margin-bottom: 10px;
+    border: 1px black solid;
+}
+
+.brew .box .headline {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+    width: 100%;
+}
+
+.brew .box .boxContent {
+    background-color: #fcfcfc;
+    padding: 2%;
+    margin: 5px;
+}
+
+.brew .stepInfo .boxContent {
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.protocolContainer .boxContent {
+    height: 150px;
+    overflow-y: scroll;
+}
+
+.protocolContainer ul {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.protocolContainer ul li {
+    padding-left: 0;
+    margin-left: 0;
+}
+
+.protocolContainer .addComment {
+    margin-left: 5px;
+}
+
+.protocolContainer input {
+    margin-right: 10px;
+    width: 60%;
+}
+
+.temperatureSensor, .pressureSensor {
+    margin-bottom: 15px;
+}
+
+.temperatureSensor:last-child, .pressureSensor:last-child {
+    margin-bottom: 0;
+}
+
+.temperatureSensor .temperatureSensorName, .pressureSensor .pressureSensorName {
+    font-weight: bold;
+}
+
+.temperatureSensor .temperatureContainer, .pressureSensor .pressureContainer {
+    height: 20px;
+    width: 100%;
+    border: 1px black solid;
+}
+
+.temperatureSensor .temperatureContainer .temperature, .pressureSensor .pressureContainer .pressure {
+    width: 0;
+    background-color: #3B69AD;
+    text-align: center;
+    height: 16px;
+    color: white;
+    font-weight: bold;
+    padding-top: 4px;
+    overflow: hidden;
+}
+
+.brewInitWindow, .brewMeshingTemperatureReachedWindow, .addHopWindow, .cookingFinishedWindow, .brewFillWindow, .editProtocolWindow, .brewCalculatorWindow {
+    padding: 10px;
+    font-size: 1.1em;
+}
+
+.brewInitWindow h4, .addHopWindow h4, .brewMeshingTemperatureReachedWindow h4, .brewFillWindow h4 {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.brewInitWindow ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.brewInitWindow p {
+    font-weight: bold;
+}
+
+.brewInitWindow p.disclaimer {
+    font-size: 0.9em;
+    font-style: italic;
+    font-weight: normal;
+    color: red;
+}
+
+.brewFillWindow ul {
+    margin-top: 10px;
+}
+
+.brewMeshingTemperatureReachedWindow .elongateMeshingArea, .elongateCookingArea {
+    float: left;
+    width: 100%;
+    margin-bottom: 25px;
+}
+
+.brewMeshingTemperatureReachedWindow .elongateMeshingArea .time, .elongateCookingArea .time {
+    float: left;
+    width: 49%;
+}
+
+.brewMeshingTemperatureReachedWindow .elongateMeshingArea .time input, .elongateCookingArea .time input {
+    width: 30px;
+}
+
+.brewMeshingTemperatureReachedWindow .elongateMeshingArea .buttonArea, .elongateCookingArea .buttonArea {
+    float: left;
+    width: 49%;
+}
+
+.brewMeshingTemperatureReachedWindow .elongateMeshingArea .buttonArea input, .elongateCookingArea .buttonArea input {
+    padding: 0.15em 1.0em;
+    font-size: 0.9em;
+}
+
+.brewMeshingTemperatureReachedWindow .startCooking .buttonArea, .finish .buttonArea {
+    float: left;
+    text-align: right;
+    width: 100%;
+}
+
+.addHopWindow fieldset {
+    margin-bottom: 5px;
+}
+
+.addHopWindow label {
+    float: left;
+    font-weight: bold;
+    width: 49%;
+    margin-bottom: 10px;
+}
+
+.addHopWindow .value {
+    float: left;
+    width: 49%;
+    margin-bottom: 10px;
+}
+
+.addHopWindow .buttonArea {
+    text-align: right;
+}
+
+.heater {
+    width: 100%;
+}
+
+.pump {
+    width: 100%;
+    height: 20px;
+}
+
+.pumpName {
+    float: left;
+    width: auto;
+    padding-top: 2px;
+}
+
+.heaterName {
+    float: left;
+    width: auto;
+}
+
+.pumpMode {
+    width: 53px;
+    float: right;
+    margin-left: 5px;
+}
+
+.heaterStatus {
+    float: right;
+    width: 16px;
+    margin-left: 5px;
+}
+
+.pumpStatus {
+    float: right;
+    width: 16px;
+    margin-left: 5px;
+    padding-top: 2px;
+}
+
+.heaterStatus .onIcon, .pumpStatus .onIcon {
+    display: none;
+    width: 16px;
+    height: 16px;
+    background-image: url(../images/icons/brew/enabled.png);
+}
+
+.heaterStatus .offIcon, .pumpStatus .offIcon {
+    display: none;
+    width: 16px;
+    height: 16px;
+    background-image: url(../images/icons/brew/disabled.png);
+}
+
+.pumpMode a, .pumpMode a:hover {
+    text-decoration: none;
+}
+
+.pumpMode .forced {
+    width: 16px;
+    height: 16px;
+    display: block;
+    background-image: url(../images/icons/brew/exclamation.png);
+    float: left;
+    margin-top: 2px;
+}
+
+.pumpMode .mode_0 {
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-image: url(../images/icons/pumpModes/continuus.png);
+    float: left;
+}
+
+.pumpMode .mode_1 {
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-image: url(../images/icons/pumpModes/interval.png);
+    float: left;
+}
+
+.pumpMode .mode_2 {
+    width: 20px;
+    height: 20px;
+    display: block;
+    background-image: url(../images/icons/pumpModes/off.png);
+    float: left;
+}
+
+.heaterStatus .active, .pumpStatus .active {
+    display: block;
+}
+
+.brew .cancelButtonContainer {
+    float: left;
+    width: 49%;
+}
+
+.brew .cancelButtonContainer input {
+    width: 70%;
+}
+
+.brew .pauseButtonContainer, .brew .editProtocolButtonContainer {
+    float: right;
+    width: 49%;
+}
+
+.brew .pauseButtonContainer input, .brew .editProtocolButtonContainer input {
+    float: right;
+    width: 70%;
+}
+
+.brew .stepInfo .info {
+    background-color: transparent;
+}
+
+.brew .stepInfo .info .row {
+    float: left;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.brew .stepInfo .info .row:last-child {
+    margin-bottom: 0;
+}
+
+.brew .stepInfo .info label {
+    width: 49%;
+    font-weight: bold;
+    float: left;
+    color: black;
+}
+
+.brew .stepInfo .info .value {
+    width: 49%;
+    float: left;
+    color: black;
+    font-weight: normal;
+}
+
+#temperatureOffsetSlider, #cookingTemperatureSlider {
+    width: 100%;
+    height: 3px;
+    background-color: #aaaaaa;
+    margin: 10px 0;
+    position: relative;
+}
+
+#temperatureOffsetHandle, #cookingTemperatureHandle {
+    width: 32px;
+    height: 32px;
+    background: transparent url(../images/icons/brew/sliderHandle.png) no-repeat;
+    cursor: move;
+    position: absolute;
+    top: -15px;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+.brew .heaterHysteresisRegulator .cautious,
+.brew .cookingTemperaturRegulator .low {
+    float: left;
+    font-size: 0.8em;
+    width: 49%;
+}
+
+.brew .heaterHysteresisRegulator .aggressive,
+.brew .cookingTemperaturRegulator .high {
+    float: right;
+    font-size: 0.8em;
+    width: 49%;
+    text-align: right;
+}
+
+.brew .aliveThrobber div {
+    height: 31px;
+    width: 31px;
+    margin: 0;
+    padding: 0;
+    display: block;
+    float: right;
+    margin-left: 10px;
+}
+
+.brew .aliveThrobber div.s0 {
+    background: transparent url(../images/icons/brew/throbber/0.gif);
+}
+
+.brew .aliveThrobber div.s1 {
+    background: transparent url(../images/icons/brew/throbber/1.gif);
+}
+
+.brew .aliveThrobber div.s2 {
+    background: transparent url(../images/icons/brew/throbber/2.gif);
+}
+
+.brew .aliveThrobber div.s3 {
+    background: transparent url(../images/icons/brew/throbber/3.gif);
+}
+
+.brew .aliveThrobber div.s4 {
+    background: transparent url(../images/icons/brew/throbber/4.gif);
+}
+
+.brew .aliveThrobber div.s5 {
+    background: transparent url(../images/icons/brew/throbber/5.gif);
+}
+
+.brew .aliveThrobber div.s6 {
+    background: transparent url(../images/icons/brew/throbber/6.gif);
+}
+
+.brew .aliveThrobber div.s7 {
+    background: transparent url(../images/icons/brew/throbber/7.gif);
+}
+
+.brew .aliveThrobber div.s8 {
+    background: transparent url(../images/icons/brew/throbber/8.gif);
+}
+
+.brew .initError .container {
+    overflow: auto;
+    width: 100%;
+    max-height: 300px;
+}
+
+.brew .initError .container pre {
+    width: 90%;
+    margin: 20px 10px 20px 0;
+}
+
+.brew .pumpModeSelector {
+    border: 1px #3B69AD dotted;
+    position: absolute;
+    max-width: 150px;
+    max-height: 200px;
+    background-color: #ffffff;
+    padding: 0;
+    -moz-box-shadow: 3px 2px 2px black;
+    -webkit-box-shadow: 3px 2px 2px black;
+}
+
+.brew .pumpModeSelector ul {
+    padding: 0;
+    margin: 0;
+}
+
+.brew .pumpModeSelector ul li.headline, .brew .pumpModeSelector ul li.headline:hover {
+    background-color: #3B69AD;
+    color: #ffffff;
+    border: none;
+}
+
+.brew .pumpModeSelector ul li {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    height: 21px;
+    width: 100%;
+    border-bottom: 1px #3B69AD dotted;
+    cursor: pointer;
+    width: 100%;
+}
+
+.brew .pumpModeSelector ul li:hover {
+    background-color: #dedede;
+}
+
+.brew .pumpModeSelector ul li:last-child {
+    border-bottom: none;
+}
+
+.brew .pumpModeSelector ul li span {
+    width: 100%;
+    height: 15px;
+    padding: 3px;
+}
+
+.manualMode .pageHeadline {
+    font-size: 2.0em;
+    font-weight: bold;
+    float: left;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.manualMode input.onIcon {
+    display: none;
+    width: 20px;
+    height: 20px;
+    background-image: url(../images/icons/brew/enabled.png);
+}
+
+.manualMode input.offIcon {
+    display: none;
+    width: 20px;
+    height: 20px;
+    background-image: url(../images/icons/brew/disabled.png);
+}
+
+.manualMode input.active{
+    display: block;
+}
+
+.manualMode .heaterName {
+    float: left;
+    width: auto;
+    padding-top: 2px;
+}
