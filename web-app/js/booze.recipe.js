@@ -75,7 +75,7 @@ BoozeRecipe.prototype.tabClick = function(event) {
     });
   }
   else {
-    booze.logger.info("inactive tab clicked");
+    booze.log.info("inactive tab clicked");
   }
 }
 
@@ -85,7 +85,7 @@ BoozeRecipe.prototype.tabClick = function(event) {
  * Options: {tabToShow: LI-Element}
  * 
  * @param {Form Element} form Form to submit
- * @param {Object} Hashmap with options
+ * @param {Object} options Hashmap with options
  */
 BoozeRecipe.prototype.update = function(form, options) {
   
@@ -95,9 +95,8 @@ BoozeRecipe.prototype.update = function(form, options) {
   $.post(APPLICATION_ROOT+"/recipe/"+this.mode, $(form).serialize(), 
   
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       
       // Redirect to a new page if set
@@ -120,8 +119,7 @@ BoozeRecipe.prototype.update = function(form, options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
-          booze.logger.error(data.error)
+          booze.notifier.error(data.error);
         }
       }
     }, "json")
@@ -133,7 +131,7 @@ BoozeRecipe.prototype.update = function(form, options) {
  * @param {Element} tabToShow Tab to show
  */
 BoozeRecipe.prototype.displayTab = function(tabToShow) {
-  
+
   for(var i=0; i<booze.recipe.tabs.length; i++) {
     $(booze.recipe.tabs[i]).removeClass("active");
   }
@@ -175,8 +173,11 @@ BoozeRecipe.prototype.submit = function(event) {
   // Show the actually active tab after updating
   // or the next tab after saving
   var tabToShow = $(booze.recipe.activeTab);
-  if(this.mode == "save") {
-    tabToShow = $(tabToShow).next();
+  if(booze.recipe.mode == "save") {
+    try {
+      tabToShow = $(tabToShow).next();
+    }
+    catch(e) {}
   }
   
   booze.recipe.update($('#'+at+'Form'), {
@@ -184,61 +185,5 @@ BoozeRecipe.prototype.submit = function(event) {
   });
 }
 
-
-/**
- * Inserts a row into the bottom of a table using a
- * tr with class "newRowTemplate
- *
- * @param {Element} callee Calling element
- * @param {string} template ID of the template to use
- * @type void
- */
-BoozeRecipe.prototype.insertRow = function(callee, template) {
-    var tbody = $(callee).parent().parent().parent().parent().children('tbody').first();
-
-    var tArgs = [{ index: tbody.children().length }];
-    $('#'+template).tmpl(tArgs).appendTo(tbody);
-};
-
-
-/**
- * Removes a row from a table
- *
- * @param {Element} callee
- * @param {Object} options
- * @type void
- */
-BoozeRecipe.prototype.deleteRow = function(callee, options) {
-    // Get tbodys
-    var tbody = $(callee).parent().parent().parent().select('.tbody').first();
-
-    var min = 1;
-    if (options && options.min !== null) {
-        min = options.min;
-    }
-
-    // Remove only if there is more than one row left
-    if (tbody.children('tr').length > (min)) {
-        $(callee).parent().parent().remove();
-
-        // Correct all other row's indices
-        var rows = tbody.children("tr");
-
-        for (var i = 0; i < rows.length; i++) {
-            var indices = $(rows[i]).find('.index');
-            for(var p=0; p < indices.length; p++) {
-                indices[p].value = i;
-            }
-
-            var inputs = $(rows[i]).find('input');
-            for (var q = 0; q < inputs.length; q++) {
-                inputs[q].name = inputs[q].name.replace(/\[\d+\]/, "[" + i + "]");
-            }
-        }
-    }
-    else {
-        //booze.showStatusMessage(booze.messageSource.message("js.booze.recipe.removeRow.lastRowLeft"), {duration: 5000});
-    }
-};
 
 

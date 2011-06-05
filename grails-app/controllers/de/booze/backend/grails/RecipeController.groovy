@@ -22,6 +22,12 @@ class RecipeController {
    */
   def create = {
     session.recipe = new Recipe()
+    // Generate a pseudorandom (hopefully) unique global ID for community 
+    // upload
+    Random random = new Random(new Date().getTime())
+    session.recipe.globalId = random.next(40).encodeAsMD5()
+    
+    log.error("assigned global id: "+session.recipe.globalId)
     [recipeInstance: new Recipe()]
   }
     
@@ -35,13 +41,10 @@ class RecipeController {
       
       // If finalSave is set redirect to the edit dialog after saving
       if(params.finalSave && params.finalSave == "1") {
-        session.recipe.validate()
-
-        // Generate a pseudorandom (hopefully) unique global ID for community 
-        // upload
-        Random random = new Random(new Date().getTime())
-        session.recipe.globalId = (random.next(40) + session.recipe.name + session.recipe.originalWort).encodeAsMD5()
+                
+        //Recipe recipe = session.recipe.merge()
         
+        log.error(session.recipe.errors)
         if(session.recipe.save(flush: true)) {
           render([success:true, 
               message: g.message(code:"recipe.save.saved"), 

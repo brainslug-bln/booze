@@ -18,7 +18,8 @@
  **/
 
 /**
- * Helper methods for the setting editor
+ * This class handles the displaying of tabs
+ * and all ajax requests to the server
  *
  * @author Andreas Kotsias <akotsias@esnake.de>
  * @copyright Andreas Kotsias <akotsias@esnake.de>
@@ -51,6 +52,9 @@ BoozeSetting.prototype.initEdit = function() {
 /**
  * Updates setting data and optionally displays a new tab
  * Options: {tabToShow: LI-Element}
+ * 
+ * @param {Form Element} form Form to submit
+ * @param {Object} options Hashmap with options
  */
 BoozeSetting.prototype.update = function(form, options) {
   
@@ -68,7 +72,6 @@ BoozeSetting.prototype.update = function(form, options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
       
@@ -80,6 +83,8 @@ BoozeSetting.prototype.update = function(form, options) {
 
 /**
  * Callback for tab click event
+ * 
+ * @param {Event} event Calling event
  */
 BoozeSetting.prototype.tabClick = function(event) {
   event.stopPropagation();
@@ -94,6 +99,8 @@ BoozeSetting.prototype.tabClick = function(event) {
 
 /**
  * Displays a tab and hides all other tabs
+ * 
+ * @param {Element} tabToShow Tab to show
  */
 BoozeSetting.prototype.displayTab = function(tabToShow) {
   
@@ -113,6 +120,11 @@ BoozeSetting.prototype.displayTab = function(tabToShow) {
   booze.setting.activeTab = tabToShow;
 }
 
+/**
+ * Submits the settings form
+ * 
+ * @param {Event} event Calling event
+ */
 BoozeSetting.prototype.formSubmit = function(event) {
   event.stopPropagation();
   event.preventDefault();
@@ -120,6 +132,12 @@ BoozeSetting.prototype.formSubmit = function(event) {
   booze.setting.update(event.data.form);
 }
 
+/**
+ * Fetches available options for a driver from the server
+ * and displays them in the driverOptions div
+ * 
+ * @param {Event} event Calling event
+ */
 BoozeSetting.prototype.fetchDriverOptions = function(event) {
   try { prefix = event.data.prefix } catch(e) { prefix = ""}
   
@@ -143,12 +161,17 @@ BoozeSetting.prototype.fetchDriverOptions = function(event) {
     else {
       if(data.error) {
         booze.showStatusMessage(data.error);
-        console.log(data.error)
       }
     }
   }, "json")
 }
 
+/**
+ * Displays an edit dialog for a regulator
+ * 
+ * @param {String} type Regulator type
+ * @param {Object} options Hashmap with options that are submitted to the server
+ */
 BoozeSetting.prototype.editRegulator = function(type, options) {
   if(!options) options = {};
   
@@ -166,17 +189,23 @@ BoozeSetting.prototype.editRegulator = function(type, options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
 
+/**
+ * Cancels a regulator/edit dialog
+ */
 BoozeSetting.prototype.cancelEditRegulator = function() {
   $('#'+booze.setting.activeTab.id+'_regulatorEditor').slideUp();
         $('#'+booze.setting.activeTab.id+'_tabOptions').show();
 }
 
+/**
+ * Deletes a regulator by hiding the editor and removing the 
+ * regulator data from the hidden input fields in the device dialog
+ */
 BoozeSetting.prototype.deleteRegulator = function() {
   $('#'+booze.setting.activeTab.id+'_regulatorEditor').hide();
   $('#'+booze.setting.activeTab.id+'_hasRegulatorField').val(0);
@@ -190,6 +219,13 @@ BoozeSetting.prototype.deleteRegulator = function() {
   $('#'+booze.setting.activeTab.id+'_regulatorSoftOnField').val("");
 }
 
+/**
+ * Saves a regulator
+ * - submit data to the server and validate the data
+ * - write the data into the device's hidden input field on success
+ * 
+ * @param {Event} event Calling event
+ */
 BoozeSetting.prototype.saveRegulator = function(event) {
   event.stopPropagation();
   event.preventDefault();
@@ -217,12 +253,17 @@ BoozeSetting.prototype.saveRegulator = function(event) {
         
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
 
+/**
+ * Displays an edit dialog for a device
+ * 
+ * @param {String} type Device type
+ * @param {Object} options Hashmap with options that are submitted to the server
+ */
 BoozeSetting.prototype.editDevice = function(type, options) {
   if(!options) options = {};
     
@@ -240,18 +281,25 @@ BoozeSetting.prototype.editDevice = function(type, options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
 
+/**
+ * Cancels a device/edit dialog
+ */
 BoozeSetting.prototype.cancelEditDevice = function() {
   $('#'+booze.setting.activeTab.id+'_tabOptions').show();
   $('#'+booze.setting.activeTab.id+'_deviceEditor').hide();
   $('#'+booze.setting.activeTab.id+'_deviceList').show();
 }
 
+/**
+ * Saves a device and hides the edit dialog on success
+ * 
+ * @param {Event} event Calling event
+ */
 BoozeSetting.prototype.saveDevice = function(event) {
 
   event.stopPropagation();
@@ -274,12 +322,16 @@ BoozeSetting.prototype.saveDevice = function(event) {
         
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
-
+/**
+ * Deletes a device and reloads the device list
+ * 
+ * @param {String} type Device type
+ * @param {Object} options Hashmap with options that are submitted to the server
+ */
 BoozeSetting.prototype.deleteDevice = function(type, options) {
   if(!options) options = {};
     
@@ -297,12 +349,16 @@ BoozeSetting.prototype.deleteDevice = function(type, options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
 
+/**
+ * Loads the motorTask/edit dialog from the server
+ * 
+ * @param {Object} options Hashmap with options that are submitted to the server
+ */
 BoozeSetting.prototype.createMotorTask = function(options) {
   if(!options) options = {};
   
@@ -319,12 +375,18 @@ BoozeSetting.prototype.createMotorTask = function(options) {
       else {
         if(data.error) {
           booze.showStatusMessage(data.error);
-          console.log(data.error)
         }
       }
     }, "json")
 }
 
+/**
+ * Hide/show regulation mode options corresponding to the
+ * selected regulation mode
+ * 
+ * @param {String} type Regulation mode type
+ * @param {String} mode Regulation mode (temperature/speed/pressure/off)
+ */
 BoozeSetting.prototype.selectMotorTaskRegulationMode = function(type, mode) {
   if(mode == "temperature") {
     $('#motorTask_'+type+'_regulationModeData_speed').hide();

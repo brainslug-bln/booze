@@ -19,6 +19,7 @@
 
 /**
  * BoozeNotifier class
+ * 
  * Handles displaying of notifications and error messages
  * messages
  *
@@ -30,7 +31,10 @@ function BoozeNotifier() {
 
 /**
  * Displays a simple notification
- *
+ * with one "OK" button
+ * 
+ * options: {modal: true/false}
+ * 
  * @param {String} message
  * @param {Map} options
  * @type void
@@ -40,29 +44,23 @@ BoozeNotifier.prototype.notify = function(message, options) {
     if (!options) {
         options = {};
     }
-
-    var dialog = Dialog.alert(message, {
-        minimizable: false,
-        maximizable: false,
-        title: booze.messageSource.message("js.booze.notifier.notification"),
-        resizable: false,
-        width: "300px",
-        maxHeight: "500px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true,
-        className: 'notification',
-        okLabel: booze.messageSource.message("js.booze.notifier.close"),
-        onOk:function(r) {
-            r.close();
-        }
-    });
-
-    if (options.duration) {
-        window.setTimeout(function(d) {
-            d.close();
-        }.curry(dialog), options.duration);
-    }
+    
+    if(!options.modal) options.modal = false
+    var dialog = $('<div></div>')
+		.html(message)
+		.dialog({
+			autoOpen: true,
+			title: booze.messageSource.message("js.booze.notifier.notification"),
+            modal: options.modal,
+            buttons:  
+              [
+                { text: booze.messageSource.message("js.booze.notifier.close"),
+                  click: function() { $(this).dialog("close"); }
+                }
+              ]
+		});
+        
+    return dialog;
 };
 
 /**
@@ -77,33 +75,22 @@ BoozeNotifier.prototype.error = function(message, options) {
     if (!options) {
         options = {};
     }
-
-    var dialog = Dialog.alert(message, {
-        minimizable: false,
-        maximizable: false,
-        title: booze.messageSource.message("js.booze.notifier.error"),
-        resizable: false,
-        width: "300px",
-        maxHeight: "400px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true,
-        className: 'error',
-        closable: true,
-        okLabel: booze.messageSource.message("js.booze.notifier.close"),
-        onOk:function(r, callback) {
-            if (callback) {
-                callback();
-            }
-            r.close();
-        }.bindAsEventListener(this, options.callback)
-    });
-
-    if (options.duration) {
-        window.setTimeout(function(d) {
-            d.close();
-        }.curry(dialog), options.duration);
-    }
+    
+    if(!options.modal) options.modal = false
+    
+    var dialog = $('<div></div>')
+		.html(message)
+		.dialog({
+			autoOpen: true,
+			title: booze.messageSource.message("js.booze.notifier.error"),
+            modal: options.modal,
+            buttons:  
+              [
+                { text: booze.messageSource.message("js.booze.notifier.close"),
+                  click: function() { $(this).dialog("close"); }
+                }
+              ]
+		});
 
     return dialog;
 };
@@ -117,59 +104,44 @@ BoozeNotifier.prototype.error = function(message, options) {
  */
 BoozeNotifier.prototype.confirm = function(message, options) {
 
-    if (!options) {
+  if (!options) {
         options = {};
     }
-
-    var dialog = Dialog.confirm(message, {
-        minimizable: false,
-        maximizable: false,
-        title: booze.messageSource.message("js.booze.notifier.confirm"),
-        resizable: false,
-        width: "300px",
-        maxHeight: "500px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true,
-        className: 'notification',
-        okLabel: booze.messageSource.message("js.booze.notifier.ok"),
-        cancelLabel: booze.messageSource.message("js.booze.notifier.cancel"),
-        onOk:function(r, callback) {
-            if (callback) {
-                callback();
-            }
-            r.close();
-        }.bindAsEventListener(this, options.callback),
-        onCancel: function(r) {
-            r.close();
-        }
-    });
+    
+    if(!options.modal) options.modal = false
+    var dialog = $('<div></div>')
+		.html(message)
+		.dialog({
+			autoOpen: true,
+			title: booze.messageSource.message("js.booze.notifier.confirm"),
+            modal: options.modal,
+            buttons:  
+              [
+                { text: booze.messageSource.message("js.booze.notifier.ok"),
+                  click: function() { options.callback(); $(this).dialog("close"); }
+                },
+                { text: booze.messageSource.message("js.booze.notifier.cancel"),
+                  click: function() { $(this).dialog("close"); }
+                }
+              ]
+		});
+        
+    return dialog;
 }
 
-/**
- * Displays an information (without any buttons)
- *
- * @param {String} message
- * @param {Map} options
- * @type void
- */
-BoozeNotifier.prototype.info = function(message, options) {
+BoozeNotifier.prototype.statusMessage = function(msg) {
+  booze.log.info(msg);
+  
+  this.clearStatusMessage();
+  $('#statusMessage').html(msg);
+  $('#statusMessage').slideDown("slow");
+  $('#statusMessage').delay(5000);
+  $('#statusMessage').slideUp("slow");
+}
 
-    if (!options) {
-        options = {};
-    }
-
-    var dialog = Dialog.info(message, {
-        minimizable: false,
-        maximizable: false,
-        title: booze.messageSource.message("js.booze.notifier.info"),
-        resizable: false,
-        width: "300px",
-        maxHeight: "500px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true
-    });
+BoozeNotifier.prototype.clearStatusMessage = function() {
+  $('#statusMessage').clearQueue("fx");
+  $('#statusMessage').html("");
 }
 
 

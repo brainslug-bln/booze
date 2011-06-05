@@ -74,7 +74,12 @@
 $(document).ready(function() {
 try {
   $('#fermentationForm').submit(booze.recipe.submit);
-  $('#submitFermentationButton').click(booze.recipe.submit);
+  <g:if test="${it.id}">
+    $('#submitFermentationButton').click(booze.recipe.submit);
+  </g:if>
+  <g:else>
+    $('#submitFermentationButton').click({finalSave: true}, booze.recipe.submit);
+  </g:else>
 }catch(e){console.log(e);}
 });
 

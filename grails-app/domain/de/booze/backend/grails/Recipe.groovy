@@ -235,8 +235,4 @@ class Recipe {
   def afterUpdate = {
     this.calculateData()
   }
-  
-  def afterInsert = {
-    this.calculateData()
-  }
 }

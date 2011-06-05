@@ -30,19 +30,6 @@
 function Booze() {
 }
 
-Booze.prototype.showStatusMessage = function(msg) {
-  this.clearStatusMessage();
-  $('#statusMessage').html(msg);
-  $('#statusMessage').slideDown("slow");
-  $('#statusMessage').delay(5000);
-  $('#statusMessage').slideUp("slow");
-}
-
-Booze.prototype.clearStatusMessage = function() {
-  $('#statusMessage').clearQueue("fx");
-  $('#statusMessage').html("");
-}
-
 var booze = new Booze();
 
 /**

@@ -33,7 +33,7 @@ function BoozeLogger() {
      * - 2: Log errors and warnings
      * - 3: Log everything
      */
-    this.loglevel = 0;
+    this.loglevel = 3;
 
     try {
         if (console) {

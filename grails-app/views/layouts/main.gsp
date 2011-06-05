@@ -17,7 +17,6 @@
   <link href="${resource(dir:'/css/',file:'form.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'list.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'setting.css')}" rel="stylesheet" type="text/css" />
-  
   <g:javascript>
       var APPLICATION_ROOT = "${resource(dir: '', absolute: true)}";      
       var APPLICATION_HOME = "${createLink(controller:'home', action: 'index')}";
@@ -27,10 +26,12 @@
   <g:javascript src="jquery-ui.js" />
   <g:javascript src="jquery.tmpl.js" />
   <g:javascript src="booze.js" />
+  <g:javascript src="booze.messageSource.js" />
+  <g:javascript src="booze.logger.js" />
+  <g:javascript src="booze.notifier.js" />
   <g:javascript src="booze.setting.js" />
   <g:javascript src="booze.calculator.js" />
   <g:javascript src="booze.form.js" />
-  <g:javascript src="booze.leftnav.js" />
   <g:javascript src="booze.recipe.js" />
   
   <g:layoutHead />
