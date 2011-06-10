@@ -83,12 +83,12 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
      * @param int speed
      */
     public void setPower(Integer power) throws Exception, IllegalArgumentException {
-        if(power > 0 && power < 100) {
+        if(power >= 0 && power <= 100) {
             this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(power * 2.54))
             this.power = power;
         }
         else {
-            throw IllegalArgumentException("Heater power must be between 0 and 100");
+            throw new IllegalArgumentException("Heater power must be between 0 and 100");
         }
     }
 

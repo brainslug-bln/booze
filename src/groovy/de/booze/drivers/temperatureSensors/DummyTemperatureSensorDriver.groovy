@@ -19,66 +19,57 @@
 
 package de.booze.drivers.temperatureSensors
 
+import org.apache.log4j.Logger
 import de.booze.driverInterfaces.AbstractTemperatureSensorDriver
 import de.booze.regulation.DeviceSwitcher
 import de.booze.regulation.*
 
 /**
- * Dummy driver
- * Increases the temperature +0.01 every read
+ * Driver for a dummy temperature sensor
  *
  * @author akotsias
  */
 class DummyTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
 
-  private Double lastTemperature = 48.0 as Double;
+    /**
+     * Logger instance
+     */
+    private Logger log = Logger.getLogger(getClass().getName());
 
-  private Double threshold = 5.0
+    /**
+     * Driver options
+     */
+    public static availableOptions = []
+    
+    private Double lastTemperature = 28.0 as Double;
 
-  final static public String ADDRESS_PATTERN = "dummy"
+    private Double threshold = 5.0
 
-  /**
-   * Constructor
-   *
-   * @param String Address for this device
-   */
-  public DummyTemperatureSensorDriver(String address) throws Exception, IllegalArgumentException {
-
-  }
-
-  /**
-   * Returns temperature in degrees celsius
-   */
-  public Double getTemperature() throws Exception {
-    DeviceSwitcher d = DeviceSwitcher.getInstance();
-    if (this.lastTemperature < (d.getTargetTemperature() + 2.0 as Double)) {
-      this.lastTemperature += 0.002 * this.threshold as Double;
-
-      if (this.threshold > 1.1) {
-//        this.threshold -= (0.000005 as Double)
-      }
+    /**
+     * Constructor
+     * Gets an IOWController instance and registers the PCF8591 adc
+     *
+     * @param String Address for this device
+     * @param Double Minimum temperature value
+     * @param Double Maximum temperature value
+     */
+    public DummyTemperatureSensorDriver(Map o) throws Exception, IllegalArgumentException {
+        this.setOptions(o);
     }
-    return this.lastTemperature;
-  }
 
-  /**
-   * Checks if the given address is valid for this driver
-   *
-   * dummy
-   *
-   * @param String Address string for checking
-   */
-  public static boolean checkAddress(String address) {
-    return (address ==~ /dummy/) ? true : false
-  }
+    /**
+     * Returns temperature in degrees celsius
+     */
+    public Double getTemperature() throws Exception {
+      DeviceSwitcher d = DeviceSwitcher.getInstance();
+      if (this.lastTemperature < (d.getTargetTemperature() + 2.0 as Double)) {
+        this.lastTemperature += 0.2 * this.threshold as Double;
 
-  /**
-   * Sets the driver's address
-   *
-   * @param String Address to set
-   */
-  public void setAddress(String address) throws Exception {
-
-  }
+        if (this.threshold > 1.1) {
+          // this.threshold -= (0.000005 as Double)
+        }
+      }
+      return this.lastTemperature;
+    }
 }
 

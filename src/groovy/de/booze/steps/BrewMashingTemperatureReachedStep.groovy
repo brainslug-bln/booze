@@ -45,7 +45,7 @@ class BrewMashingTemperatureReachedStep extends AbstractBrewStep {
 
   public Map getInfo(taglib) {
     return [type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            headline: taglib.message(code: 'brew.step.brewMashingTemperatureReached')]
+            headline: taglib.message(code: 'brew.step.mashingTemperatureReached')]
   }
 }
 

@@ -18,6 +18,8 @@
  * */
 
 package de.booze.backend.grails
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import grails.converters.JSON
 
 /**
  * A motor device may be any device with a motor
@@ -43,16 +45,18 @@ class MotorDevice extends Device {
   static constraints = {
     regulator(nullable: true)
   }
+  
+  static mapping = {
+    columns {
+      regulator lazy: false
+    }
+  }
 
   /** 
    * Enables the motor device
    */
   public void enable() {
     if (!this.enabled()) {
-      
-      if(this.hasRegulator) {
-        this.regulator.enable()
-      }
       
       driverInstance.enable()
       this.lastEnableTime = new Date()
@@ -65,9 +69,6 @@ class MotorDevice extends Device {
   public void disable() {
     if (this.enabled()) {
       
-      if(this.hasRegulator()) {
-        this.regulator.disable()
-      }
       
       driverInstance.disable();
       this.secondsOn += Math.round((new Date().getTime()) - this.lastEnableTime.getTime())
@@ -79,7 +80,9 @@ class MotorDevice extends Device {
    */
   public void writeSpeed(int s) {
     if(this.hasRegulator()) {
-      this.regulator.writeSpeed(s);
+      if(this.enabled()) {
+        this.regulator.writeSpeed(s);
+      }
     }
   }
   
@@ -96,7 +99,7 @@ class MotorDevice extends Device {
    * Checks if this device has a speed regulator
    */
   public boolean hasRegulator() {
-    return !this.regulator.isNull()
+    return (this.regulator != null)
   }
 
   /**
@@ -104,5 +107,31 @@ class MotorDevice extends Device {
    */
   public boolean enabled() {
     return driverInstance.enabled();
+  }
+  
+  /**
+   * Init the device driver
+   * Store an instance of it in the transient driverInstance
+   */
+  def initDevice() {
+    def myClassLoader = AH.application.mainContext.getClassLoader()
+    def myClass = Class.forName(driver, false, myClassLoader)
+    driverInstance = myClass.newInstance(JSON.parse(options));
+    
+    if(this.hasRegulator()) {
+      this.regulator.initDevice()
+    }
+  }
+
+  /**
+   * Gracefully shut down a driver instance
+   */
+  def shutdown() {
+    if(this.hasRegulator()) {
+      this.regulator.shutdown()
+    }
+    
+    driverInstance.shutdown()
+    driverInstance = null
   }
 }

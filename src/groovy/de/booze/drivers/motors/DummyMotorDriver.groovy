@@ -17,28 +17,41 @@
  *
  * */
 
-package de.booze.drivers.motors;
+package de.booze.drivers.motors
 
-import de.booze.driverInterfaces.AbstractMotorDriver;
+import org.apache.log4j.Logger
+import de.booze.driverInterfaces.AbstractMotorDriver
 
 /**
  *
- * Driver a pump device connect via
- * an IOWarrior usb controller
+ * Driver for a dummy motor device
+ * 
+ * Only for switching a connected motor on and off
  *
  * @author akotsias
  */
 class DummyMotorDriver extends AbstractMotorDriver {
 
-  private boolean enabled = false
-
-  final static public String ADDRESS_PATTERN = "dummy"
 
   /**
-   * Constructor
+   * Logger instance
    */
-  public DummyMotorDriver(String address) throws Exception {
-  }
+  private Logger log = Logger.getLogger(getClass().getName());
+
+  private boolean enabled = false;
+  
+  /**
+   * Driver options
+   */
+  public static availableOptions = []
+    
+    
+    /**
+     * Constructor
+     */
+    public DummyMotorDriver(Map o) throws Exception {
+        this.setOptions(o);
+    }
 
   /**
    * Returns true if the device is enabled
@@ -60,22 +73,12 @@ class DummyMotorDriver extends AbstractMotorDriver {
   public void disable() throws Exception {
     this.enabled = false;
   }
-
+  
   /**
-   * Checks if the given address is valid for this driver
-   *
-   * iow://PORT/BIT
+   * Device shutdown
    */
-  public static boolean checkAddress(String address) {
-    return (address ==~ /dummy/) ? true : false
-  }
-
-  /**
-   * Sets the driver's address
-   *
-   * @param String Address to set
-   */
-  private void setAddress(String address) throws Exception {
+  public void shutdown() throws Exception {
+    this.disable()
   }
 }
 

@@ -18,7 +18,7 @@
  **/
 package de.booze.backend.grails
 
-class Setting {
+class Setting implements Serializable {
 
   String name
 
@@ -82,23 +82,19 @@ class Setting {
 
   static mapping = {
     heaters cascade: "evict,refresh"
+    motors cascade: "evict,refresh"
     pressureSensors cascade: "evict,refresh"
     temperatureSensors cascade: "evict,refresh"
-  }
-  
-  def listHeaters() {
-    return HeaterDevice.findAll(setting: id)
-  }
-  
-  def listMotors() {
-    return MotorDevice.findAll(setting: id)
-  }
-  
-  def listTemperatureSensors() {
-    return TemperatureSensorDevice.findAll(setting: id)
-  }
-  
-  def listPressureSensors() {
-    return PressureSensorDevice.findAll(setting: id)
+    columns {
+      heaters lazy: false
+      motors lazy: false
+      pressureSensors lazy: false
+      temperatureSensors lazy: false
+      mashingMixer lazy: false
+      cookingMixer lazy: false
+      mashingPump lazy: false
+      cookingPump lazy: false
+      drainPump lazy: false
+    }
   }
 }

@@ -1,28 +1,29 @@
 <div class="headline" id="stepInfoHeadline">
   <g:message code="brew.step.initialize"/>
 </div>
-<div class="info" id="stepInfo">
 
-  <div id="fillTemperatureInfo" style="display: none;">
+<div class="stepInfo" id="stepInfo">
+
+  <div id="targetMashingTemperatureInfo" style="display: none;">
     <p>Heize auf Einmaischtemperatur auf</p>
 
     <div class="row">
       <label>Beginn dieses Schritts</label>
-      <div class="value" id="fillTemperatureInfo_stepStartTime">
+      <div class="value" id="targetMashingTemperatureInfo_stepStartTime">
 
       </div>
     </div>
 
     <div class="row">
       <label>Einmaischtemperatur</label>
-      <div class="value" id="fillTemperatureInfo_targetTemperature">
+      <div class="value" id="targetMashingTemperatureInfo_targetTemperature">
 
       </div>
     </div>
     <div class="clearfix"></div>
   </div>
 
-  <div id="fillTemperatureReachedInfo" style="display: none;">
+  <div id="mashingTemperatureReachedInfo" style="display: none;">
     <p>Warte auf Hinzufügen der Zutaten</p>
   </div>
 
@@ -62,20 +63,20 @@
     <div class="clearfix"></div>
   </div>
 
-  <div id="meshingFinishedInfo" style="display: none;">
+  <div id="mashingFinishedInfo" style="display: none;">
     <p>Alle Rasten abgeschlossen</p>
     <p>Heize auf Abmaischtemperatur auf</p>
 
     <div class="row">
       <label>Beginn dieses Schritts</label>
-      <div class="value" id="meshingFinishedInfo_stepStartTime">
+      <div class="value" id="mashingFinishedInfo_stepStartTime">
 
       </div>
     </div>
 
     <div class="row">
       <label>Abmaischtemperatur</label>
-      <div class="value" id="meshingFinishedInfo_targetTemperature">
+      <div class="value" id="mashingFinishedInfo_targetTemperature">
 
       </div>
     </div>
@@ -122,25 +123,25 @@
     <div class="clearfix"></div>
   </div>
 
-  <div id="elongateMeshingInfo" style="display: none">
+  <div id="elongateMashingInfo" style="display: none">
 
     <div class="row">
       <label>Zieltemperatur</label>
-      <div class="value" id="elongateMeshingInfo_targetTemperature">
+      <div class="value" id="elongateMashingInfo_targetTemperature">
 
       </div>
     </div>
 
     <div class="row">
       <label>Startzeit</label>
-      <div class="value" id="elongateMeshingInfo_stepStartTime">
+      <div class="value" id="elongateMashingInfo_stepStartTime">
 
       </div>
     </div>
 
     <div class="row">
       <label>Restzeit</label>
-      <div class="value" id="elongateMeshingInfo_timeToGo">
+      <div class="value" id="elongateMashingInfo_timeToGo">
 
       </div>
     </div>
@@ -169,6 +170,19 @@
 
       </div>
     </div>
+    <div class="clearfix"></div>
+  </div>
+  
+  <div id="coolingInfo" style="display: none;">
+    <p>Pumpe ab</p>
+
+    <div class="row">
+      <label>Beginn dieses Schritts</label>
+      <div class="value" id="coolingInfo_stepStartTime">
+
+      </div>
+    </div>
+
     <div class="clearfix"></div>
   </div>
 </div>

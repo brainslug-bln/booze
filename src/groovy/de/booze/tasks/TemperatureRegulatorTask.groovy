@@ -80,6 +80,7 @@ class TemperatureRegulatorTask extends TimerTask {
    *
    */
   public void run() {
+    log.debug("running TemperatureRegulatorTask")
     List heaters = this.tempRegulator.getHeaters();
 
     Double targetTemperature = this.tempRegulator.getTargetTemperature();
@@ -87,6 +88,7 @@ class TemperatureRegulatorTask extends TimerTask {
 
     try {
       referenceTemperature = this.getReferenceTemperature();
+      log.debug("reference temperature is ${referenceTemperature}°C")
     }
     catch (Exception e) {
       // Could not read a valid temperature value, shutdown all heaters
@@ -107,6 +109,7 @@ class TemperatureRegulatorTask extends TimerTask {
     this.tempRegulator.setActualTemperature(referenceTemperature);
 
     if (referenceTemperature < targetTemperature) {
+      log.debug("reference temperature is lower than target temperature (${targetTemperature}°C)")
       Double tempDifference = targetTemperature - referenceTemperature
       Double hysteresis = this.tempRegulator.getHysteresis()
 
@@ -134,7 +137,7 @@ class TemperatureRegulatorTask extends TimerTask {
         // Check only the first for a regulator, assume they all got
         // one. That should be assured by the Setting domain class
         if(heaters[0].hasRegulator()) {
-          Integer power = new Integer(Math.round(tempDifference / ((hysteresis) / 100)))
+          Integer power = (int)(Math.round(   (tempDifference / hysteresis) * 100));
           try {
             for(int i = 0; i< heaters.size(); i++) {
               heaters[i].writePower(power)
@@ -176,6 +179,7 @@ class TemperatureRegulatorTask extends TimerTask {
       }
     }
     else {
+      log.debug("reference temperature is higher than target temperature (${targetTemperature}°C)")
       try {
         for (int i = 0; i < heaters.size(); i++) {
           if(heaters[i].hasRegulator()) {

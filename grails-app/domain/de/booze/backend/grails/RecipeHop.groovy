@@ -23,4 +23,5 @@ class RecipeHop extends Hop {
 
     static belongsTo = [recipe: Recipe]
 
+    
 }

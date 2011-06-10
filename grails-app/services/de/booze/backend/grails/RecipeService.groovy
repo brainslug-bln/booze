@@ -26,7 +26,7 @@ class RecipeService {
   /**
    * Evaporation per minute default factor
    */
-  final static Double DEFAULT_EVAPORATION_FACTOR = 0.0155;
+  final static Double DEFAULT_EVAPORATION_FACTOR = 0.19;
 
   /**
    * Calculates the EBU for a given
@@ -50,7 +50,7 @@ class RecipeService {
       water += recipe.spargingWaterVolume
     }
 
-    return (water * (1 / (this.calculateAverageEvaporationFactor() * recipe.cookingTime)))
+    return (water - (this.calculateAverageEvaporationFactor() * recipe.cookingTime))
   }
 
   /**

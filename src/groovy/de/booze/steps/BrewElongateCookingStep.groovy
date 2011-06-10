@@ -72,7 +72,7 @@ class BrewElongateCookingStep extends AbstractBrewStep {
     this.startMotors();
 
     // Set the target temperature
-    this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
     
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setCookingReferenceSensors();
@@ -121,7 +121,7 @@ class BrewElongateCookingStep extends AbstractBrewStep {
    */
   public void setTargetTemperature(Double t) {
     this.targetTemperature = t;
-    this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
   }
 
   /**
@@ -158,6 +158,34 @@ class BrewElongateCookingStep extends AbstractBrewStep {
             stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime),
             targetTemperature: taglib.message(code: 'default.formatter.degrees.celsius', args: [taglib.formatNumber(format: '##0.0', number: this.targetTemperature)]),
             timeToGo: taglib.message(code: 'default.formatter.minutes', args: [Math.round(this.getTimeToGo() / 60)])]
+  }
+  
+  /**
+   * Start all associated motors for this step
+   */
+  private void startMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.mashingPumpRegulator) {
+      this.brewProcess.mashingPumpRegulator.enable();
+    }
+    
+    if(this.brewProcess.mashingMixerRegulator) {
+      this.brewProcess.mashingMixerRegulator.enable();
+    }
+  }
+ 
+  /**
+   * Stop all associated motors for this step
+   */
+  private void stopMotors() {
+    // Start the mashing pump and mixer
+    if(this.brewProcess.cookingPumpRegulator) {
+      this.brewProcess.cookingPumpRegulator.disable();
+    }
+    
+    if(this.brewProcess.cookingMixerRegulator) {
+      this.brewProcess.cookingMixerRegulator.disable();
+    }
   }
 }
 

@@ -2,6 +2,7 @@
     <head>
         <title><g:message code="setting.edit.headline" args="${[settingInstance.name.encodeAsHTML()]}" /></title>
         <meta name="layout" content="main" />
+        <g:javascript src="booze.setting.js" />
     </head>
     <body>
       <h1><g:message code="setting.edit.headline" args="${[settingInstance.name.encodeAsHTML()]}" /></h1>

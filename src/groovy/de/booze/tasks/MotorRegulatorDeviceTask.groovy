@@ -57,7 +57,7 @@ class MotorRegulatorDeviceTask extends TimerTask {
    */
   public MotorRegulatorDeviceTask(MotorTask m) {
     this.mt = m;
-    this.adaptedSpeed = this.mt.targetSpeed
+    this.adaptedSpeed = this.mt.targetSpeed;
   }
 
   /**
@@ -68,51 +68,73 @@ class MotorRegulatorDeviceTask extends TimerTask {
       this.startDate = new Date()
     }
     
+    log.debug("adapted speed before motor regulation is ${this.adaptedSpeed}")
+    
     if(this.mt.targetPressure) {
-      if(this.mt.readAveragePressure() > (this.mt.targetPressure + 100)) {
+      Double ap = this.mt.readAveragePressure()
+      log.debug("Regulating motor by pressure")
+      if(ap > (this.mt.targetPressure + 100)) {
+        log.debug("actual pressure (${ap}}) is higher than ${(this.mt.targetPressure + 100)}")
         if(this.mt.pressureRegulationDirection) {
+          log.debug("decreasing speed")
           this.decreaseSpeed()
         }
         else {
+          log.debug("increasing speed")
           this.increaseSpeed()
         }
       }
-      else if(this.mt.readAveragePressure() < (this.mt.targetPressure - 100)) {
+      else if(ap < (this.mt.targetPressure - 100)) {
+        log.debug("actual pressure (${ap}) is lower than ${(this.mt.targetPressure - 100)}")
         if(this.mt.pressureRegulationDirection) {
+          log.debug("increasing speed")
           this.increaseSpeed()
         }
         else {
+          log.debug("decreasing speed")
           this.decreaseSpeed()
         }
       }
     }
-    else (this.mt.targetTemperature) {
-      if(this.mt.readAverageTemperature() > (this.mt.targetTemperature + 1)) {
+    else if(this.mt.targetTemperature) {
+      Double at = this.mt.readAverageTemperature()
+      log.debug("Regulating motor by temperature")
+      if(at > (this.mt.targetTemperature + 1)) {
+        log.debug("actual temperature (${at}}) is higher than ${(this.mt.targetTemperature + 1)}")
         if(this.mt.temperatureRegulationDirection) {
+          log.debug("decreasing speed")
           this.decreaseSpeed()
         }
         else {
+          log.debug("increasing speed")
           this.increaseSpeed()
         }
       }
-      else if(this.mt.readAverageTemperature() < (this.mt.targetTemperature - 1)) {
+      else if(at < (this.mt.targetTemperature - 1)) {
+        log.debug("actual temperature (${at}}) is lower than ${(this.mt.targetTemperature - 1)}")
         if(this.mt.temperatureRegulationDirection) {
+          log.debug("increasing speed")
           this.increaseSpeed()
         }
         else {
+          log.debug("decreasing speed")
           this.decreaseSpeed()
         }
       }
     }
     
-    if(this.mt.motor.hasRegulator() && this.mt.motor.regulator?.softOn) {
+    if(this.mt.motor.hasRegulator() && this.mt.readMotor().regulator?.softOn) {
+      log.debug("motor softOn running")
       Integer timeRun = (new Date()).getTime() - this.startDate.getTime();
-      if(this.timeRun < this.mt.motor.regulator?.softOn) {
-        this.adaptedSpeed = Math.round(this.spinupTime/timeRun * this.adaptedSpeed);
+      if(timeRun < this.mt.readMotor().regulator?.softOn) {
+        log.debug("softOn ran ${timeRun}ms")
+        this.adaptedSpeed = Math.round(  (timeRun / this.mt.readMotor().regulator?.softOn) * this.mt.targetSpeed);
       }
     }
     
-    this.mt.motor.writeSpeed(this.adaptedSpeed);
+    
+    log.debug("adapted speed is now ${this.adaptedSpeed}, setting it...")
+    this.mt.readMotor().writeSpeed(this.adaptedSpeed);
   }
   
   /**

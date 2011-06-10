@@ -20,19 +20,19 @@
         <div class="twoColumn">
           <div class="column">
             <fieldset>
-              <label class="${hasErrors(bean:protocol,field:'finalMeshingWort', 'error')}"><g:message code="protocol.finalMeshingWort"/></label>
+              <label class="${hasErrors(bean:protocol,field:'finalPreSpargingWort', 'error')}"><g:message code="protocol.finalPreSpargingWort"/></label>
               <div class="type-text">
-                <input type="text" name="finalMeshingWort" value="${formatNumber(number:protocol.finalMeshingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
+                <input type="text" name="finalPreSpargingWort" value="${formatNumber(number:protocol.finalPreSpargingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
               </div>
 
-              <label class="${hasErrors(bean:protocol,field:'finalPreCookingWort', 'error')}"><g:message code="protocol.finalPreCookingWort"/></label>
+              <label class="${hasErrors(bean:protocol,field:'finalPostSpargingWort', 'error')}"><g:message code="protocol.finalPostSpargingWort"/></label>
               <div class="type-text">
-                <input type="text" name="finalPreCookingWort" value="${formatNumber(number:protocol.finalPreCookingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
+                <input type="text" name="finalPostSpargingWort" value="${formatNumber(number:protocol.finalPostSpargingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
               </div>
 
-              <label class="${hasErrors(bean:protocol,field:'finalSecondWaterVolume', 'error')}"><g:message code="protocol.finalSecondWaterVolume"/></label>
+              <label class="${hasErrors(bean:protocol,field:'finalSpargingWaterVolume', 'error')}"><g:message code="protocol.finalSpargingWaterVolume"/></label>
               <div class="type-text">
-                <input type="text" name="finalSecondWaterVolume" value="${formatNumber(number:protocol.finalSecondWaterVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
+                <input type="text" name="finalSpargingWaterVolume" value="${formatNumber(number:protocol.finalSpargingWaterVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
               </div>
 
             </fieldset>
@@ -44,9 +44,9 @@
                 <input type="text" name="dilutionWaterVolume" value="${formatNumber(number:protocol.dilutionWaterVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
               </div>
 
-              <label class="${hasErrors(bean:protocol,field:'finalVolume', 'error')}"><g:message code="protocol.finalVolume"/></label>
+              <label class="${hasErrors(bean:protocol,field:'finalBeerVolume', 'error')}"><g:message code="protocol.finalVolume"/></label>
               <div class="type-text">
-                <input type="text" name="finalVolume" value="${formatNumber(number:protocol.finalVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
+                <input type="text" name="finalBeerVolume" value="${formatNumber(number:protocol.finalBeerVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
               </div>
 
               <label class="${hasErrors(bean:protocol,field:'finalOriginalWort', 'error')}"><g:message code="protocol.finalOriginalWort"/></label>
@@ -61,10 +61,6 @@
     </div>
 
     <div class="clearfix"></div>
-
-    <div class="buttonArea">
-      <input type="button" name="saveProtocolData" onclick="booze.brew.saveProtocolData()" value="${message(code: 'brew.init.saveProtocolData')}"/>
-    </div>
   </div>
 
 </div>

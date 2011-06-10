@@ -19,7 +19,7 @@
 
 package de.booze.backend.grails
 
-class Hop {
+class Hop implements Comparable, Serializable {
 
   String name
   Double percentAlpha
@@ -32,4 +32,12 @@ class Hop {
     time(min: 0, max: 1000000, nullable: false)
     amount(min: 0.0 as Double, max: 1000.0 as Double, nullable: false)
   }
+  
+  int compareTo(obj) {
+      if (!obj || !time) {
+        return -1
+      }
+
+      return time.compareTo(obj.time)
+    }
 }

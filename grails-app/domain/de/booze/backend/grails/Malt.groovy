@@ -19,7 +19,7 @@
 
 package de.booze.backend.grails
 
-class Malt {
+class Malt implements Comparable, Serializable {
 
   String name
   Double amount
@@ -29,5 +29,13 @@ class Malt {
     name(size: 3..255, nullable: false, blank: false)
     amount(min: 0.0 as Double, max: 100 as Double, nullable: false)
     ebc(min: 0.0 as Double, max: 10000 as Double, nullable: false)
+  }
+  
+  int compareTo(obj) {
+    if (!obj || !id) {
+      return -1
+    }
+
+    return id.compareTo(obj.id)
   }
 }

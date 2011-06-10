@@ -20,7 +20,8 @@
 package de.booze.backend.grails
 
 import grails.converters.*
-
+import de.booze.process.BrewProcess
+import de.booze.process.BrewProcessHolder
 import de.booze.events.BrewAddCommentEvent
 
 class BrewController {
@@ -34,7 +35,7 @@ class BrewController {
    */
   def init = {
 
-    def s = Setting.findByIsDefault(true)
+    def s = Setting.findByActive(true)
     if (!s) {
       render(view: "initError", model: [msg: message(code: 'brew.init.noSettings')])
       return
@@ -45,11 +46,15 @@ class BrewController {
       render(view: "initError", model: [msg: message(code: 'brew.init.recipeNotFound')])
       return
     }
-
+    
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
     // Check if there is a running brew process
-    if (brewService.brewProcess != null) {
-      forward(action: "resumeLostSession", params: params)
-      return
+    if (f.hasBrewProcess()) {
+      f.getBrewProcess().cancel();
+      f.flushBrewProcess()
+      //forward(action: "resumeLostSession", params: params)
+      //return
     }
 
     // Create a new brew process instance which holds
@@ -58,14 +63,7 @@ class BrewController {
       def settings = Setting.read(s.id)
       def recipe = Recipe.read(params.recipe)
 
-      // Check if the sensors defined in the recipe are all present
-      /*if(brewService.checkInvalidSensorsForRecipe(recipe, settings)) {
-          flash.message = message(code:"brew.init.invalidSensorsDefinedInRecipe")
-          redirect(controller:'recipe', action:'edit', id: recipe.id)
-          return
-      }*/
-
-      brewService.initBrewProcess(recipe, settings, g)
+      f.setBrewProcess(new BrewProcess(recipe, settings))
     }
     catch (Exception e) {
       render(view: "initError", model: [msg: e.toString(), recipe: params.recipe])
@@ -76,27 +74,32 @@ class BrewController {
       return
     }
 
+    log.error(f.getBrewProcess())
     // Render template
-    [brewProcess: brewService.brewProcess, pumpModes: PumpMode.findAll()]
+    [brewProcess: f.getBrewProcess()]
   }
 
   /**
    * Starts the brew process
    */
   def start = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
     try {
-      brewService.brewProcess.start()
+      p.start()
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -112,12 +115,16 @@ class BrewController {
    * Commits the fill completion and inits meshing process
    */
   def commitFill = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
@@ -125,7 +132,7 @@ class BrewController {
 
     try {
       log.debug("Commiting fill...")
-      brewService.brewProcess.commitFill()
+      p.commitFill()
     }
     catch (Exception e) {
       log.error("Could not commit fill: ${e}")
@@ -141,12 +148,16 @@ class BrewController {
    * minutes
    */
   def elongateMashing = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
@@ -154,7 +165,7 @@ class BrewController {
 
     try {
       Long elongate = Long.parseLong(params.time)
-      brewService.brewProcess.elongateMashing(elongate * 60)
+      p.elongateMashing(elongate * 60)
       render([success: true] as JSON)
     }
     catch (Exception e) {
@@ -168,11 +179,16 @@ class BrewController {
    * was finished
    */
   def startCooking = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
+      return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
@@ -183,7 +199,7 @@ class BrewController {
       //bindData(p, params);
 
       //p.save()
-      brewService.brewProcess.startCooking()
+      p.startCooking()
 
       render([success: true] as JSON)
     }
@@ -197,12 +213,16 @@ class BrewController {
    * minutes
    */
   def elongateCooking = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
@@ -211,7 +231,7 @@ class BrewController {
     try {
       Long elongate = Long.parseLong(params.time)
       Double temperature = Double.parseDouble(params.temperature)
-      brewService.brewProcess.elongateCooking(elongate * 60, temperature)
+      p.elongateCooking(elongate * 60, temperature)
       render([success: true] as JSON)
     }
     catch (Exception e) {
@@ -219,24 +239,57 @@ class BrewController {
       render([success: false, message: g.message(code: 'brew.elongateCooking.failed', args: [e])] as JSON)
     }
   }
+  
+  /**
+   * Starts the cooling step
+   */
+  def startCooling = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+    
+    BrewProcess p = f.getBrewProcess()
+
+    if (p.processId != params.processId) {
+      log.debug("Given process id does not match the processe's id")
+      response.sendError(503)
+      return
+    }
+
+    try {
+      p.startCooling()
+      render([success: true] as JSON)
+    }
+    catch (Exception e) {
+      log.error("Could not start cooling: ${e}")
+      render([success: false, message: g.message(code: 'brew.startCooling.failed', args: [e])] as JSON)
+    }
+  }
 
   /**
    * Reads the status for the actual brew process
    */
   def readStatus = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.error("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
     try {
-      def status = brewService.updateStatus()
+      def status = brewService.updateStatus(g)
       render([success: true, status: status] as JSON)
     }
     catch (Exception e) {
@@ -250,26 +303,31 @@ class BrewController {
    * Pauses the actual brew process
    */
   def pause = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
     try {
-      if (!brewService.brewProcess.isPaused()) {
-        brewService.brewProcess.pause()
+      if (!p.isPaused()) {
+        p.pause()
         render([success: true] as JSON)
       }
     }
     catch (Exception e) {
       log.error("Unable to pause: ${e}")
       render([success: false, message: g.message(code: 'brew.pause.failed', args: [e])] as JSON)
+      e.printStackTrace();
     }
   }
 
@@ -277,20 +335,24 @@ class BrewController {
    * Resumes the actual brew process
    */
   def resume = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
     try {
-      if (brewService.brewProcess.isPaused()) {
-        brewService.brewProcess.resume()
+      if (p.isPaused()) {
+        p.resume()
         render([success: true] as JSON)
       }
     }
@@ -305,20 +367,24 @@ class BrewController {
    * Cancels the actual brew process
    */
   def cancel = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
     try {
-      brewService.brewProcess.cancel()
-      brewService.brewProcess = null
+      p.cancel()
+      f.flushBrewProcess()
       render([success: true] as JSON)
     }
     catch (Exception e) {
@@ -331,12 +397,16 @@ class BrewController {
    * Sets the value for hysteresis adaptation
    */
   def setHysteresis = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
@@ -344,7 +414,7 @@ class BrewController {
 
     try {
       def hysteresis = Double.parseDouble(params.hysteresis)
-      brewService.brewProcess.setHysteresis(hysteresis)
+      p.setHysteresis(hysteresis)
     }
     catch (Exception e) {
       log.error("Unable to set temperature offset: ${e}")
@@ -357,18 +427,22 @@ class BrewController {
    * Sets the cooking temperature
    */
   def setCookingTemperature = {
-    if (!brewService.brewProcess || brewService.brewProcess == null) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
-    def actualStep = brewService.brewProcess.getActualStep();
+    def actualStep = p.getActualStep();
     if (actualStep.getClass().getName() != "de.booze.steps.BrewCookingStep" && actualStep.getClass().getName() != "de.booze.steps.BrewElongateCookingStep") {
       response.sendError(503)
       return
@@ -391,73 +465,57 @@ class BrewController {
    * Adds a comment to the event list
    */
   def addComment = {
-    if (!brewService.brewProcess || brewService.brewProcess == null || !params.comment) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
       response.sendError(503)
       return
     }
+    
+    BrewProcess p = f.getBrewProcess()
 
-    if (brewService.brewProcess?.processId != params.processId) {
+    if (p.processId != params.processId) {
       log.debug("Given process id does not match the processe's id")
       response.sendError(503)
       return
     }
 
-    brewService.brewProcess.addEvent(new BrewAddCommentEvent(params.comment));
+    p.addEvent(new BrewAddCommentEvent(params.comment));
     render([success: true] as JSON)
   }
 
   /**
-   * Forces the pump to a given pump mode
+   * Forces a motor to a cycling mode
    */
-//  def forcePumpMode = {
-//    if (!brewService.brewProcess || brewService.brewProcess == null || !params.pumpMode) {
-//      response.sendError(503)
-//      return
-//    }
-//
-//    if (brewService.brewProcess?.processId != params.processId) {
-//      log.debug("Given process id does not match the processe's id")
-//      response.sendError(503)
-//      return
-//    }
-//
-//    try {
-//      brewService.brewProcess.forcePumpMode(PumpMode.get(params.pumpMode));
-//      render([success: true] as JSON)
-//    }
-//    catch (Exception e) {
-//      render([success: false, message: e])
-//    }
-//  }
-//
-//  /**
-//   * Un-forces the pump
-//   */
-//  def unforcePumpMode = {
-//    if (!brewService.brewProcess || brewService.brewProcess == null) {
-//      response.sendError(503)
-//      return
-//    }
-//
-//    if (brewService.brewProcess?.processId != params.processId) {
-//      log.debug("Given process id does not match the processe's id")
-//      response.sendError(503)
-//      return
-//    }
-//
-//    try {
-//      brewService.brewProcess.unforcePumpMode();
-//      render([success: true] as JSON)
-//    }
-//    catch (Exception e) {
-//      render([success: false, message: e])
-//    }
-//  }
+  def forceCyclingMode = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+    
+    BrewProcess p = f.getBrewProcess()
+
+    if (p.processId != params.processId) {
+      log.debug("Given process id does not match the processe's id")
+      response.sendError(503)
+      return
+    }
+
+    try {
+      p.forceCyclingMode(params);
+      render([success: true] as JSON)
+    }
+    catch (Exception e) {
+      render([success: false, message: e])
+    }
+  }
 
   /**
-   * Finishes the brew process
+   * Un-forces the pump
    */
-  def finish = {
+  def unforcePumpMode = {
     if (!brewService.brewProcess || brewService.brewProcess == null) {
       response.sendError(503)
       return
@@ -469,8 +527,36 @@ class BrewController {
       return
     }
 
-    def actualStep = brewService.brewProcess.getActualStep();
-    if (actualStep.getClass().getName() != "de.booze.steps.BrewCookingFinishedStep") {
+    try {
+      brewService.brewProcess.unforcePumpMode();
+      render([success: true] as JSON)
+    }
+    catch (Exception e) {
+      render([success: false, message: e])
+    }
+  }
+
+  /**
+   * Finishes the brew process
+   */
+  def finish = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+    
+    BrewProcess p = f.getBrewProcess()
+
+    if (p.processId != params.processId) {
+      log.debug("Given process id does not match the processe's id")
+      response.sendError(503)
+      return
+    }
+
+    def actualStep = p.getActualStep();
+    if (actualStep.getClass().getName() != "de.booze.steps.BrewCookingFinishedStep" && actualStep.getClass().getName() != "de.booze.steps.BrewCoolingStep") {
       response.sendError(503)
       return
     }
@@ -485,7 +571,7 @@ class BrewController {
 
 
     try {
-      brewService.brewProcess.cancel()
+      p.cancel()
 
 //      def myp = Protocol.get(brewService.brewProcess.protocolId)
 //
@@ -514,13 +600,14 @@ class BrewController {
 //
 //      myp.save()
 
-      brewService.brewProcess = null
+      f.flushBrewProcess()
 
-      [success: true/*, protocolInstance: myp*/]
+      render([success: true, redirect: g.createLink(controller:'recipe', action:'edit', id:p.recipe.id)/*, protocolInstance: myp*/] as JSON)
+      return
     }
     catch (Exception e) {
       log.error("Failed to finish brew process: ${e}")
-      response.sendError(503)
+      render([success: false, error: e] as JSON)
     }
   }
 
@@ -551,4 +638,31 @@ class BrewController {
 //      render([success: false, close: false, message: e] as JSON)
 //    }
 //  }
+
+  def toggleForceHeater = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+
+    BrewProcess p = f.getBrewProcess()
+
+    if (p.processId != params.processId) {
+      log.debug("Given process id does not match the processe's id")
+      response.sendError(503)
+      return
+    }
+
+    try {
+      Long heater = Long.parseLong(params.heater)
+      p.toggleForceHeater(heater);
+      render([success: true] as JSON)
+    }
+    catch (Exception e) {
+      render([success: false, message: e])
+    }
+  }
+  
 }

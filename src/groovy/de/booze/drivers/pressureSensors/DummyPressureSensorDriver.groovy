@@ -19,55 +19,56 @@
 
 package de.booze.drivers.pressureSensors
 
+import java.util.*;
 import java.util.Random
+
+import org.apache.log4j.Logger
 import de.booze.driverInterfaces.AbstractPressureSensorDriver
 
 /**
- * Driver for an analogue pressure sensor
- * connected via a combination of IOWarrior and
- * a PCF8591 a/d converter
+ * Driver for a dummy pressure sensor
  *
  * @author akotsias
  */
 class DummyPressureSensorDriver extends AbstractPressureSensorDriver {
+    
+    /**
+     * Logger instance
+     */
+    private Logger log = Logger.getLogger(getClass().getName());
 
-  /**
-   * Address pattern
-   */
-  final static public String ADDRESS_PATTERN = "dummy"
+  
+    /**
+     * Driver options
+     */
+    public static availableOptions = []
 
-  /**
-   * Constructor
-   *
-   * Gets an IOWController instance and registers the PCF8591 adc
-   * If successful a timer is started which adds a pressure value
-   * to valueList every 50ms
-   */
-  public DummyPressureSensorDriver(String address) throws Exception, IllegalArgumentException {
-  }
+    /**
+     * Constructor
+     */
+    public DummyPressureSensorDriver(Map o) throws Exception, IllegalArgumentException {
+        this.setOptions(o);
+    }
 
-  /**
-   * Returns pressure in mbar
-   */
-  public Double getPressure() throws Exception {
-    def rand = new Random()
-    return (Double) rand.nextDouble() * 300;
-    //return 100.0 as Double
-  }
+    /**
+     * Returns a random pressure in mbar
+     */
+    public Double getPressure() throws Exception {
+      def rand = new Random()
+      if(rand.nextBoolean()) {
+        return (Double)(200d + rand.nextDouble() * 150);
+      }
+      else {
+        return (Double)(200d + rand.nextDouble() - 150);
+      }
+    }
 
-  /**
-   * Checks if the given address is valid for this driver
-   *
-   * iow://pcf/'PCF8591-ADDRESS'/'ANALOG-INPUT-PORT'
-   */
-  public static boolean checkAddress(String address) {
-    return (address ==~ /dummy/) ? true : false
-  }
+    protected void finalize() throws Exception {
+        this.shutdown();
+    }
 
-  /**
-   * Sets the driver's address
-   */
-  public void setAddress(String address) throws Exception {
-  }
+    public void shutdown() throws Exception {
+
+    }
 }
 

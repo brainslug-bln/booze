@@ -4,30 +4,18 @@
         <meta name="layout" content="main" />
     </head>
     <body>
-      <h1><g:message code="calculator.headline" /></h1>
+      <h1><g:message code="home.headline" /></h1>
 
-      <div class="leftColumn">
-        <div id="leftColumn_content" class="leftColumn_content">
-          <div id="leftnav">
-            <ul>
-              <li class="active"><a href="#" rel="#test">test</a></li>
-            </ul>
-          </div>
-          <div class="clearfix"></div>
+      <div class="singleColumn">
+        <div style="float: left; width: 50%">
+          <h3>Booze <g:meta name="app.version" /></h3>
+          
+          <p>Booze - tolle Software für tolle Leute</p>
+        </div>
+        
+        <div style="float: left; width: 50%; text-align: right">
+          <img src="${resource(dir:'/images', file:'home_picture.jpg')}" style="width: 400px" />
         </div>
       </div>
-
-      <div class="rightColumn">
-        <div class="rightColumn_content">
-
-          test
-
-        </div>
-      </div>
-
-
-      <!--<div class="singleColumn">Hallo Welt!</div>-->
-
-
     </body>
 </html>

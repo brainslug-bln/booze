@@ -34,7 +34,7 @@ class BrewMashingElongationFinishedEvent extends BrewEvent {
 
   public Map getEventDataForFrontend(g) {
     return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message)]),
-            dialog: 'mashingTemperatureReached',
+            dialog: 'lauterTemperatureReached',
             playSound: true]
   }
 

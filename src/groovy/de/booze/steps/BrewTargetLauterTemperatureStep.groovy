@@ -23,16 +23,20 @@ import java.lang.Math.*
 
 import grails.util.GrailsNameUtils
 import de.booze.process.BrewProcess
-import de.booze.events.BrewMashingTemperatureReachedEvent
-import de.booze.events.BrewMashingTemperatureStartedEvent
-import de.booze.backend.grails.Recipe
+import de.booze.events.BrewEvent
+import de.booze.events.BrewLauterTemperatureReachedEvent
 import de.booze.tasks.CheckStepTask
 
 /**
  *
  * @author akotsias
  */
-class BrewMashingTemperatureStep extends AbstractBrewStep {
+class BrewTargetLauterTemperatureStep extends AbstractBrewStep {
+
+  /**
+   * Mashing temperature
+   */
+  public Double targetTemperature;
 
   /**
    * This step's type
@@ -45,26 +49,23 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
   public Date stepStartTime
 
   /**
-   * Target temperature
-   */
-  public Recipe recipe
-
-  /**
    * The timer for this step
    */
   public Timer timer
 
-
-  public BrewMashingTemperatureStep(BrewProcess bp, Recipe recipe) {
+  /**
+   * Constructor
+   */
+  public BrewTargetLauterTemperatureStep(BrewProcess bp, Double t) {
     this.brewProcess = bp;
-    this.recipe = recipe;
+    this.targetTemperature = t
 
     this.stepStartTime = new Date()
 
     this.startMotors();
 
     // Set the target temperature
-    this.brewProcess.temperatureRegulator.setTemperature(this.recipe.mashingTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
     
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
@@ -76,18 +77,19 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
 
-    this.brewProcess.addEvent(new BrewMashingTemperatureStartedEvent('brew.brewProcess.mashingTemperatureStarted', this.recipe.mashingTemperature));
+    this.brewProcess.addEvent(new BrewEvent('brew.brewProcess.targetingLauterTemperature'));
   }
 
   /**
-   * Checks if this step is finished
+   * Checks if this step is finished or if the
+   * target temperature is reached
    */
   public void checkStep() {
-
-    if (this.brewProcess.temperatureRegulator.getActualTemperature() >= this.recipe.mashingTemperature) {
-      this.brewProcess.addEvent(new BrewMashingTemperatureReachedEvent('brew.brewProcess.mashingTemperatureReached', this.recipe.mashingTemperature));
-
-      this.pause();
+    if (this.brewProcess.temperatureRegulator.getActualTemperature() >= this.targetTemperature) {
+      this.timer.cancel();
+      this.stopMotors();
+      this.brewProcess.temperatureRegulator.stop()
+      this.brewProcess.addEvent(new BrewLauterTemperatureReachedEvent('brew.brewProcess.lauterTemperatureReached', this.targetTemperature));
       this.brewProcess.nextStep();
     }
   }
@@ -100,6 +102,14 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
     return this.stepStartTime;
   }
 
+  /**
+   * Returns the target temperature
+   */
+  public Double getTargetTemperature() {
+    return this.targetTemperature;
+  }
+
+
   public void pause() {
     this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
@@ -107,7 +117,7 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
   }
 
   public void resume() {
-    this.startMotors();
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -115,9 +125,9 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
 
   public Map getInfo(taglib) {
     return [type: grails.util.GrailsNameUtils.getShortName(this.getClass()),
-            headline: taglib.message(code: 'brew.step.mashingTemperature'),
-            targetTemperature: taglib.message(code: 'default.formatter.degrees.celsius', args: [taglib.formatNumber(format: '##0.0', number: this.recipe.mashingTemperature)]),
-            stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime)]
+            headline: taglib.message(code: 'brew.step.finalRestFinished'),
+            stepStartTime: taglib.formatDate(formatName: 'default.time.formatter', date: this.stepStartTime),
+            targetTemperature: taglib.message(code: 'default.formatter.degrees.celsius', args: [taglib.formatNumber(format: '##0.0', number: this.targetTemperature)])]
   }
   
   /**
@@ -140,7 +150,7 @@ class BrewMashingTemperatureStep extends AbstractBrewStep {
   private void stopMotors() {
     // Start the mashing pump and mixer
     if(this.brewProcess.mashingPumpRegulator) {
-      this.brewProcess.mashingPumpRegulator.disable()();
+      this.brewProcess.mashingPumpRegulator.disable();
     }
     
     if(this.brewProcess.mashingMixerRegulator) {

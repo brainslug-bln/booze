@@ -29,6 +29,12 @@ import de.booze.backend.grails.MotorDevice
  *
  */
 class MotorRegulator {
+  
+  private Integer forcedCyclingMode
+  
+  private Integer forcedOnInterval
+  
+  private Integer forcedOffInterval
 
   /**
    * Regulation cycle timer
@@ -40,6 +46,7 @@ class MotorRegulator {
    */
   private MotorTask motorTask
 
+  
   /**
    * Default logger
    */
@@ -49,7 +56,7 @@ class MotorRegulator {
    * Constructor
    */
   public MotorRegulator(MotorTask motorTask) {
-    this.motorTask = motorTask;
+    this.motorTask = motorTask;    
   }
 
   public void forceCyclingMode(Integer mode, Integer onInterval, Integer offInterval) {
@@ -64,6 +71,7 @@ class MotorRegulator {
     if(mode == MotorTask.CYCLING_MODE_INTERVAL) {
       throw new IllegalArgumentException("You must supply an on/off interval for interval cycling mode");
     }
+    this.forceCyclingMode(mode, 0, 0)
   }
 
   /**
@@ -72,13 +80,6 @@ class MotorRegulator {
   public void unforceCyclingMode() {
     this.forcedCyclingMode = this.forcedOnInterval = this.forcedOffInterval = null;
     this.enable()
-  }
-
-  /**
-   * Returns true if the actual cyclling mode is forced
-   */
-  public Map getForcedCyclingMode() {
-    return this.getActualCyclingMode;
   }
 
   /**
@@ -93,25 +94,26 @@ class MotorRegulator {
    * the MotorRegulatorTask if motor mode is interval
    */
   public void enable() {
-
+    log.error("Enabling motor")
     this.disable();
 
     def dm = this.getActualCyclingMode()
-
-    if (dm == MotorTask.CYCLING_MODE_ON) {
+    
+    if (dm.mode == MotorTask.CYCLING_MODE_ON) {
       log.debug("enabling motor continuus")
-      this.motorTask.motor.enable();
+      this.motorTask.enable();
     }
-    else if (dm == MotorTask.CYCLING_MODE_INTERVAL) {
+    else if (dm.mode == MotorTask.CYCLING_MODE_INTERVAL) {
       log.debug("enabling motor interval")
       this.timer = new Timer();
       this.timer.schedule(new MotorRegulatorTask(this), 100, 1000);
     }
     else {
       log.debug("disabling motor for cycling mode OFF")
-      this.motorTask.motor.disable()
+      this.motorTask.disable()
     }
 
+    
   }
 
   /**
@@ -120,6 +122,8 @@ class MotorRegulator {
    */
   public void disable() {
     log.debug("disabling motor")
+    this.motorTask.disable();
+    
     if (this.timer) {
       try {
         this.timer.cancel();
@@ -130,15 +134,13 @@ class MotorRegulator {
         // pass
       }
     }
-
-    this.motorTask.motor.disable();
   }
   
   /**
    * Returns the motor associated to this regulator
    */
   public MotorDevice getMotor() {
-    return this.motorTask.motor;
+    return this.motorTask.readMotor();
   }
   
   /**

@@ -26,17 +26,17 @@ import grails.converters.JSON
  *
  * @author akotsias
  */
-class BrewMashingTemperatureStartedEvent extends BrewEvent {
+class BrewTargetMashingTemperatureStartedEvent extends BrewEvent {
 
   Double mashingTemperature
 
-  public BrewMashingTemperatureStartedEvent(String message, Double mashingTemperature) {
+  public BrewTargetMashingTemperatureStartedEvent(String message, Double mashingTemperature) {
     super(message);
     this.mashingTemperature = mashingTemperature;
   }
 
   public Map getEventDataForFrontend(g) {
-    def args = [this.MashingTemperature]
+    def args = [this.mashingTemperature]
     return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message, args: args)])]
   }
 

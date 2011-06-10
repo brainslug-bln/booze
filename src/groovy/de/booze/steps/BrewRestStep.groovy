@@ -31,7 +31,7 @@ import de.booze.tasks.CheckStepTask
  *
  * @author akotsias
  */
-class BrewMashingStep extends AbstractBrewStep {
+class BrewRestStep extends AbstractBrewStep {
 
   /**
    * This steps rest
@@ -69,7 +69,7 @@ class BrewMashingStep extends AbstractBrewStep {
   public Timer timer
 
 
-  public BrewMeshStep(BrewProcess bp, RecipeRest r, Integer ri) {
+  public BrewRestStep(BrewProcess bp, RecipeRest r, Integer ri) {
     this.brewProcess = bp;
     this.rest = r;
     this.restIndex = ri;
@@ -78,7 +78,7 @@ class BrewMashingStep extends AbstractBrewStep {
     this.startMotors();
 
     // Set the target temperature
-    this.brewProcess.temperatureRegulator.setTemperature(this.rest.temperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.rest.temperature);
     
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
@@ -108,7 +108,7 @@ class BrewMashingStep extends AbstractBrewStep {
     else {
       if ((new Date()).getTime() > (this.targetTemperatureReachedTime.getTime() + (this.rest.duration * 60000))) {
         this.timer.cancel();
-        this.motors.stop();
+        this.stopMotors();
         this.brewProcess.temperatureRegulator.stop()
         this.brewProcess.addEvent(new BrewRestEvent('brew.brewProcess.restFinished', this.rest));
         this.brewProcess.nextStep();
@@ -166,13 +166,13 @@ class BrewMashingStep extends AbstractBrewStep {
   }
 
   public void pause() {
-    this.motors.stop();
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
-    this.motors.start();
+    this.startMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -208,7 +208,7 @@ class BrewMashingStep extends AbstractBrewStep {
   private void stopMotors() {
     // Start the mashing pump and mixer
     if(this.brewProcess.mashingPumpRegulator) {
-      this.brewProcess.mashingPumpRegulator.disable()();
+      this.brewProcess.mashingPumpRegulator.disable();
     }
     
     if(this.brewProcess.mashingMixerRegulator) {

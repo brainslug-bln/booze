@@ -18,6 +18,8 @@
  * */
 
 package de.booze.backend.grails
+import org.codehaus.groovy.grails.commons.ApplicationHolder as AH
+import grails.converters.JSON
 
 /**
  * Basic actions are enable/disable.
@@ -28,12 +30,20 @@ class HeaterDevice extends Device {
   Long secondsOn = 0
   Date lastEnableTime
   
+  boolean forced = false
+  
   HeaterRegulatorDevice regulator
 
-  static transients = ["secondsOn", "lastEnableTime"]
+  static transients = ["secondsOn", "lastEnableTime", "forced"]
   
   static constraints = {
     regulator(nullable: true)
+  }
+  
+  static mapping = {
+    columns {
+      regulator lazy: false
+    }
   }
 
   /**
@@ -75,7 +85,7 @@ class HeaterDevice extends Device {
   /**
    * Returns the device power if a regulator is available
    */
-  public int readSpeed() {
+  public int readPower() {
     if(this.hasRegulator()) {
       return this.regulator.readPower()
     }
@@ -85,6 +95,48 @@ class HeaterDevice extends Device {
    * Checks if this device has a power regulator
    */
   public boolean hasRegulator() {
-    return !this.regulator.isNull()
+    return (this.regulator != null)
+  }
+  
+  /**
+   * Toggles the force mode for this heater
+   */
+  public void toggleForce() {
+    // STUB
+    if(!this.forced) this.forced = true
+    else this.forced = false
+  }
+  
+  /**
+   * Returns heater force status
+   */
+  public boolean forced() {
+    return this.forced
+  }
+  
+  /**
+   * Init the device driver
+   * Store an instance of it in the transient driverInstance
+   */
+  def initDevice() {
+    def myClassLoader = AH.application.mainContext.getClassLoader()
+    def myClass = Class.forName(driver, false, myClassLoader)
+    driverInstance = myClass.newInstance(JSON.parse(options));
+    
+    if(this.hasRegulator()) {
+      this.regulator.initDevice()
+    }
+  }
+
+  /**
+   * Gracefully shut down a driver instance
+   */
+  def shutdown() {
+    if(this.hasRegulator()) {
+      this.regulator.shutdown()
+    }
+    
+    driverInstance.shutdown()
+    driverInstance = null
   }
 }

@@ -15,32 +15,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.drivers.heaters
 
+import org.apache.log4j.Logger
 import de.booze.driverInterfaces.AbstractHeaterDriver
 
 /**
  *
- * Driver for a heater device connect via
- * an IOWarrior usb controller
+ * Driver for a dummy heater device
  *
  * @author akotsias
  */
 class DummyHeaterDriver extends AbstractHeaterDriver {
 
-  private boolean enabled = false
-
   /**
-   * Address pattern
+   * Logger instance
    */
-  final static public String ADDRESS_PATTERN = "dummy"
+  private Logger log = Logger.getLogger(getClass().getName());
+
+  private boolean enabled = false;
+  
+  /**
+   * Driver options
+   */
+  public static availableOptions = []
+
 
   /**
    * Constructor
    */
-  public DummyHeaterDriver(String address) throws Exception {
+  public DummyHeaterDriver(Map o) throws Exception {
+    this.setOptions(o);
+    
   }
 
   /**
@@ -63,24 +71,12 @@ class DummyHeaterDriver extends AbstractHeaterDriver {
   public void disable() throws Exception {
     this.enabled = false;
   }
-
+    
   /**
-   * Checks if the given address is valid for this driver
-   *
-   * iow://PORT/BIT
-   *
-   * @param String Address to check
+   * Device shutdown
    */
-  public static boolean checkAddress(String address) {
-    return (address ==~ /dummy/) ? true : false
-  }
-
-  /**
-   * Sets the driver's address
-   *
-   * @param String Address to set
-   */
-  public void setAddress(String address) throws Exception {
+  public void shutdown() throws Exception {
+    this.disable()
   }
 }
 

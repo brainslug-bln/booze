@@ -87,7 +87,7 @@ class BrewCookingStep extends AbstractBrewStep {
     this.startMotors();
 
     // Set the target temperature
-    this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
     
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setCookingReferenceSensors();
@@ -167,7 +167,7 @@ class BrewCookingStep extends AbstractBrewStep {
    */
   public void setTargetTemperature(Double t) {
     this.targetTemperature = t;
-    this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
   }
 
   /**
@@ -234,7 +234,7 @@ class BrewCookingStep extends AbstractBrewStep {
   private void stopMotors() {
     // Start the mashing pump and mixer
     if(this.brewProcess.cookingPumpRegulator) {
-      this.brewProcess.cookingPumpRegulator.disable()();
+      this.brewProcess.cookingPumpRegulator.disable();
     }
     
     if(this.brewProcess.cookingMixerRegulator) {

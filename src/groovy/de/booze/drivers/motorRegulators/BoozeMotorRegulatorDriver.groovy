@@ -85,12 +85,12 @@ class BoozeMotorRegulatorDriver extends AbstractMotorRegulatorDriver {
    * @param int speed
    */
   public void setSpeed(Integer speed) throws IllegalArgumentException {
-    if(speed > 0 && speed < 100) {
+    if(speed >= 0 && speed <= 100) {
       this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(speed * 2.54))
       this.speed = speed;
     }
     else {
-      throw IllegalArgumentException("Motor speed must be between 0 and 100");
+      throw new IllegalArgumentException("Motor speed must be between 0 and 100");
     }
   }
 

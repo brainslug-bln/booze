@@ -5,9 +5,9 @@
     </head>
     <body>
       <h1><g:message code="recipe.list.headline" /></h1>
-      <div class="singleColumn itemList recipeList">
+      <div class="itemList recipeList">
         <ul>
-          <g:each in="${recipeInstanceList}" var="recipe">
+          <g:each in="${recipes}" var="recipe">
           <li class="ui-widget-content" onclick="window.location.href='${createLink(controller:"recipe", action:"edit", id:recipe.id)}'">
             <div class="name"><g:fieldValue bean="${recipe}" field="name" /></div>
             <div class="author"><g:fieldValue bean="${recipe}" field="author" /></div>
@@ -15,9 +15,7 @@
           </li>
           </g:each>
 
-          <li class="pagination">
-            &lt;&lt; 1 2 3 4 5 6 7 8 9 &gt;&gt;
-          </li>
+          <li class="pagination"><g:paginate controller="recipe" action="list" total="${recipeTotalCount}" /></li>
         </ul>
       </div>
     </body>

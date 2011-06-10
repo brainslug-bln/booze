@@ -58,7 +58,9 @@ class PressureMonitorTask extends TimerTask {
     this.pressureSensors.each {
       try {
         Double pressure = it.readPressure();
+        log.debug("PressureMonitorTask pressure is ${pressure}mbar")
         if (pressure > it.pressureMaxLimit) {
+          log.debug("pressure exceeded limit (${it.pressureMaxLimit}mbar), pausing brew process")
           //if((this.lastExceedanceEvent.getTime() + PressureRegulator.exceedanceTimeout) < (new Date().getTime())) {
           brewProcess.pause()
           brewProcess.addEvent(new BrewPressureExceededEvent('brew.brewProcess.pressureExceeded', pressure, it.name))
@@ -66,7 +68,7 @@ class PressureMonitorTask extends TimerTask {
         }
       }
       catch (Exception e) {
-        log.error("Could not read pressure ${e}");
+        log.error("PressureMonitorTask could not read pressure ${e}");
       }
     }
   }

@@ -2,7 +2,8 @@
     <head>
         <title><g:message code="recipe.edit.headline" /></title>
         <meta name="layout" content="main" />
-        
+        <g:javascript src="booze.recipe.js" />
+
         <script type="text/javascript">
           $(document).ready(function() {
             booze.recipe = new BoozeRecipe('update');

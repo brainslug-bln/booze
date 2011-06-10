@@ -96,15 +96,17 @@ class SettingController {
         
         if(params.setting[task]?.active == "true") {
           newTask = new MotorTask(params.setting[task])
-          
           newTask.setting = setting
+          newTask.checkTargetSpeed()
           
           if(!newTask.validate()) {
             validationErrors = true
             newTask.discard()
           }
+          
+          
         }
-        
+
         setting[task] = newTask
       }  
     }
@@ -128,6 +130,9 @@ class SettingController {
         flash.message = g.message(code:"setting.update.failed")
         log.error("Updating setting failed: ${e}")
       }
+    }
+    else {
+      setting.discard()
     }
     
     render([success: false, tab: params.tab, html: g.render(template:params.tab, bean: setting)] as JSON)

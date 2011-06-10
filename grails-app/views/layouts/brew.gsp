@@ -4,6 +4,7 @@
   <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
   <title><g:layoutTitle default="Booze" /></title>
 
+  <core:settingsFontSize />
   <link href="${resource(dir:'css',file:'main.css')}" rel="stylesheet" />
   <link href="${resource(dir:'/css/yaml/core/',file:'base.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/yaml/',file:'basemod.css')}" rel="stylesheet" type="text/css" />
@@ -11,14 +12,25 @@
   <link href="${resource(dir:'/css/',file:'jquery-ui.css')}" rel="stylesheet" type="text/css" />
 
   <link href="${resource(dir:'/css/',file:'calculator.css')}" rel="stylesheet" type="text/css" />
+   <link href="${resource(dir:'/css/',file:'brew.css')}" rel="stylesheet" type="text/css" />
+
+  <g:javascript>
+      var APPLICATION_ROOT = "${resource(dir: '', absolute: true)}";      
+      var APPLICATION_HOME = "${createLink(uri:'/home')}";
+  </g:javascript>
 
   <g:javascript src="jquery.js" />
   <g:javascript src="jquery-ui.js" />
+  <g:javascript src="jquery.tmpl.js" />
+  <g:javascript src="jquery.sound.js" />
   <g:javascript src="booze.js" />
+  <g:javascript src="booze.messageSource.js" />
+  <g:javascript src="booze.logger.js" />
+  <g:javascript src="booze.notifier.js" />
   <g:javascript src="booze.calculator.js" />
-
+  <g:javascript src="booze.brew.js" />
+  
   <g:layoutHead />
-
 </head>
 <body>
   <div class="page_margins">
@@ -28,12 +40,6 @@
         <g:layoutBody />
       </div>
 
-      <div class="clearfix"></div>
-      <!-- begin: #footer -->
-      <div id="footer" class="ui-widget ui-widget-content ui-corner-all">
-        <div class="content">&copy;2011 Andreas Kotsias</div>
-      </div>
-      
       <div class="clearfix">&nbsp;</div>
     </div>
     <div class="clearfix">&nbsp;</div>

@@ -51,7 +51,6 @@ class DeviceSwitcher {
 
   public static DeviceSwitcher getInstance() {
     return instance;
-
   }
 
   /**

@@ -92,8 +92,9 @@
     }
 
     .contentbox .singleColumn {
-        padding: 0.5em 1em 0.5em 1em;
+        padding: 1% 1.5% 1% 1.5%;
         float: left;
+        width: 97%;
     }
 
     .contentbox .leftColumn { float: left; width: 30%;}
@@ -101,6 +102,21 @@
     .contentbox .leftColumn_content { padding: 0; float: left; }
     .contentbox .rightColumn_content { float: left; padding: 0.5em 1em 0.5em 1em; float: left; width: 100%;}
 
+
+    .column50percent {
+      width: 46%;
+      margin: 0;
+      padding: 0;
+      float: left;
+      margin-right: 4%;
+    }
+
+    .column33percent {
+      width: 33%;
+      margin: 0;
+      padding: 0;
+      float: left;
+    }
 
     .leftNav ul {
         list-style-type: none;

@@ -61,26 +61,32 @@ class MotorRegulatorTask extends TimerTask {
    */
   public void run() {
     try {
+      log.debug("running regulation for motor cycling mode")
       
       MotorDevice motor = this.motorRegulator.getMotor(); 
       Map cm = this.motorRegulator.getActualCyclingMode();
       
       // Save the first run time, start disabled
       if (this.virgin) {
+        log.debug("first run for MotorRegulatorTask")
         this.virgin = false;
         this.actualIntervalStart = new Date();
         return
       }
 
       if (motor.enabled()) {
+        log.debug("motor is actually enabled")
         if ((this.actualIntervalStart.getTime() + (cm.onInterval * 1000)) < (new Date().getTime())) {
-          motor.disable();
+          log.debug("disabling motor, actual offInterval passed by")
+          this.motorRegulator.motorTask.disable();
           this.actualIntervalStart = new Date();
         }
       }
       else {
+        log.debug("motor is actually disabled")
         if ((this.actualIntervalStart.getTime() + (cm.offInterval * 1000)) < (new Date().getTime())) {
-          motor.enable();
+          log.debug("enabling motor, actual offInterval passed by")
+          this.motorRegulator.motorTask.enable();
           this.actualIntervalStart = new Date();
         }
       }

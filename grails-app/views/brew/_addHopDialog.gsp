@@ -6,35 +6,30 @@
   <fieldset>
     <label><g:message code="hop.name"/></label>
     <div class="value">
-      #{name}
+      {{= name}}
     </div>
 
-    <div class="clearfix"></div>
+    <div class="clear"></div>
 
     <label><g:message code="hop.percentAlpha"/></label>
     <div class="value">
-      #{percentAlpha}
+      {{= percentAlpha}}
     </div>
 
-    <div class="clearfix"></div>
+    <div class="clear"></div>
 
     <label><g:message code="hop.amount"/></label>
     <div class="value">
-      #{amount}
+      {{= amount}}
     </div>
 
-    <div class="clearfix"></div>
+    <div class="clear"></div>
 
     <label><g:message code="hop.time"/></label>
     <div class="value">
-      #{time}
+      {{= time}}
     </div>
 
-    <div class="clearfix"></div>
+    <div class="clear"></div>
   </fieldset>
-
-  <div class="buttonArea">
-    <input type="button" name="close" onclick="booze.brew.addHopWindow.close()" value="${message(code: "brew.init.closeWindow")}"/>
-  </div>
-
 </div>

@@ -37,7 +37,7 @@ class BrewCoolingStep extends AbstractBrewStep {
    */
   public BrewProcess brewProcess;
 
-  public BrewCoolingFinishedStep(BrewProcess bp) {   
+  public BrewCoolingStep(BrewProcess bp) {   
     this.brewProcess = bp;
     
     this.stepStartTime = new Date()
@@ -61,14 +61,14 @@ class BrewCoolingStep extends AbstractBrewStep {
   }
   
   public void startMotors() {
-    if(this.brewProcess.drainPump) {
-      this.brewProcess.drainPump.enable()
+    if(this.brewProcess.drainPumpRegulator) {
+      this.brewProcess.drainPumpRegulator.enable()
     }
   }
   
   public void stopMotors() {
-    if(this.brewProcess.drainPump) {
-      this.brewProcess.drainPump.disable()
+    if(this.brewProcess.drainPumpRegulator) {
+      this.brewProcess.drainPumpRegulator.disable()
     }
   }
 }

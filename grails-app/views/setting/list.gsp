@@ -8,7 +8,7 @@
       <div class="singleColumn itemList">
         <ul>
           <g:each in="${settings}" var="setting">
-          <li class="ui-widget-content">
+          <li class="ui-widget-content" onclick="window.location.href='${createLink(controller:'setting', action:'edit', id:setting.id)}'">
             <div class="name"><g:fieldValue bean="${setting}" field="name" /></div>
           </li>
           </g:each>

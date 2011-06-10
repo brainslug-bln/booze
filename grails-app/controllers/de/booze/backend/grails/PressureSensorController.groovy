@@ -53,7 +53,7 @@ class PressureSensorController {
     
     if(ts.validate()) {
       try {
-        ts.save()
+        ts.save(flush: true)
         
         render([success: true, message: g.message(code:"setting.pressureSensor.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
         return

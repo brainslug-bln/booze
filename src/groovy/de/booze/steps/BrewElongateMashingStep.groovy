@@ -72,7 +72,7 @@ class BrewElongateMashingStep extends AbstractBrewStep {
     this.startMotors();
 
     // Set the target temperature
-    this.brewProcess.temperatureRegulator.setTemperature(this.targetTemperature);
+    this.brewProcess.temperatureRegulator.setTargetTemperature(this.targetTemperature);
     
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
@@ -94,7 +94,7 @@ class BrewElongateMashingStep extends AbstractBrewStep {
   public void checkStep() {
     if ((this.stepStartTime.getTime() + this.time * 1000) < (new Date()).getTime()) {
       this.timer.cancel();
-      this.motors.stop();
+      this.stopMotors();
       this.brewProcess.temperatureRegulator.stop()
       this.brewProcess.addEvent(new BrewMashingElongationFinishedEvent('brew.brewProcess.mashingElongationFinished'));
       this.brewProcess.nextStep();
@@ -126,13 +126,13 @@ class BrewElongateMashingStep extends AbstractBrewStep {
 
 
   public void pause() {
-    this.motors.stop();
+    this.stopMotors();
     this.brewProcess.temperatureRegulator.stop();
     this.timer.cancel();
   }
 
   public void resume() {
-    this.motors.start();
+    this.startMotors();
     this.brewProcess.temperatureRegulator.start();
     this.timer = new Timer();
     this.timer.schedule(new CheckStepTask(this), 100, 1000);
@@ -166,7 +166,7 @@ class BrewElongateMashingStep extends AbstractBrewStep {
   private void stopMotors() {
     // Start the mashing pump and mixer
     if(this.brewProcess.mashingPumpRegulator) {
-      this.brewProcess.mashingPumpRegulator.disable()();
+      this.brewProcess.mashingPumpRegulator.disable();
     }
     
     if(this.brewProcess.mashingMixerRegulator) {

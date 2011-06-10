@@ -40,7 +40,7 @@
         <label for="recipe.finalBeerVolume"><g:message code="recipe.finalBeerVolume.label" /></label>
         <span class="immutable">
           <g:if test="${it?.finalBeerVolume}">
-            <g:formatNumber number="${it?.finalBeerVolume}" format="####.#" />
+            <g:formatNumber number="${it?.finalBeerVolume}" format="###0.#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotComputable" />
@@ -52,7 +52,7 @@
         <label for="recipe.originalWort"><g:message code="recipe.originalWort" /></label>
         <span class="immutable">
           <g:if test="${it?.originalWort}">
-            <g:formatNumber number="${it?.originalWort}" format="####.0#" />
+            <g:formatNumber number="${it?.originalWort}" format="###0.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotAvailable" />
@@ -64,7 +64,7 @@
         <label for="recipe.ibu"><g:message code="recipe.ibu.label" /></label>
         <span class="immutable">
           <g:if test="${it?.ibu}">
-            <g:formatNumber number="${it?.ibu}" format="####.0#" />
+            <g:formatNumber number="${it?.ibu}" format="###0.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotComputable" />
@@ -76,7 +76,7 @@
         <label for="recipe.ebc"><g:message code="recipe.ebc.label" /></label>
         <span class="immutable">
           <g:if test="${it?.ebc}">
-            <g:formatNumber number="${it?.ebc}" format="####.0#" />
+            <g:formatNumber number="${it?.ebc}" format="###0.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotComputable" />
@@ -88,7 +88,7 @@
         <label for="recipe.alcohol"><g:message code="recipe.alcohol.label" /></label>
         <span class="immutable">
           <g:if test="${it?.alcohol}">
-            <g:formatNumber number="${it?.alcohol}" format="####.0#" />
+            <g:formatNumber number="${it?.alcohol}" format="###0.0#" />
           </g:if>
           <g:else>
             <g:message code="recipe.valueNotAvailable" />

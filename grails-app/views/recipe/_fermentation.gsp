@@ -20,7 +20,7 @@
           <div class="errors" id="errors_fermentationTemperature">
             <g:renderErrors bean="${it}" field="fermentationTemperature" as="list" />
           </div>
-        <input class="small" type="text" name="fermentationTemperature" value="${formatNumber(format:'###', number:it?.fermentationTemperature)}" maxlength="10" onkeyup="$('#errors_fermentationTemperature').slideUp(100)" />
+        <input class="small" type="text" name="fermentationTemperature" value="${formatNumber(format:'##0.0#', number:it?.fermentationTemperature)}" maxlength="10" onkeyup="$('#errors_fermentationTemperature').slideUp(100)" />
       </div>
 
       <div class="row">
@@ -28,7 +28,15 @@
           <div class="errors" id="errors_alcohol">
             <g:renderErrors bean="${it}" field="alcohol" as="list" />
           </div>
-        <input class="small" type="text" name="alcohol" value="${formatNumber(format:'###', number:it?.alcohol)}" maxlength="10" onkeyup="$('#errors_alcohol').slideUp(100)" />
+        <input class="small" type="text" name="alcohol" value="${formatNumber(format:'##0.0#', number:it?.alcohol)}" maxlength="10" onkeyup="$('#errors_alcohol').slideUp(100)" />
+      </div>
+      
+      <div class="row">
+        <label for="recipe.co2Concentration"><g:message code="recipe.co2Concentration.label" /></label>
+          <div class="errors" id="errors_co2Concentration">
+            <g:renderErrors bean="${it}" field="alcohco2Concentrationol" as="list" />
+          </div>
+        <input class="small" type="text" name="co2Concentration" value="${formatNumber(format:'##0.0#', number:it?.co2Concentration)}" maxlength="10" onkeyup="$('#errors_co2Concentration').slideUp(100)" />
       </div>
     </div>
 

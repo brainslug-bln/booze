@@ -19,7 +19,7 @@
 
 package de.booze.backend.grails
 
-class Rest implements Comparable {
+class Rest implements Comparable, Serializable {
 
   /**
    * Target temperature

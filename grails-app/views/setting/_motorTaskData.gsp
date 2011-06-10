@@ -6,7 +6,7 @@
   
   <select name="setting.${type}.motor.id">
       <option onclick="$('#motorTask_${type}_regulationMode').hide()" value="" <g:if test="${ !setting[type]?.motor }">checked="checked"</g:if>></option>
-    <g:each in="${setting.listMotors()}" var="motor">
+    <g:each in="${setting.motors}" var="motor">
       <option onclick="<g:if test='${motor.regulator != null}'>$('#motorTask_${type}_regulationMode').show()</g:if><g:else>$('#motorTask_${type}_regulationMode').hide()</g:else>" value="${motor.id}" <g:if test="${motor.id == setting[type]?.motor?.id }">selected="selected"</g:if>>${motor.name.encodeAsHTML()}</option>
     </g:each>
   </select>
@@ -50,6 +50,9 @@
 <div id="motorTask_${type}_regulationModeData">
   <div id="motorTask_${type}_regulationModeData_speed" <g:if test="${setting[type]?.regulationMode != de.booze.backend.grails.MotorTask.REGULATION_MODE_SPEED}">style="display: none"</g:if>>
     <div class="row">
+      <div class="errors" id="motorTasksTab_errors_${type}_targetSpeed">
+         <g:renderErrors bean="${setting[type]}" field="targetSpeed" as="list" />
+      </div>
       <label for="setting.${type}.targetSpeed"><g:message code="motorTask.targetSpeed.label" /></label>
       <input type="text" name="setting.${type}.targetSpeed" value="${setting[type]?.targetSpeed}" />
     </div>
@@ -58,6 +61,9 @@
   <div id="motorTask_${type}_regulationModeData_temperature" <g:if test="${setting[type]?.regulationMode != de.booze.backend.grails.MotorTask.REGULATION_MODE_TEMPERATURE}">style="display: none"</g:if>>
     <div class="row">
       <div class="column50percent">
+        <div class="errors" id="motorTasksTab_errors_${type}_targetTemperature">
+           <g:renderErrors bean="${setting[type]}" field="targetTemperature" as="list" />
+        </div>
         <label for="setting.${type}.targetTemperature"><g:message code="motorTask.targetTemperature.label" /></label>
         <input type="text" name="setting.${type}.targetTemperature" value="${formatNumber(number:setting[type]?.targetTemperature, format:'###.##')}" />
       </div>
@@ -83,6 +89,9 @@
   <div id="motorTask_${type}_regulationModeData_pressure" <g:if test="${setting[type]?.regulationMode != de.booze.backend.grails.MotorTask.REGULATION_MODE_PRESSURE}">style="display: none"</g:if>>
     <div class="row">
       <div class="column50percent">
+        <div class="errors" id="motorTasksTab_errors_${type}_targetPressure">
+           <g:renderErrors bean="${setting[type]}" field="targetPressure" as="list" />
+        </div>
         <label for="setting.${type}.targetPressure"><g:message code="motorTask.targetPressure.label" /></label>
         <input type="text" name="setting.${type}.targetPressure" value="${formatNumber(number:setting[type]?.targetPressure, format:'###.##')}" />
       </div>

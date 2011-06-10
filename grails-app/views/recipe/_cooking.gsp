@@ -18,7 +18,7 @@
       
       <div class="row">
         <label for="recipe.ibu"><g:message code="recipe.ibu.label" /></label>
-        <span class="immutable"><g:formatNumber format="###.0#" number="${it?.ibu}" /></span>
+        <span class="immutable"><g:formatNumber format="##0.0#" number="${it?.ibu}" /></span>
       </div>
     </div>
 
@@ -28,7 +28,7 @@
         <div class="errors" id="errors_originalWort">
           <g:renderErrors bean="${it}" field="originalWort" as="list" />
         </div>
-        <input class="small" type="text" name="originalWort" value="${formatNumber(format:'####.0#', number:it?.originalWort)}" maxlength="10" onkeyup="$('#errors_originalWort').slideUp(100)" />
+        <input class="small" type="text" name="originalWort" value="${formatNumber(format:'###0.0#', number:it?.originalWort)}" maxlength="10" onkeyup="$('#errors_originalWort').slideUp(100)" />
       </div>
 
       <div class="row">
@@ -36,7 +36,7 @@
         <div class="errors" id="errors_postIsomerization">
           <g:renderErrors bean="${it}" field="postIsomerization" as="list" />
         </div>
-        <input class="small" type="text" name="postIsomerization" value="${formatNumber(format:'####.0#', number:it?.postIsomerization)}" maxlength="10" onkeyup="$('#errors_postIsomerization').slideUp(100)" />
+        <input class="small" type="text" name="postIsomerization" value="${formatNumber(format:'###0.0#', number:it?.postIsomerization)}" maxlength="10" onkeyup="$('#errors_postIsomerization').slideUp(100)" />
       </div>
     </div>
 

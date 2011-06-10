@@ -3,21 +3,6 @@
     width: 100%;
 }
 
-.form .column50percent {
-    width: 46%;
-    margin: 0;
-    padding: 0;
-    float: left;
-    margin-right: 4%;
-}
-
-.form .column33percent {
-    width: 33%;
-    margin: 0;
-    padding: 0;
-    float: left;
-}
-
 .form .row {
     min-height: 3.5em;
     width: 100%;

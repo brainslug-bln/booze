@@ -20,7 +20,7 @@ package de.booze.backend.grails
 
 import java.util.Random
 
-class Recipe {
+class Recipe implements Serializable {
   
   def recipeService, hopService
 
@@ -150,8 +150,12 @@ class Recipe {
    * Estimated EBU beer color
    */
   Double ebc
+  
+  Double co2Concentration
 
   SortedSet rests
+  SortedSet malts
+  SortedSet hops
 
   static hasMany = [rests: RecipeRest, hops: RecipeHop, malts: RecipeMalt]
 
@@ -186,6 +190,7 @@ class Recipe {
     storingTime(min: 0.0 as Double, max: 1000 as Double, nullable: true)
     storingTemperature(min: 0.0 as Double, max: 50 as Double, nullable: true)
     yeast(nullable: false, blank: false, size: 3..2000)
+    co2Concentration(nullable: true, min: 0d, max: 1000d)
   }
 
   static mapping = {
@@ -229,10 +234,28 @@ class Recipe {
   }
   
   def afterLoad = {
+    if(!mashingTemperature) {
+      doColdMashing = true
+    }
+    else {
+      doColdMashing = false
+    }
     this.calculateData()
   }
   
   def afterUpdate = {
     this.calculateData()
+  }
+  
+  def beforeInsert = {
+    if(doColdMashing == true) {
+      mashingTemperature = null
+    }
+  }
+  
+  def beforeUpdate = {
+    if(doColdMashing == true) {
+      mashingTemperature = null
+    }
   }
 }

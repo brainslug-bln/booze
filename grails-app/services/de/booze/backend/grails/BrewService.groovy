@@ -20,27 +20,24 @@
 package de.booze.backend.grails
 
 import de.booze.process.BrewProcess
+import de.booze.process.BrewProcessHolder
 import de.booze.regulation.MotorRegulator
+import de.booze.regulation.TemperatureRegulator
 
 class BrewService {
 
-  boolean transactional = true;
-  static scope = "singleton";
+  //boolean transactional = true;
+  //static scope = "singleton";
 
-  BrewProcess brewProcess;
-
-  def taglib;
-
-  public BrewProcess initBrewProcess(Recipe recipe, Setting settings, taglib) throws Exception {
-    this.taglib = taglib;
-    this.brewProcess = new BrewProcess(recipe, settings);
-  }
 
   /**
    * Builds a map with status information for the actual brew process
    */
-  public Map updateStatus() throws Exception {
+  public Map updateStatus(taglib) throws Exception {
 
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    BrewProcess p = f.getBrewProcess()
+    
     log.debug("Collecting status data...")
     Date startTime = new Date();
 
@@ -50,23 +47,35 @@ class BrewService {
 
     try {
       log.debug("Reading temperature sensors")
-      this.brewProcess.temperatureSensors.each {
+      p.temperatureSensors.each {
         // Round temperature to .5 steps
         def t = Math.round(it.readTemperatureImmediate()*2d)/2d;
-        status.temperatureSensors.add([id: it.id,
+        Map ts = [id: it.id,
                 temperature: t,
-                label: taglib.message(code: "default.formatter.degrees.celsius", args: [taglib.formatNumber(number: t, format: "##0.0")])]);
+                label: taglib.message(code: "default.formatter.degrees.celsius", args: [taglib.formatNumber(number: t, format: "##0.0")])]
+             
+        if(p.temperatureRegulator.getReferenceSensors() == TemperatureRegulator.REFERENCE_SENSORS_MASHING && it.referenceForMashing == true) {
+          ts.reference = true
+        }
+        else if(p.temperatureRegulator.getReferenceSensors() == TemperatureRegulator.REFERENCE_SENSORS_COOKING && it.referenceForCooking == true) {
+          ts.reference = true
+        }
+        else {
+          ts.reference = false
+        }
+        
+        status.temperatureSensors.add(ts);
       }
     }
     catch(Exception e) {
-      log.error("Error reading temperature sensors: ${e}");
+      log.debug("Error reading temperature sensors: ${e}");
       e.printStackTrace()
     }
 
 
     try {
       log.debug("Reading pressure sensors")
-      this.brewProcess.pressureSensors.each {
+      p.pressureSensors.each {
         def pressure = Math.round(it.readPressure()*2d)/2d;
         status.pressureSensors.add([id: it.id,
                 pressure: pressure,
@@ -74,14 +83,14 @@ class BrewService {
       }
     }
     catch(Exception e) {
-      log.error("Error reading pressure sensors: ${e}");
+      log.debug("Error reading pressure sensors: ${e}");
       e.printStackTrace()
     }
 
     try {
       log.debug("Reading heater status")
-      this.brewProcess.heaters.each {
-        Map h = [id: it.id, enabled: it.enabled()];
+      p.heaters.each {
+        Map h = [id: it.id, enabled: it.enabled(), forced: it.forced()];
         if(it.hasRegulator()) {
           h.power = it.readPower();
         }
@@ -89,31 +98,31 @@ class BrewService {
       }
     }
     catch(Exception e) {
-      log.error("Error reading heater status: ${e}");
+      log.debug("Error reading heater status: ${e}");
       e.printStackTrace()
     }
 
     status.motors = []
-    ["mashingMixer", "mashingPump", "cookingMixer", "cookingPump", "drainPump"].each() { ->
-      MotorRegulator mr = this.brewProcess[it+"Regulator"] 
+    ["mashingMixerRegulator", "mashingPumpRegulator", "cookingMixerRegulator", "cookingPumpRegulator", "drainPumpRegulator"].each() {
+      MotorRegulator mr = p[it] 
       if(mr) {
         try {
           log.debug("Reading motor status: ${mr.motor}")
 
           def myMotor = [id: it, 
-                         enabled: mr.motorTask.motor.enabled(),
-                         hasForcedCyclingMode:mr.forcedCyclingMode(), 
-                         cyclingMode: mr.getActualCyclingMode,
-                         message: taglib.message(code: "motorDeviceMode.mode.${MotorDeviceMode.MODE_OFF}")]
+                         enabled: mr.motorTask.enabled(),
+                         hasForcedCyclingMode:mr.forced(), 
+                         cyclingMode: mr.getActualCyclingMode(),
+                         message: taglib.message(code: "motorDeviceMode.mode.${MotorTask.CYCLING_MODE_OFF}")]
                        
           if(mr.motorTask.motor.hasRegulator()) {
-            myMotor.power = mr.motorTask.motor.readPower();
+            myMotor.speed = mr.motorTask.motor.readSpeed();
           }
 
           status.motors.add(myMotor);
         }
         catch(Exception e) {
-          log.error("Error reading motor status: ${e}");
+          log.debug("Error reading motor status: ${e}");
           e.printStackTrace()
         }
       }
@@ -121,18 +130,18 @@ class BrewService {
 
 
     // Read actual used reference sensors
-    status.referenceSensors = this.brewProcess.temperatureRegulator.getReferenceSensors()
+    status.referenceSensors = p.temperatureRegulator.getReferenceSensors()
 
-    status.targetTemperature = this.brewProcess.temperatureRegulator.getTemperature();
+    status.targetTemperature = p.temperatureRegulator.getTargetTemperature();
 
-    status.actualStep = this.brewProcess.getActualStep().getInfo(this.taglib);
+    status.actualStep = p.getActualStep().getInfo(taglib);
 
-    status.events = this.getActualEvents();
+    status.events = this.getActualEvents(taglib);
 
-    status.pause = this.brewProcess.isPaused();
+    status.pause = p.isPaused();
 
     // Elapsed time in minutes
-    status.timeElapsed = Math.round(((new Date()).getTime() - this.brewProcess.initTime.getTime()) / 60000)
+    status.timeElapsed = Math.round(((new Date()).getTime() - p.initTime.getTime()) / 60000)
 
     status.success = true;
 
@@ -146,11 +155,13 @@ class BrewService {
    * Generates a list of events suitable for
    * delivery to the frontend
    */
-  public List getActualEvents() {
-
+  public List getActualEvents(taglib) {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+    BrewProcess p = f.getBrewProcess()
+    
     List events = [];
-    this.brewProcess.getEvents().each {
-      events.add(it.getEventDataForFrontend(this.taglib));
+    p.getEvents().each {
+      events.add(it.getEventDataForFrontend(taglib));
     }
     return events;
   }

@@ -13,7 +13,7 @@ class RecipeController {
    */
   def list = {
     params.max = Math.min(params.max ? params.max.toInteger() : 10, 100)
-    [recipeInstanceList: Recipe.list(params), recipeInstanceTotal: Recipe.count()]
+    [recipes: Recipe.list(params), recipeTotalCount: Recipe.count()]
   }
 
   /**
@@ -80,6 +80,7 @@ class RecipeController {
     if(params.tab == 'mashing') {
       recipe.malts.clear()
       recipe.rests.clear()
+      log.error("Cleared rests and malts")
     }
     
     recipe.properties = params

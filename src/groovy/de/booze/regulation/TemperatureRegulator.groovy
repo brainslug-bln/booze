@@ -208,15 +208,20 @@ class TemperatureRegulator {
    * Stops temperature controlling
    */
   public void stop() {
-    if (!this.timer != null) {
+    if (this.timer != null) {
       try {
         this.timer.cancel();
       }
       catch (Exception e) {}
     }
 
-    this.heaters.each {
-      it.disable();
+    try {
+      this.heaters.each {
+        it.disable();
+      }
+    }
+    catch(Exception e) {
+      log.error("Failed to disable heater: ${e}")
     }
   }
 

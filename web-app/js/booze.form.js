@@ -75,7 +75,7 @@ BoozeForm.prototype.deleteRow = function(callee, options) {
         }
     }
     else {
-        booze.notifier.notify(booze.messageSource.message("js.booze.recipe.removeRow.lastRowLeft"), {duration: 5000});
+        booze.notifier.notify(booze.messageSource.message("js.booze.recipe.removeRow.lastRowLeft"));
     }
 };
 

@@ -90,7 +90,7 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
      * @param Double Minimum temperature value
      * @param Double Maximum temperature value
      */
-    public BoozeTemperatureSensorDriver(String address) throws Exception, IllegalArgumentException {
+    public BoozeTemperatureSensorDriver(Map o) throws Exception, IllegalArgumentException {
 
         this.iow = IoWarriorController.getInstance()
 

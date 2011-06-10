@@ -16,9 +16,7 @@
 
       <p><g:message code="brew.initError.startupFailed"/></p>
       <div class="container">
-        <pre>
           ${msg.encodeAsHTML()}
-        </pre>
       </div>
 
       <g:if test="${recipe}">

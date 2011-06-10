@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -19,13 +19,13 @@
 
 
 /**
- * BoozeBrew class contains all methods
+ * BoozeBrew class containing all methods
  * for brew process handling
  *
  */
 function BoozeBrew() {
 
-    /**
+  /**
      * Indicates if the last update call
      * is already finished
      *
@@ -34,185 +34,126 @@ function BoozeBrew() {
      *
      * @type Integer
      */
-    this.updateStatus = 1;
+  this.updateStatus = 1;
 
-    /**
+  /**
      * Handle for updateStatus timeout
      *
      * @type {setTimeoutHandle}
      */
-    this.updateTimeoutHandle = null;
+  this.updateTimeoutHandle = null;
 
-    /**
+  /**
      * Timeout for update calls (ms)
      *
      * @type Integer
      */
-    this.updateTimeout = 1000;
+  this.updateTimeout = 1000;
 
-    /**
+  /**
      * Maximal omits to permit for update
      *
      * @type Integer
      */
-    this.maxUpdateOmits = 15;
+  this.maxUpdateOmits = 15;
 
-    /**
+  /**
      * Actually ommitet updates count
      *
      * @type Integer
      */
-    this.updateOmits = 0;
+  this.updateOmits = 0;
 
-    /**
-     * Handle for meshingTemperature window
-     *
-     * @type Window
-     */
-    this.meshingTemperatureReachedWindow;
-
-    /**
-     * Handle for initialization window
-     *
-     * @type Window
-     */
-    this.initWindow;
-
-    /**
-     * Handle for cooking finished window
-     *
-     * @type Window
-     */
-    this.cookingFinishedWindow;
-
-    /**
-     * Handle for fill temperature reached windows
-     *
-     * @type Window
-     */
-    this.fillTemperatureReachedWindow;
-
-    /**
-     * Slider instance for cooking temperature adjustion
-     *
-     * @type Control.Slider
-     */
-    this.cookingTemperatureSlider;
-
-    /**
-     * Slider instance for adjustion of
-     * heating temperature offset
-     *
-     * @type Control.Slider
-     */
-    this.temperatureOffsetSlider;
-
-    /**
-     * Cancel dialog handle
-     *
-     * @type Object
-     */
-    this.cancelDialog;
-
-    /**
-     * Edit protocol dialog handle
-     *
-     * @type Object
-     */
-    this.editProtocolDialog;
-
-    /**
+  /**
      * AliveThrobber status count
      *
      * @type Integer
      */
-    this.aliveThrobber = 0;
+  this.aliveThrobber = 0;
 
-    /**
+  /**
      * Open dialogs
      *
      * @type Array
      */
-    this.dialogs = [];
+  this.dialogs = [];
 
-    /**
-     * Unique process id to identify us
+  /**
+     * Unique process id to identify ourselfs
      * to the server
      *
      * @type String
      */
-    this.processId = "";
+  this.processId = "";
 
-    /**
-     * Set to true if updating shall be stopped
-     *
-     * @type boolean
-     */
-    this.stopUpdating = false;
+  /**
+   * Set to true if updating shall be stopped
+   *
+   * @type boolean
+   */
+  this.stopUpdating = false;
 
-    /**
-     * Handle for pump mode selector event
-     */
-    this.pmsClickHandle = null;
+  /**
+   * Handle for pump mode selector event
+   */
+  this.pmsClickHandle = null;
 
-    /**
-     * Brew calculator window
-     */
-    this.showCalculatorWindow = null;
+  /**
+   * Brew calculator window
+   */
+  this.showCalculatorWindow = null;
+  
+  /**
+   * Perform a cooling step after cooking or not
+   */
+  this.coolingStep = false;
 }
 
 /**
  * Inits the brew process
  *
- * @param processId
+ * @param {String} processId
+ * @param {Object} options
  * @type void
  */
-BoozeBrew.prototype.init = function(processId) {
-
-    this.processId = processId;
-
-    // Display brew initialization window
-    this.initWindow = new Window('initWindow', {title: booze.messageSource.message("js.booze.brew.initWindow.title"),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        closable: false,
-        recenterAuto: true,
-        width: "400px",
-        /*height: "420px",*/
-        maxHeight: 420,
-        minHeight: 330,
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    this.initWindow.setHTMLContent($('initWindowContent').innerHTML);
-    this.initWindow.showCenter(true);
-
-    this.initTemperatureOffsetSlider();
-    this.initCookingTemperatureSlider();
-    $('cookingTemperatureBox').hide();
-
-    // Start status updates
-    this.update();
+BoozeBrew.prototype.init = function(processId, options) {
+  booze.log.info("Init new brew process")
+  
+  if(!options) options = {};
+  if(options.updateTimeout) this.updateTimeout = options.updateTimeout;
+  if(options.coolingStep) this.coolingStep = true;
+  
+  this.processId = processId;
+  
+  this.dialogs.initDialog = booze.notifier.confirm($('#initDialogTemplate').tmpl({}),
+    {
+      title: booze.messageSource.message("js.booze.brew.initWindow.title"),
+      proceedCallback: booze.brew.startBrewing,
+      cancelCallback: booze.brew.cancel,
+      cancelCallbackOptions: {force: true}
+    }
+  );
+  
+  // Start status updates
+  this.update();
 };
 
 /**
  * Resumes a lost brew session
  *
- * @param processId
+ * @param {String} processId
+ * @param {Object} options
  * @type void
  */
-BoozeBrew.prototype.resumeLostSession = function(processId) {
+BoozeBrew.prototype.resumeLostSession = function(processId, options) {
 
-    this.processId = processId;
+  if(!options) options = {};
+  if(options.updateTimeout) this.updateTimeout = options.updateTimeout;
+  
+  this.processId = processId;
 
-    this.initTemperatureOffsetSlider();
-    this.initCookingTemperatureSlider();
-    $('cookingTemperatureBox').hide();
-
-    // Start status updates
-    this.update();
+  // Start status updates
+  this.update();
 };
 
 /**
@@ -221,47 +162,38 @@ BoozeBrew.prototype.resumeLostSession = function(processId) {
  * @type void
  */
 BoozeBrew.prototype.startBrewing = function() {
-    booze.log.info("Calling brew/start");
-    new Ajax.Request(APPLICATION_ROOT + '/brew/start', {
-        parameters: {processId: this.processId},
-        onSuccess: this.startBrewingCallback.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
-};
-
-/**
- * Callback for startBrewing server call
- *
- * @param {Object} response  Server response
- * @type void
- */
-BoozeBrew.prototype.startBrewingCallback = function(response) {
-    if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-            booze.log.info("Brew process successfully started");
-            this.initWindow.close();
-        }
-        else {
-            booze.notifier.error(data.message);
-        }
+  booze.log.info("Calling brew/start");
+    
+  $.get(APPLICATION_ROOT + '/brew/start', {
+    processId: booze.brew.processId
+    }) 
+  .success(function(data) {
+    if(data.success) {
+      booze.brew.dialogs.initDialog.dialog("destroy");
+      booze.brew.dialogs.initDialog = null;
+      
+      booze.log.info("Brew process successfully started");
     }
     else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+      booze.notifier.error(data.message);
     }
-    delete response;
+  })
+  .error(booze.brew.ajaxError);
 };
+
 
 /**
  * Default callback for ajax errors
  *
- * @param {Object} response  Server response
+ * @param {Object} jqxhr  jqXHR object
  * @type void
  */
-BoozeBrew.prototype.ajaxError = function(response) {
-    booze.log.error("Ajax error");
-    booze.notifier.error(response.responseJSON.message);
-    delete response;
+BoozeBrew.prototype.ajaxError = function(jqxhr) {
+  booze.log.error("Ajax error");
+  booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+    
+  jqxhr.abort();
+  delete jqxhr;
 };
 
 /**
@@ -273,44 +205,46 @@ BoozeBrew.prototype.ajaxError = function(response) {
  * @type void
  */
 BoozeBrew.prototype.update = function() {
-    booze.log.info("Calling brew/update");
 
-    // Sets a new timeout for the next update call
-    if (this.stopUpdating === true) {
-        return;
-    }
-    this.updateTimeoutHandle = setTimeout(this.update.bind(this), 1000);
+  // Sets a new timeout for the next update call
+  if (booze.brew.stopUpdating === true) {
+    return;
+  }
+  booze.brew.updateTimeoutHandle = setTimeout(booze.brew.update, booze.brew.updateTimeout);
 
-    // Don't proceed if there is a still unfinished update call
-    // Omit this turn and wait for the next
-    if (this.updateStatus == 0) {
-        if (this.updateOmits < this.maxUpdateOmits) {
-            booze.log.info("Omitting update");
-            this.updateOmits++;
-            return;
-        }
-        else {
-            booze.log.info("Omitted " + this.maxUpdateOmits + " updates, proceeding");
-            if (this.dialogs.stalled) {
-                this.dialogs.stalled.close();
-            }
-            this.dialogs.stalled = booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationStalled"));
-            this.updateOmits = 0;
-        }
+  // Don't proceed if there is a still unfinished update call
+  // Omit this turn and wait for the next
+  if (booze.brew.updateStatus == 0) {
+    if (booze.brew.updateOmits < booze.brew.maxUpdateOmits) {
+      booze.log.info("Omitting update");
+      booze.brew.updateOmits++;
+      return;
     }
     else {
-        this.updateOmits = 0;
+      booze.log.info("Omitted " + booze.brew.maxUpdateOmits + " updates, proceeding");
+      if (!booze.brew.dialogs.stalled) {
+        booze.brew.dialogs.stalled = booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationStalled"),
+          {
+            callback: function() { $(booze.brew.dialogs.stalled).dialog("destroy"); booze.brew.dialogs.stalled = null; }
+          }
+        );
+      }
+      booze.brew.updateOmits = 0;
     }
+  }
+  else {
+    booze.brew.updateOmits = 0;
+  }
 
 
-    this.updateStatus = 0;
+  booze.brew.updateStatus = 0;
 
-    // Init AJAX call
-    new Ajax.Request(APPLICATION_ROOT + '/brew/readStatus', {
-        parameters: {processId: this.processId},
-        onSuccess: this.updateCallback.bindAsEventListener(this),
-        onFailure: this.updateError.bindAsEventListener(this)
-    });
+  // Init AJAX call
+  $.get(APPLICATION_ROOT + '/brew/readStatus', {
+    processId: booze.brew.processId
+    }) 
+  .success(booze.brew.updateCallback)
+  .error(booze.brew.updateError);
 };
 
 /**
@@ -322,153 +256,186 @@ BoozeBrew.prototype.update = function() {
  */
 BoozeBrew.prototype.updateCallback = function(response) {
 
-    if (response.responseJSON) {
-        var my = response.responseJSON;
-        delete response;
+  if (response.success === false) {
+    booze.log.error("Update status failed");
+    return;
+  }
+
+  try {
+  booze.brew.spinAliveThrobber();
+
+  var data = response.status;
+
+
+  var i, sensor, temperature, pressure, heater, motor;
+
+  for (i = 0; i < data.temperatureSensors.length; i++) {
+    sensor = $('#temperatureSensor_' + data.temperatureSensors[i].id);
+    $(sensor).find('.temperatureSensorValue').first().html(data.temperatureSensors[i].temperature);
+    $(sensor).find('.progressbar').first().progressbar({
+      value: Math.round(data.temperatureSensors[i].temperature/1.1)
+      });
+      
+    if(data.temperatureSensors[i].reference == true) {
+      $(sensor).find('.reference').first().show();
     }
     else {
-        booze.log.error("Not a valid json response for updateCallback");
-        if (this.dialogs.updateErrorDialog) {
-            this.dialogs.updateErrorDialog.close();
-        }
-        this.dialogs.updateErrorDialog = booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-        booze.log.error("Update: No valid JSON response");
-        delete response;
-        return;
+      $(sensor).find('.reference').first().hide();
     }
+        
+  // TODO: use calculateTemperatureColor for progress bar color modification
+  }
 
-    if (my.success === false) {
-        booze.log.error("Update status failed");
-        return;
-    }
+  for (i = 0; i < data.pressureSensors.length; i++) {
+    sensor = $('#pressureSensor_' + data.pressureSensors[i].id);
+    $(sensor).find('.pressureSensorValue').first().html(data.pressureSensors[i].pressure);
+    $(sensor).find('.progressbar').first().progressbar({
+      value: Math.round(data.pressureSensors[i].pressure/20)
+      });
+  }
 
-    this.spinAliveThrobber();
-
-    var data = my.status;
-
-    booze.log.info("brew/update successfully called");
-
-    var sensor, temperature, pressure, heater, pump, pumpModes;
-
-    for (var i = 0; i < data.innerTemperatureSensors.length; i++) {
-        sensor = $('temperatureSensor_' + data.innerTemperatureSensors[i].id);
-        temperature = sensor.select('.temperature').first();
-        temperature.update(data.innerTemperatureSensors[i].label);
-        temperature.setStyle({'width': Math.round(data.innerTemperatureSensors[i].temperature / 1.1) + '%', "backgroundColor": this.calculateTemperatureColor(data.outerTemperatureSensors[i].temperature, data.targetTemperature)});
-
-    }
-
-    for (var i = 0; i < data.outerTemperatureSensors.length; i++) {
-        sensor = $('temperatureSensor_' + data.outerTemperatureSensors[i].id);
-        temperature = sensor.select('.temperature').first();
-        temperature.update(data.outerTemperatureSensors[i].label);
-        temperature.setStyle({'width': Math.round(data.outerTemperatureSensors[i].temperature / 1.1) + '%', "backgroundColor": this.calculateTemperatureColor(data.innerTemperatureSensors[i].temperature, data.targetTemperature)});
-
-    }
-
-    for (var i = 0; i < data.pressureSensors.length; i++) {
-        sensor = $('pressureSensor_' + data.pressureSensors[i].id);
-        pressure = sensor.select('.pressure').first();
-        pressure.update(data.pressureSensors[i].label);
-        pressure.setStyle({'width': Math.round(data.pressureSensors[i].pressure / 10) + '%'});
-
-    }
-
-    for (var i = 0; i < data.heaters.length; i++) {
-        heater = $('heater_' + data.heaters[i].id);
-        if (data.heaters[i].enabled === true) {
-            heater.select('.onIcon').first().addClassName('active');
-            heater.select('.offIcon').first().removeClassName('active');
-        }
-        else {
-            heater.select('.offIcon').first().addClassName('active');
-            heater.select('.onIcon').first().removeClassName('active');
-        }
-    }
-
-    if (data.pump) {
-        pump = $('pump_' + data.pump.id);
-        if (data.pump.enabled === true) {
-            pump.select('.onIcon').first().addClassName('active');
-            pump.select('.offIcon').first().removeClassName('active');
-        }
-        else {
-            pump.select('.offIcon').first().addClassName('active');
-            pump.select('.onIcon').first().removeClassName('active');
-        }
-
-        pumpModes = pump.select('.pumpMode').first().select('input');
-
-        if (data.pumpMode) {
-            for (var c = 0; c < pumpModes.length; c++) {
-                if (pumpModes[c].hasClassName("mode_" + data.pumpMode.mode)) {
-                    pumpModes[c].show();
-                    pumpModes[c].title = data.pumpMode.message;
-                }
-                else {
-                    pumpModes[c].hide();
-                }
-            }
-        }
-
-        if (data.pumpModeForced) {
-            pump.select('.forced').first().show();
-            pump.select('.unforcePumpModeButton').first().show();
-        }
-        else {
-            pump.select('.forced').first().hide();
-            pump.select('.unforcePumpModeButton').first().hide();
-        }
-
-        if (data.temperatureReference) {
-            $('temperatureReference').update(data.temperatureReference);
-        }
-    }
-
-
-    this.handleStep(data.actualStep);
-
-    for (var i = 0; i < data.events.length; i++) {
-        this.handleEvent(data.events[i]);
-    }
-
-    // Update pause/resume button
-    if (data.pause === true) {
-        $('pauseButton').hide();
-        $('resumeButton').show();
+  for (i = 0; i < data.heaters.length; i++) {
+    if(data.heaters[i].forced == true) {
+      $('#heater_'+data.heaters[i].id+'_forced').show();
+      $('#heater_'+data.heaters[i].id+'_regular').hide();
+      
+      // Set power value
+      if(data.heaters[i].power != undefined) {
+        $('#heater_'+data.heaters[i].id+'_forced').find('.indicator').first().html(data.heaters[i].power);
+      }
+      
+      // Set status icon (on/off)
+      if(data.heaters[i].enabled === true) {
+        $('#heater_'+data.heaters[i].id+'_forced').find('.statusIcon').first().addClass("ui-state-active");
+      }
+      else {
+        $('#heater_'+data.heaters[i].id+'_forced').find('.statusIcon').first().removeClass("ui-state-active");
+      }
     }
     else {
-        $('pauseButton').show();
-        $('resumeButton').hide();
+      $('#heater_'+data.heaters[i].id+'_forced').hide();
+      $('#heater_'+data.heaters[i].id+'_regular').show();
+      
+      // Set power value
+      if(data.heaters[i].power != undefined) {
+        $('#heater_'+data.heaters[i].id+'_progressbar').find('.progressbar').first().progressbar("value", data.heaters[i].power);
+      }
+      
+      if(data.heaters[i].speed != undefined) {
+        if(data.heaters[i].enabled === true) {
+        $('#heater_'+data.heaters[i].id+'_progressbar').find('.progressbar').first().progressbar("value", data.heaters[i].power);
+        }
+        else {
+        $('#heater_'+data.heaters[i].id+'_progressbar').find('.progressbar').first().progressbar("value", 0);
+        }
+      }
+      
+      // Set status icon (on/off)
+      if(data.heaters[i].enabled === true) {
+        $('#heater_'+data.heaters[i].id+'_regular').find('.statusIcon').first().addClass("ui-state-active");
+      }
+      else {
+        $('#heater_'+data.heaters[i].id+'_regular').find('.statusIcon').first().removeClass("ui-state-active");
+      }
     }
+  }
+  
+  for (i = 0; i < data.motors.length; i++) {
+    if(data.motors[i].forced == true) {
+      $('#motor_'+data.motors[i].id+'_forced').show();
+      $('#motor_'+data.motors[i].id+'_regular').hide();
+      
+      // Set power value
+      if(data.motors[i].speed != undefined) {
+        $('#motor_'+data.motors[i].id+'_forced').find('.indicator').first().html(data.motors[i].speed);
+      }
+      
+      // Set status icon (on/off)
+      if(data.motors[i].enabled === true) {
+        $('#motor_'+data.motors[i].id+'_forced').find('.statusIcon').first().addClass("ui-state-active");
+      }
+      else {
+        $('#motor_'+data.motors[i].id+'_forced').find('.statusIcon').first().removeClass("ui-state-active");
+      }
+    }
+    else {
+      $('#motor_'+data.motors[i].id+'_forced').hide();
+      $('#motor_'+data.motors[i].id+'_regular').show();
+      
+      // Set power value
+      if(data.motors[i].speed != undefined) {
+        if(data.motors[i].enabled === true) {
+          $('#motor_'+data.motors[i].id+'_progressbar').find('.progressbar').first().progressbar("value", data.motors[i].speed);
+        }
+        else {
+          $('#motor_'+data.motors[i].id+'_progressbar').find('.progressbar').first().progressbar("value", 0);
+        }
+      }
+      
+      // Set status icon (on/off)
+      if(data.motors[i].enabled === true) {
+        $('#motor_'+data.motors[i].id+'_regular').find('.statusIcon').first().addClass("ui-state-active");
+      }
+      else {
+        $('#motor_'+data.motors[i].id+'_regular').find('.statusIcon').first().removeClass("ui-state-active");
+      }
+    }
+  }
 
-    // Update the elapsed time info
-    $('timeElapsed').update(data.timeElapsed);
 
-    this.updateStatus = 1;
-    if (this.dialogs.updateErrorDialog) {
-        this.dialogs.updateErrorDialog.close();
-    }
-    if (this.dialogs.stalled) {
-        this.dialogs.stalled.close();
-    }
+  booze.brew.handleStep(data.actualStep);
+
+  for (i = 0; i < data.events.length; i++) {
+    booze.brew.handleEvent(data.events[i]);
+  }
+
+  } catch(e){console.log(e)}
+  
+  // Update pause/resume button
+  if (data.pause === true) {
+    $('#pauseButton').hide();
+    $('#resumeButton').show();
+  }
+  else {
+    $('#pauseButton').show();
+    $('#resumeButton').hide();
+  }
+
+  // Update the elapsed time info
+  $('#timeElapsed').html(data.timeElapsed);
+
+  booze.brew.updateStatus = 1;
+  if (booze.brew.dialogs.updateErrorDialog) {
+    $(booze.brew.dialogs.updateErrorDialog).dialog("destroy");
+    booze.brew.dialogs.updateErrorDialog = null;
+  }
+  if (booze.brew.dialogs.stalled) {
+    $(booze.brew.dialogs.stalled).dialog("destroy");
+    booze.brew.dialogs.stalled = null
+  }
 };
 
 /**
  * Callback for update error
  *
- * @param {Object} response  Server response
+ * @param {Object} jqxhr  jqXHR object
  * @type void
  */
-BoozeBrew.prototype.updateError = function(response) {
-    booze.log.error("Ajax error for brew/update");
-    if (this.dialogs.updateErrorDialog) {
-        this.dialogs.updateErrorDialog.close();
+BoozeBrew.prototype.updateError = function(jqxhr) {
+  booze.log.error("Ajax error for brew/update");
+  
+  if (booze.brew.dialogs.updateErrorDialog) {
+    $(booze.brew.dialogs.updateErrorDialog).dialog("destroy");
+    booze.brew.dialogs.updateErrorDialog = null
+  }
+  booze.brew.dialogs.updateErrorDialog = booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"), 
+    {
+      callback: function() { $(booze.brew.dialogs.updateErrorDialog).dialog("destroy"); booze.brew.dialogs.updateErrorDialog = null}
     }
+  );
 
-    this.dialogs.updateErrorDialog = booze.notifier.error(response.responseJSON.message);
-
-    delete response;
+  jqxhr.abort();
+  delete jqxhr;
 };
 
 /**
@@ -477,37 +444,26 @@ BoozeBrew.prototype.updateError = function(response) {
  * @type void
  */
 BoozeBrew.prototype.pause = function() {
-    booze.log.info("Calling brew/pause");
-    new Ajax.Request(APPLICATION_ROOT + '/brew/pause', {
-        parameters: {processId: this.processId},
-        onSuccess: this.pauseCallback.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
-};
-
-/**
- * Callback for pause
- *
- * @param {Object} response  Server response
- * @type void
- */
-BoozeBrew.prototype.pauseCallback = function(response) {
-    if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-            booze.log.info("Successfully paused brew process");
-            $('pauseButton').hide();
-            $('resumeButton').show();
-        }
-        else {
-            booze.notifier.error(data.message);
-        }
+  booze.log.info("Calling brew/pause");
+  
+  $.get(APPLICATION_ROOT + '/brew/pause', {
+    processId: booze.brew.processId
+    }) 
+  .success(function(data) {
+    if (data.success === true) {
+      booze.log.info("Successfully paused brew process");
+      $('#pauseButton').hide();
+      $('#resumeButton').show();
     }
     else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+      booze.notifier.error(data.message);
     }
-    delete response;
+
+    delete data;
+  })
+  .error(booze.brew.ajaxError);
 };
+
 
 /**
  * Resumes the brew process
@@ -515,99 +471,69 @@ BoozeBrew.prototype.pauseCallback = function(response) {
  * @type void
  */
 BoozeBrew.prototype.resume = function() {
-    booze.log.info("Calling brew/resume");
-    new Ajax.Request(APPLICATION_ROOT + '/brew/resume', {
-        parameters: {processId: this.processId},
-        onSuccess: this.resumeCallback.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
-};
-
-/**
- * Callback for resume
- *
- * @param {Object} response  Server response
- * @type void
- */
-BoozeBrew.prototype.resumeCallback = function(response) {
-    if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-            booze.log.info("Successfully resumed brew process");
-            $('pauseButton').show();
-            $('resumeButton').hide();
-        }
-        else {
-            booze.notifier.error(data.message);
-        }
+  booze.log.info("Calling brew/resume");
+  
+  $.get(APPLICATION_ROOT + '/brew/resume', {
+    processId: booze.brew.processId
+    }) 
+  .success(function(data) {
+    if (data.success === true) {
+      booze.log.info("Successfully resumed brew process");
+      $('#pauseButton').show();
+      $('#resumeButton').hide();
     }
     else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+      booze.notifier.error(data.message);
     }
-    delete response;
+
+    delete data;
+  })
+  .error(booze.brew.ajaxError);
 };
 
 
 /**
  * Cancels the brew process
  *
- * @param {boolean} force Set to true to override confirmation message
+ * @param {Object} options 
  * @type void
  */
-BoozeBrew.prototype.cancel = function(force) {
-    booze.log.info("cancelling brew process");
-    if (force) {
-        this.stopUpdating = true;
-        new Ajax.Request(APPLICATION_ROOT + '/brew/cancel', {
-            parameters: {processId: this.processId},
-            onSuccess: this.cancelCallback.bindAsEventListener(this),
-            onFailure: this.ajaxError.bindAsEventListener(this)
-        });
-    }
-    else {
-        this.cancelDialog = Dialog.confirm(booze.messageSource.message("js.booze.brew.cancelConfirmation"), {
-            title: booze.messageSource.message("js.booze.brew.cancelConfirmation"),
-            width:"400px",
-            height: "160px",
-            minimizable: false,
-            maximizable: false,
-            closable: true,
-            recenterAuto: true,
-            resizable: false,
-            destroyOnClose: true,
-            okLabel: booze.messageSource.message("js.booze.brew.proceed"),
-            cancelLabel: booze.messageSource.message("js.booze.brew.cancel"),
-            onOk:function(r) {
-                this.cancel(true);
-            }.bindAsEventListener(this),
-            onCancel: function(r) {
-                this.cancelDialog.close();
-            }.bindAsEventListener(this)
-        });
-    }
+BoozeBrew.prototype.cancel = function(options) {
+  
+  if(!options) options = {}
+  
+  booze.log.info("cancelling brew process");
+  console.log(options);
+  if (options.force) {
+    booze.brew.stopUpdating = true;
+    
+    $.get(APPLICATION_ROOT + '/brew/cancel', {
+      processId: booze.brew.processId
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        window.location.href = APPLICATION_HOME;
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
+  }
+  else {
+    booze.brew.dialogs.cancelDialog = booze.notifier.confirm(booze.messageSource.message("js.booze.brew.cancelConfirmation"),
+      { proceedCallback: booze.brew.cancel, 
+        proceedCallbackOptions: {force: true},
+        proceedText: booze.messageSource.message("js.booze.notifier.confirmCancellation"),
+        cancelText:booze.messageSource.message("js.booze.notifier.keepOnBrewing"),
+        cancelCallback: function() {booze.brew.dialogs.cancelDialog.dialog("destroy")}
+      }
+    );
+  }
 };
 
-/**
- * Callback for cancel server call
- *
- * @param {Object} response
- * @type void
- */
-BoozeBrew.prototype.cancelCallback = function(response) {
-    if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-            window.location.href = APPLICATION_HOME;
-        }
-        else {
-            booze.notifier.error(data.message);
-        }
-    }
-    else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-    }
-    delete response;
-};
 
 /**
  * Handles the actual event from an server update call
@@ -616,19 +542,18 @@ BoozeBrew.prototype.cancelCallback = function(response) {
  * @type void
  */
 BoozeBrew.prototype.handleEvent = function(event) {
-    booze.log.info("Handling event: " + event.message);
-    if (event.message) {
-        var li = new Element("LI").update(event.message);
-        $('protocol').insert({top:li});
-    }
+  if (event.message) {
+    var li = $('<li></li>').html(event.message)
+    $('#protocol').prepend(li);
+  }
 
-    if (event.playSound) {
-        Sound.play(APPLICATION_ROOT + "/sounds/notification.wav", {replace:true});
-    }
+  if (event.playSound) {
+    $.sound.play(APPLICATION_ROOT + "/sounds/notification.wav");
+  }
 
-    if (event.dialog) {
-        this.openDialog(event.dialog, event.args, event.message);
-    }
+  if (event.dialog) {
+    booze.brew.openDialog(event.dialog, event.args, event.message);
+  }
 };
 
 /**
@@ -639,26 +564,27 @@ BoozeBrew.prototype.handleEvent = function(event) {
  * @type void
  */
 BoozeBrew.prototype.openDialog = function(dialog, args, message) {
-    /**
+  /**
      * Possible dialogs
      * - addHop
      * - cookingFinished
-     * - meshingTemperatureReached
-     * - meshingElongationFinished
+     * - mashingTemperatureReached
+     * - lauterTemperatureReached
+     * - mashingElongationFinished
      * - pressureExceeded
      */
 
-    booze.log.info("Trying to open dialog: " + dialog);
+  booze.log.info("Trying to open dialog: " + dialog);
 
-    // Call dialog
-    try {
-        var myFunction = eval("this." + dialog).bind(this);
-        myFunction(args, message);
-    }
-    catch(e) {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.couldNotOpenDialog") + dialog);
-        booze.log.error("could not call dialog: " + dialog);
-    }
+  // Call dialog
+  try {
+    var myFunction = eval("booze.brew." + dialog);
+    myFunction(args, message);
+  }
+  catch(e) {
+    booze.notifier.error(booze.messageSource.message("js.booze.brew.couldNotOpenDialog") + dialog);
+    booze.log.error("could not call dialog: " + dialog);
+  }
 };
 
 /**
@@ -668,30 +594,23 @@ BoozeBrew.prototype.openDialog = function(dialog, args, message) {
  * @param {String}  message
  */
 BoozeBrew.prototype.pressureExceeded = function(args, message) {
-    if (this.pressureExceededDialog) {
-        this.pressureExceededDialog.close();
-        this.pressureExceededDialog = null;
-    }
-    this.pressureExceededDialog = Dialog.confirm(message, {
-        width:400,
-        height:200,
-        minimizable: false,
-        maximizable: false,
-        closable: true,
-        recenterAuto: true,
-        resizable: false,
-        destroyOnClose: true,
-        okLabel: booze.messageSource.message("js.booze.brew.proceed"),
-        cancelLabel: booze.messageSource.message("js.booze.brew.cancel"),
-        onOk:function(r) {
-            this.pressureExceededDialog.close();
-            this.pressureExceededDialog = null;
-            this.resume();
-        }.bindAsEventListener(this),
-        onCancel: function(r) {
-            this.pressureExceededDialog.close();
-        }.bindAsEventListener(this)
-    });
+  if (booze.brew.dialogs.pressureExceededDialog) {
+    booze.brew.dialogs.pressureExceededDialog.dialog("destroy");
+    booze.brew.dialogs.pressureExceededDialog = null;
+  }
+  
+  // Callback for OK and close
+  var cb = function() {
+    booze.brew.dialogs.pressureExceededDialog.dialog("destroy");
+    booze.brew.dialogs.pressureExceededDialog = null;
+    booze.brew.resume();
+  }
+  
+  booze.brew.dialogs.pressureExceededDialog = booze.notifier.error(message, {
+    modal: true,
+    callback: cb
+  });
+  
 };
 
 /**
@@ -702,78 +621,33 @@ BoozeBrew.prototype.pressureExceeded = function(args, message) {
  */
 BoozeBrew.prototype.addHop = function(args, message) {
 
-    booze.log.info("Opening window for addHop");
-
-    // Display brew initialization window
-    this.addHopWindow = new Window('addHopWindow_' + args.id, {title: booze.messageSource.message('js.booze.brew.addHopWindow.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        recenterAuto: true,
-        closable: true,
-        width: "400px",
-        height: "260px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    var myTemplate = new Template($('addHopWindowTemplate').innerHTML);
-
-    this.addHopWindow.setHTMLContent(myTemplate.evaluate(args));
-    this.addHopWindow.showCenter(true);
+  booze.log.info("Opening window for addHop");
+    
+  booze.notifier.notify($('#addHopDialogTemplate').tmpl(args), 
+    {title: booze.messageSource.message('js.booze.brew.addHopDialog.title'),
+  });
 };
 
-BoozeBrew.prototype.fillTemperatureReached = function(args, message) {
-    booze.log.info("Opening window for fillTemperatureReached event");
-
-    // Display brew initialization window
-    this.fillTemperatureReachedWindow = new Window('fillTemperatureReachedWindow',
-    {title: booze.messageSource.message('js.booze.brew.fillTemperatureReachedWindow.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        recenterAuto: true,
-        closable: false,
-        width: "400px",
-        minHeight: "180",
-        maxHeight: "400",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    this.fillTemperatureReachedWindow.setHTMLContent($('fillTemperatureReachedWindowContent').innerHTML);
-    this.fillTemperatureReachedWindow.showCenter(true);
-}
-
 /**
- * Opens a dialog for meshingTemperatureReached
+ * Opens a dialog for lauterTemperatureReached
  *
  * @param {Array} args      Arguments
  * @param {String} message
  * @type void
  */
-BoozeBrew.prototype.meshingTemperatureReached = function(args, message) {
-    booze.log.info("Opening window for meshingTemperatureReached event");
+BoozeBrew.prototype.lauterTemperatureReached = function(args, message) {
+  booze.log.info("Opening window for lauterTemperatureReached event");
 
-    // Display brew initialization window
-    this.meshingTemperatureReachedWindow = new Window('meshingTemperatureReachedWindow',
-    {title: booze.messageSource.message('js.booze.brew.meshingTemperatureReachedWindow.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        recenterAuto: true,
-        closable: false,
-        width: "400px",
-        minHeight: "450",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
+  // Display brew initialization window
+  booze.brew.dialogs.lauterTemperatureReachedDialog = booze.notifier.notify($('#lauterTemperatureReachedDialogTemplate').tmpl(args), 
+    {
+      title: booze.messageSource.message('js.booze.brew.lauterTemperatureReachedDialog.title'),
+      callback: booze.brew.startCooking
+    }
+  );
+}
 
-    var myTemplate = new Template($('meshingTemperatureReachedWindowTemplate').innerHTML);
 
-    this.meshingTemperatureReachedWindow.setHTMLContent(myTemplate.evaluate(args));
-    this.meshingTemperatureReachedWindow.showCenter(true);
-};
 
 /**
  * Opens a dialog for cookingFinished
@@ -783,69 +657,131 @@ BoozeBrew.prototype.meshingTemperatureReached = function(args, message) {
  * @type void
  */
 BoozeBrew.prototype.cookingFinished = function(args, message) {
-    booze.log.info("Opening window for cookingFinished event");
+  booze.log.info("Opening dialog for cookingFinished event");
+  
+  var cb = booze.brew.finish
+  if(booze.brew.coolingStep == true) {
+    booze.log.info("preparing cooling step");
+    cb = booze.brew.startCooling;
+  }
 
-    // Display brew initialization window
-    this.cookingFinishedWindow = new Window('cookingFinished',
-    {title: booze.messageSource.message('js.booze.brew.cookingFinishedWindow.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        recenterAuto: true,
-        closable: false,
-        width: "400px",
-        height: "460px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    var myTemplate = new Template($('cookingFinishedWindowTemplate').innerHTML);
-
-    this.cookingFinishedWindow.setHTMLContent(myTemplate.evaluate(args));
-    this.cookingFinishedWindow.showCenter(true);
+  // Display brew initialization window
+  booze.brew.dialogs.cookingFinishedDialog = booze.notifier.notify($('#cookingFinishedDialogTemplate').tmpl(args), 
+    {
+      title: booze.messageSource.message('js.booze.brew.cookingFinishedDialog.title'),
+      buttonText: booze.messageSource.message('js.booze.brew.cookingFinishedDialog.finish'),
+      callback: cb
+    }
+  );
 };
 
 /**
- * Commits the fill completion and proceeds to meshing
+ * Opens a dialog for mashingTemperatureReached
+ *
+ * @param {Array} args      Arguments
+ * @param {String} message
+ * @type void
+ */
+BoozeBrew.prototype.mashingTemperatureReached = function(args, message) {
+  booze.log.info("Opening window for mashingTemperatureReached event");
+  
+  booze.brew.dialogs.mashingTemperatureReachedDialog = booze.notifier.notify($('#mashingTemperatureReachedDialogTemplate').tmpl(args),
+    {
+      title: booze.messageSource.message('js.booze.brew.mashingTemperatureReachedDialog.title'),
+      callback: booze.brew.commitFill,
+    }
+  )
+}
+
+/**
+ * Commits the fill completion and proceeds to mashing
  *
  * @type void
  */
 BoozeBrew.prototype.commitFill = function() {
-    new Ajax.Request(APPLICATION_ROOT + '/brew/commitFill', {
-        parameters: {processId: this.processId},
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("Successfully commited fill");
-                    this.fillTemperatureReachedWindow.close();
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+  
+  $.get(APPLICATION_ROOT + '/brew/commitFill', {
+      processId: booze.brew.processId
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        booze.log.info("Successfully commited fill");
+        booze.brew.dialogs.mashingTemperatureReachedDialog.dialog("destroy");
+        booze.brew.dialogs.mashingTemperatureReachedDialog = null;
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 }
 
 /**
- * Gracefully finished the brew process
+ * Gracefully finish the brew process
  *
  * @type void
  */
 BoozeBrew.prototype.finish = function() {
-    this.stopUpdating = true;
-    var queryParams = Object.toQueryString({
-        processId: this.processId,
-        finalOriginalWort: $('brewCookingTemperatureReachedWindow_finalOriginalWort').value,
-        finalVolume: $('brewCookingTemperatureReachedWindow_finalVolume').value,
-        dilutionWaterVolume: $('brewCookingTemperatureReachedWindow_dilutionWaterVolume').value,
-    });
-    window.location.href = APPLICATION_ROOT + '/brew/finish?' + queryParams;
+  this.stopUpdating = true;
+  
+  $.get(APPLICATION_ROOT + '/brew/finish', {
+      processId: booze.brew.processId,
+      finalOriginalWort: $('brewCookingTemperatureReachedWDialog_finalOriginalWort').value,
+      finalVolume: $('brewCookingTemperatureReachedDialog_finalVolume').value,
+      dilutionWaterVolume: $('brewCookingTemperatureReachedDialog_dilutionWaterVolume').value
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        booze.log.info("Successfully finished brew process");
+        window.location.href=data.redirect;
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
+};
+
+/**
+ * Starts the cooling process
+ *
+ * @type void
+ */
+BoozeBrew.prototype.startCooling = function() {
+  booze.log.info("Calling brew/startCooling");
+
+  $.get(APPLICATION_ROOT + '/brew/startCooling', {
+      processId: booze.brew.processId
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        $(booze.brew.dialogs.cookingFinishedDialog).dialog("destroy");
+        booze.brew.dialogs.cookingFinishedDialog = null;
+        
+        if(booze.brew.dialogs.coolingDialog) {
+          $(booze.brew.dialogs.coolingDialog).dialog("destroy");
+          booze.brew.dialogs.coolingDialog = null;
+        }
+        
+        booze.brew.dialogs.coolingDialog = booze.notifier.notify($('#coolingDialogTemplate').tmpl({}),
+          {
+            title: booze.messageSource.message('js.booze.brew.coolingDialog.title'),
+            callback: booze.brew.finish,
+            buttonText: booze.messageSource.message('js.booze.brew.finishBrewProcess')
+          }
+        )
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
@@ -854,66 +790,53 @@ BoozeBrew.prototype.finish = function() {
  * @type void
  */
 BoozeBrew.prototype.startCooking = function() {
-    booze.log.info("Calling brew/startCooking");
+  booze.log.info("Calling brew/startCooking");
 
-    new Ajax.Request(APPLICATION_ROOT + '/brew/startCooking', {
-        parameters: {processId: this.processId, finalPreCookingWort: $('brewMeshingTemperatureReachedWindow_finalPreCookingWort').value},
-        onSuccess: this.startCookingCallback.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+  $.get(APPLICATION_ROOT + '/brew/startCooking', {
+      processId: booze.brew.processId,
+      finalPreCookingWort: $('#brewLauterTemperatureReachedDialog_finalPreCookingWort').val()
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        
+        booze.log.info("Successfully started cooking");
+        booze.brew.dialogs.lauterTemperatureReachedDialog.dialog("destroy");
+        booze.brew.dialogs.lauterTemperatureReachedDialog = null;
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
-/**
- * Callback for startCooking
- *
- * @param {Object} response
- * @type void
- */
-BoozeBrew.prototype.startCookingCallback = function(response) {
-    if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-            booze.log.info("Successfully started cooking");
-            this.meshingTemperatureReachedWindow.close();
-        }
-        else {
-            booze.notifier.error(data.message);
-        }
-    }
-    else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-    }
-    delete response;
-};
 
 /**
- * Elongates the meshing process for a given amount of time
+ * Elongates the mashing process for a given amount of time
  *
  * @type void
  */
-BoozeBrew.prototype.elongateMeshing = function() {
-    booze.log.info("Calling brew/elongateMeshing");
-    new Ajax.Request(APPLICATION_ROOT + '/brew/elongateMeshing', {
-        parameters: {time: $('brewMeshingTemperatureReachedWindow_elongateMeshingTime').value,
-            processId: this.processId
-        },
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("Successfully started meshing elongation");
-                    this.meshingTemperatureReachedWindow.close();
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+BoozeBrew.prototype.elongateMashing = function() {
+  booze.log.info("Calling brew/elongateMashing");
+  
+  $.get(APPLICATION_ROOT + '/brew/elongateMashing', {
+      processId: booze.brew.processId,
+      time: $('#brewLauterTemperatureReachedDialog_elongateMashingTime').val()
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        booze.log.info("Successfully started cooking");
+        booze.brew.dialogs.lauterTemperatureReachedDialog.dialog("destroy");
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
@@ -922,29 +845,26 @@ BoozeBrew.prototype.elongateMeshing = function() {
  * @type void
  */
 BoozeBrew.prototype.elongateCooking = function() {
-    booze.log.info("Calling brew/elongateCooking");
-    new Ajax.Request(APPLICATION_ROOT + '/brew/elongateCooking', {
-        parameters: {time: $('brewCookingTemperatureReachedWindow_elongateCookingTime').value,
-            temperature: $('cookingTemperatureHandle').innerHTML,
-            processId: this.processId
-        },
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("Successfully started cooking elongation");
-                    this.cookingFinishedWindow.close();
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+  booze.log.info("Calling brew/elongateCooking");
+  
+  $.get(APPLICATION_ROOT + '/brew/elongateCooking', {
+      processId: booze.brew.processId,
+      time: $('#brewCookingTemperatureReachedDialog_elongateCookingTime').val(),
+      temperature: $('#cookingTemperatureSlider').slider("value")
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        booze.log.info("Successfully started cooking");
+        booze.brew.dialogs.cookingFinishedDialog.dialog("destroy");
+        booze.brew.dialogs.cookingFinishedDialog = null;
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
@@ -954,192 +874,182 @@ BoozeBrew.prototype.elongateCooking = function() {
  * @type void
  */
 BoozeBrew.prototype.handleStep = function(step) {
-    booze.log.info("Handling step with type: " + step.type);
+  booze.log.info("Handling step with type: " + step.type);
+  
+  $('#stepInfoHeadline').html(step.headline);
 
-    $('stepInfoHeadline').update(step.headline);
+  switch (step.type) {
+    case "BrewInitStep":
 
-    switch (step.type) {
-        case "BrewInitStep":
+      break;
 
-            break;
+    case "BrewTargetMashingTemperatureStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "targetMashingTemperatureInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      $('#targetMashingTemperatureInfo_targetTemperature').html(step.targetTemperature);
+      $('#targetMashingTemperatureInfo_stepStartTime').html(step.stepStartTime);
+      break;
 
-        case "BrewFillTemperatureStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "fillTemperatureInfo") children[i].hide(); else children[i].show();
-            }
-            $('fillTemperatureInfo_targetTemperature').update(step.targetTemperature);
-            $('fillTemperatureInfo_stepStartTime').update(step.stepStartTime);
-            break;
+    case "BrewMashingTemperatureReachedStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "mashingTemperatureReachedInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      break;
 
-        case "BrewFillTemperatureReachedStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "fillTemperatureReachedInfo") children[i].hide(); else children[i].show();
-            }
-            break;
+    case "BrewRestStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "restInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      $('#restInfo_targetTemperature').html(step.targetTemperature);
+      $('#restInfo_timeToGo').html(step.timeToGo);
+      $('#restInfo_stepStartTime').html(step.stepStartTime);
+      if (step.targetTemperatureReached) {
+        $('#restInfo_temperatureReached_true').html(step.targetTemperatureReachedTime);
+        $('#restInfo_temperatureReached_true').show();
+        $('#restInfo_temperatureReached_false').hide();
+      }
+      else {
+        $('#restInfo_temperatureReached_true').hide();
+        $('#restInfo_temperatureReached_false').show();
+      }
+      break;
 
-        case "BrewMeshStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "restInfo") children[i].hide(); else children[i].show();
-            }
-            $('restInfo_targetTemperature').update(step.targetTemperature);
-            $('restInfo_timeToGo').update(step.timeToGo);
-            $('restInfo_stepStartTime').update(step.stepStartTime);
-            if (step.targetTemperatureReached) {
-                $('restInfo_temperatureReached_true').update(step.targetTemperatureReachedTime);
-                $('restInfo_temperatureReached_true').show();
-                $('restInfo_temperatureReached_false').hide();
-            }
-            else {
-                $('restInfo_temperatureReached_true').hide();
-                $('restInfo_temperatureReached_false').show();
-            }
-            break;
+    case "BrewTargetLauterTemperatureStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "mashingFinishedInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      $('#mashingFinishedInfo_targetTemperature').html(step.targetTemperature);
+      $('#mashingFinishedInfo_stepStartTime').html(step.stepStartTime);
 
-        case "BrewMeshingFinishedStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "meshingFinishedInfo") children[i].hide(); else children[i].show();
-            }
-            $('meshingFinishedInfo_targetTemperature').update(step.targetTemperature);
-            $('meshingFinishedInfo_stepStartTime').update(step.stepStartTime);
+      break;
 
-            break;
+    case "BrewInitCookingStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "initCookingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      break;
 
-        case "BrewInitCookingStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "initCookingInfo") children[i].hide(); else children[i].show();
-            }
-            break;
+    case "BrewCookingStep":
+      $('#cookingTemperatureBox').show();
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "cookingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      $('#cookingInfo_targetTemperature').html(step.targetTemperature);
+      $('#cookingInfo_timeToGo').html(step.timeToGo);
+      $('#cookingInfo_stepStartTime').html(step.stepStartTime);
+      if (step.targetTemperatureReached) {
+        $('#cookingInfo_temperatureReached_true').html(step.targetTemperatureReachedTime);
+        $('#cookingInfo_temperatureReached_true').show();
+        $('#cookingInfo_temperatureReached_false').hide();
+      }
+      else {
+        $('#cookingInfo_temperatureReached_true').hide();
+        $('#cookingInfo_temperatureReached_false').show();
+      }
+      break;
 
-        case "BrewCookingStep":
-            $('cookingTemperatureBox').show();
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "cookingInfo") children[i].hide(); else children[i].show();
-            }
-            $('cookingInfo_targetTemperature').update(step.targetTemperature);
-            $('cookingInfo_timeToGo').update(step.timeToGo);
-            $('cookingInfo_stepStartTime').update(step.stepStartTime);
-            if (step.targetTemperatureReached) {
-                $('cookingInfo_temperatureReached_true').update(step.targetTemperatureReachedTime);
-                $('cookingInfo_temperatureReached_true').show();
-                $('cookingInfo_temperatureReached_false').hide();
-            }
-            else {
-                $('cookingInfo_temperatureReached_true').hide();
-                $('cookingInfo_temperatureReached_false').show();
-            }
-            break;
+    case "BrewCookingFinishedStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "initCookingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      break;
 
-        case "BrewCookingFinishedStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "initCookingInfo") children[i].hide(); else children[i].show();
-            }
-            break;
+    case "BrewElongateMashingStep":
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "elongateMashingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+      $('#elongateMashingInfo_timeToGo').html(step.timeToGo);
+      $('#elongateMashingInfo_stepStartTime').html(step.stepStartTime);
+      $('#elongateMashingInfo_targetTemperature').html(step.targetTemperature);
 
-        case "BrewElongateMeshingStep":
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "elongateMeshingInfo") children[i].hide(); else children[i].show();
-            }
-            $('elongateMeshingInfo_timeToGo').update(step.timeToGo);
-            $('elongateMeshingInfo_stepStartTime').update(step.stepStartTime);
-            $('elongateMeshingInfo_targetTemperature').update(step.targetTemperature);
+      break;
 
-            break;
-
-        case "BrewElongateCookingStep":
-            $('cookingTemperatureBox').show();
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "cookingInfo") children[i].hide(); else children[i].show();
-            }
+    case "BrewElongateCookingStep":
+      $('#cookingTemperatureBox').show();
+      
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "cookingInfo" && children[i].id != "elongateCookingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
             
-            var children = $('stepInfo').childElements();
-            for (var i = 0; i < children.length; i++) {
-                if (children[i].id != "elongateCookingInfo") children[i].hide(); else children[i].show();
-            }
-            $('elongateCookingInfo_timeToGo').update(step.timeToGo);
-            $('elongateCookingInfo_stepStartTime').update(step.stepStartTime);
-            $('elongateCookingInfo_targetTemperature').update(step.targetTemperature);
+      $('#elongateCookingInfo_timeToGo').html(step.timeToGo);
+      $('#elongateCookingInfo_stepStartTime').html(step.stepStartTime);
+      $('#elongateCookingInfo_targetTemperature').html(step.targetTemperature);
 
-            break;
-    }
+      break;
+      
+    case "BrewCoolingStep":
+      $('#cookingTemperatureBox').hide();
+      
+      var children = $('#stepInfo').children();
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].id != "coolingInfo") $(children[i]).hide(); else $(children[i]).show();
+      }
+            
+      $('#coolingInfo_stepStartTime').html(step.stepStartTime);
+
+      break;
+  }
 };
 
 /**
  * Initializes the slider for heatingTemperatureOffset
  *
+ * @param {Number} value
  * @type void
  */
-BoozeBrew.prototype.initTemperatureOffsetSlider = function() {
-    this.temperatureOffsetSlider = new Control.Slider('temperatureOffsetHandle', 'temperatureOffsetSlider', {
-        range: $R(8, 0),
-        sliderValue: $('defaultTemperatureOffset').value,
-        values: [8.0, 7.5, 7.0, 6.5, 6.0, 5.5, 5.0, 4.5, 4.0, 3.5, 3.0, 2.5, 2.0, 1.5, 1.0, 0.5, 0.0],
-        onSlide: function(to) {
-            $('temperatureOffsetHandle').update(to);
-        },
-        onChange: function(temperatureOffset) {
-            new Ajax.Request(APPLICATION_ROOT + '/brew/setTemperatureOffset', {
-                parameters: {temperatureOffset: temperatureOffset, processId: this.processId},
-                onSuccess: function(response) {
-                    if (response.responseJSON) {
-                        var data = response.responseJSON;
-                        if (data.success == true) {
-                            booze.log.info('successfuly set temperatureOffsetSlider to ' + temperatureOffset)
-                        }
-                        else {
-                            booze.notifier.error(data.message);
-                        }
-                    }
-                    else {
-                        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-                    }
-                },
-                onFailure: this.ajaxError.bindAsEventListener(this)
-            });
-        }.bind(this)
-    });
+BoozeBrew.prototype.setHysteresis = function(value) {
+  
+  $.get(APPLICATION_ROOT + '/brew/setHysteresis', {
+      processId: booze.brew.processId,
+      hysteresis: value
+      }) 
+    .success(function(data) {
+      if (data.success == true) {
+        booze.log.info('successfuly set hysteresis to ' + value)
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
  * Initializes the slider for cookingTemperature
- *
+ * 
+ * @param {Number} value
  * @type void
  */
-BoozeBrew.prototype.initCookingTemperatureSlider = function() {
-    this.cookingTemperatureSlider = new Control.Slider('cookingTemperatureHandle', 'cookingTemperatureSlider', {
-      range: $R(95,108),
-      sliderValue: $('defaultCookingTemperature').value,
-      values: [95.0, 95.5, 96.0, 96.5, 97.0, 97.5, 98.0, 98.5, 99.0, 99.5, 100.0, 100.5, 101.0, 101.5, 102.0, 102.5, 103.0, 103.5, 104.0, 104.5, 105.0, 105.5, 106.0, 106.5, 107.0, 107.5, 108.0],
-      onSlide: function(ct) {
-          $('cookingTemperatureHandle').update(ct);
-      },
-      onChange: function(cookingTemperature) {
-        new Ajax.Request(APPLICATION_ROOT+'/brew/setCookingTemperature', {
-            parameters: {cookingTemperature: cookingTemperature, processId: this.processId},
-            onSuccess: function() { 
-                if(response.responseJSON) {
-                    var data = response.responseJSON;
-                    if(data.success == true) {
-                        booze.log.info('successfuly set cookingTemperatureSlider to '+cookingTemperature) 
-                    }
-                    else {
-                        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-                    }
+BoozeBrew.prototype.setCookingTemperature = function(value) {
+  console.log("Setting cooking temperature to "+value);
+  
+  $.get(APPLICATION_ROOT + '/brew/setCookingTemperature', {
+      processId: booze.brew.processId,
+      cookingTemperature: value
+      }) 
+    .success(function(data) {
+      if (data.success == true) {
+        booze.log.info('successfuly set cookingTemperature to ' + value)
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
 
-                }
-	     },
-             onFailure: this.ajaxError.bindAsEventListener(this)
-           });
-        }.bind(this)
-    });
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
@@ -1148,29 +1058,23 @@ BoozeBrew.prototype.initCookingTemperatureSlider = function() {
  * @type void
  */
 BoozeBrew.prototype.addComment = function() {
-    var commentField = $('brewCommentField');
+  
+  $.get(APPLICATION_ROOT + '/brew/addComment', {
+      processId: booze.brew.processId,
+      comment: $('#brewCommentField').val()
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+          booze.log.info("Successfully added comment");
+        $('#brewCommentField').val("");
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
 
-    new Ajax.Request(APPLICATION_ROOT + '/brew/addComment', {
-        parameters: {comment: commentField.value,
-            processId: this.processId
-        },
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("Successfully added comment");
-                    $('brewCommentField').value = "";
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 }
 
 /**
@@ -1180,16 +1084,20 @@ BoozeBrew.prototype.addComment = function() {
  * @param {Element} callee
  */
 BoozeBrew.prototype.pumpModeSelector = function(event, callee) {
-    event.stop();
+  event.stop();
 
-    var pms = callee.up().select('.pumpModeSelector').first();
+  var pms = callee.up().select('.pumpModeSelector').first();
 
-    pms.clonePosition(callee, {offsetLeft: (pms.getDimensions().width * -1 + callee.getDimensions().width), setWidth: false, setHeight: false});
-    pms.show();
+  pms.clonePosition(callee, {
+    offsetLeft: (pms.getDimensions().width * -1 + callee.getDimensions().width), 
+    setWidth: false, 
+    setHeight: false
+  });
+  pms.show();
 
-    pms.style.zIndex = 10000;
+  pms.style.zIndex = 10000;
 
-    this.pmsClickHandle = Element.observe(window.document, 'click', this.hidePumpModeSelector.bindAsEventListener(this, pms))
+  this.pmsClickHandle = Element.observe(window.document, 'click', this.hidePumpModeSelector.bindAsEventListener(this, pms))
 }
 
 
@@ -1201,10 +1109,10 @@ BoozeBrew.prototype.pumpModeSelector = function(event, callee) {
  * @type void
  */
 BoozeBrew.prototype.hidePumpModeSelector = function(event, pms) {
-    event.stop();
+  event.stop();
 
-    pms.hide();
-    Element.stopObserving(window.document, this.pmsClickHandle);
+  pms.hide();
+  Element.stopObserving(window.document, this.pmsClickHandle);
 }
 
 /**
@@ -1215,26 +1123,54 @@ BoozeBrew.prototype.hidePumpModeSelector = function(event, pms) {
  * @type void
  */
 BoozeBrew.prototype.forcePumpMode = function(pump, pumpMode) {
-    new Ajax.Request(APPLICATION_ROOT + '/brew/forcePumpMode', {
-        parameters: {processId: this.processId, pumpMode: pumpMode, pump: pump},
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("cleared forced pump mode");
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
-
+  new Ajax.Request(APPLICATION_ROOT + '/brew/forcePumpMode', {
+    parameters: {
+      processId: this.processId, 
+      pumpMode: pumpMode, 
+      pump: pump
+    },
+    onSuccess: function(response) {
+      if (response.responseJSON) {
+        var data = response.responseJSON;
+        if (data.success === true) {
+          booze.log.info("cleared forced pump mode");
+        }
+        else {
+          booze.notifier.error(data.message);
+        }
+      }
+      else {
+        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+      }
+    }.bindAsEventListener(this),
+    onFailure: this.ajaxError.bindAsEventListener(this)
+  });
 }
+
+/**
+ * Toggles the forced mode for a heater
+ *
+ * @param {Integer} heater Heater id
+ * @type void
+ */
+BoozeBrew.prototype.toggleForceHeater = function(heater) {
+  $.get(APPLICATION_ROOT + '/brew/toggleForceHeater', {
+      processId: booze.brew.processId,
+      heater: heater
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+          booze.log.info("toggled heater: "+heater);
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
+}
+
 
 /**
  * Unforces a forced pump mode
@@ -1243,24 +1179,27 @@ BoozeBrew.prototype.forcePumpMode = function(pump, pumpMode) {
  * @type void
  */
 BoozeBrew.prototype.unforcePumpMode = function(pump) {
-    new Ajax.Request(APPLICATION_ROOT + '/brew/unforcePumpMode', {
-        parameters: {processId: this.processId, pump: pump},
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    booze.log.info("cleared forced pump mode");
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });
+  new Ajax.Request(APPLICATION_ROOT + '/brew/unforcePumpMode', {
+    parameters: {
+      processId: this.processId, 
+      pump: pump
+    },
+    onSuccess: function(response) {
+      if (response.responseJSON) {
+        var data = response.responseJSON;
+        if (data.success === true) {
+          booze.log.info("cleared forced pump mode");
+        }
+        else {
+          booze.notifier.error(data.message);
+        }
+      }
+      else {
+        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+      }
+    }.bindAsEventListener(this),
+    onFailure: this.ajaxError.bindAsEventListener(this)
+  });
 }
 
 /**
@@ -1269,31 +1208,22 @@ BoozeBrew.prototype.unforcePumpMode = function(pump) {
  * @type void
  */
 BoozeBrew.prototype.spinAliveThrobber = function() {
-    this.aliveThrobber++;
-    if (this.aliveThrobber > 8) {
-        this.aliveThrobber = 0;
-    }
-    $('aliveThrobber').className = "s" + this.aliveThrobber;
+  this.aliveThrobber++;
+  if (this.aliveThrobber > 7) {
+    this.aliveThrobber = 0;
+  }
+  $('#aliveThrobber').attr('src', APPLICATION_ROOT+"/images/icons/brew/throbber/"+this.aliveThrobber+".png");
 };
 
 BoozeBrew.prototype.showCalculator = function() {
-    booze.log.info("Opening window for calculator");
+  booze.log.info("Opening window for calculator");
 
-    // Display brew initialization window
-    this.showCalculatorWindow = new Window('brewCalculatorWindow', {title: booze.messageSource.message('js.booze.brew.calculator.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        recenterAuto: true,
-        closable: true,
-        width: "500px",
-        height: "400px",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    this.showCalculatorWindow.setHTMLContent($('brewCalculatorWindowTemplate').innerHTML);
-    this.showCalculatorWindow.showCenter(true);
+  // Display brew initialization dialog
+  booze.brew.showCalculatorDialog = booze.notifier.notify($('#brewCalculatorDialogTemplate').tmpl({}), 
+    {
+      title: booze.messageSource.message('js.booze.brew.calculator.title')
+    }
+  );
 }
 
 /**
@@ -1302,28 +1232,31 @@ BoozeBrew.prototype.showCalculator = function() {
  * @type void
  */
 BoozeBrew.prototype.editProtocolData = function() {
-    if(this.editProtocolDialog != null) {
-        this.editProtocolDialog.toFront();
-        return;
-    }
+  if(this.editProtocolDialog != null) {
+    this.editProtocolDialog.dialog("moveToTop");
+    return;
+  }
+  
+  $.get(APPLICATION_ROOT + '/brew/editProtocolData', {
+      processId: booze.brew.processId,
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+          booze.brew.dialogs.editProtocolDialog = booze.notifier.notify(data.html, 
+            {
+              title: booze.messageSource.message('js.booze.brew.editProtocolDialog.title'),
+              closeCallback: function() {booze.brew.dialogs.editProtocolDialog = null},
+              callback: booze.brew.saveProtocolData
+            }
+          );
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
 
-    this.editProtocolDialog = new Window('editProtocolDialog', {title: booze.messageSource.message('js.booze.brew.editProtocolDialog.title'),
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
-        width: "460px",
-        minHeight: "365",
-        showEffectOptions: {duration: 0.2},
-        hideEffectOptions: {duration: 0.2},
-        destroyOnClose: true});
-
-    this.editProtocolDialog.setCloseCallback(function() {
-        this.editProtocolDialog = null;
-        return true;
-    }.bind(this));
-
-    this.editProtocolDialog.setAjaxContent(APPLICATION_ROOT + "/brew/editProtocolData",
-    {method: 'get'}, true, true);    
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 };
 
 /**
@@ -1332,30 +1265,22 @@ BoozeBrew.prototype.editProtocolData = function() {
  * @type void
  */
 BoozeBrew.prototype.saveProtocolData = function() {
-    $('protocolDataForm').request({
-        onSuccess: function(response) {
-            if (response.responseJSON) {
-                var data = response.responseJSON;
-                if (data.success === true) {
-                    if(data.close == true) {
-                        booze.log.info("Successfully saved protocol data");
-                        this.editProtocolDialog.close();
-                        this.editProtocolDialog = null;
-                    }
-                    else {
-                        this.editProtocolDialog.setHTMLContent(data.html);    
-                    }
-                }
-                else {
-                    booze.notifier.error(data.message);
-                }
-            }
-            else {
-                booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-            }
-        }.bindAsEventListener(this),
-        onFailure: this.ajaxError.bindAsEventListener(this)
-    });    
+  $.get(APPLICATION_ROOT + '/brew/saveProtocolData', {
+      processId: booze.brew.processId,
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+        if(data.close == true) {
+          booze.brew.dialogs.editProtocolDialog.dialog("close");
+        }
+        else {
+          booze.brew.dialogs.editProtocolDialog.html(data.html);  
+        }
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);   
 }
 
 /**
@@ -1364,25 +1289,25 @@ BoozeBrew.prototype.saveProtocolData = function() {
  * @type String
  */
 BoozeBrew.prototype.calculateTemperatureColor = function(actualTemperature, targetTemperature) {
-    if(actualTemperature < (targetTemperature - 3)) {
-        return "#"+(this.toHex(0)+this.toHex(0)+this.toHex(180));
-    }
-    else if(actualTemperature > (targetTemperature + 3)) {
-        return "#"+(this.toHex(180)+this.toHex(0)+this.toHex(0));
-    }
+  if(actualTemperature < (targetTemperature - 3)) {
+    return "#"+(this.toHex(0)+this.toHex(0)+this.toHex(180));
+  }
+  else if(actualTemperature > (targetTemperature + 3)) {
+    return "#"+(this.toHex(180)+this.toHex(0)+this.toHex(0));
+  }
 
-    var r, g, b = 0;
+  var r, g, b = 0;
 
-    if(actualTemperature < targetTemperature) {
-        b = 0 + Math.round((targetTemperature - actualTemperature) * 60)
-        g = 180 - Math.round((targetTemperature - actualTemperature) * 60)
-    }
-    else {
-        r = 0 + Math.round((actualTemperature - targetTemperature) * 60)
-        g = 180 - Math.round((actualTemperature - targetTemperature) * 60)
-    }
+  if(actualTemperature < targetTemperature) {
+    b = 0 + Math.round((targetTemperature - actualTemperature) * 60)
+    g = 180 - Math.round((targetTemperature - actualTemperature) * 60)
+  }
+  else {
+    r = 0 + Math.round((actualTemperature - targetTemperature) * 60)
+    g = 180 - Math.round((actualTemperature - targetTemperature) * 60)
+  }
 
-    return "#"+(this.toHex(r)+this.toHex(g)+this.toHex(b));
+  return "#"+(this.toHex(r)+this.toHex(g)+this.toHex(b));
 }
 
 /**
@@ -1391,19 +1316,19 @@ BoozeBrew.prototype.calculateTemperatureColor = function(actualTemperature, targ
  * @type String
  */
 BoozeBrew.prototype.toHex = function(dec) {
-        // create list of hex characters
-        var hexCharacters = "0123456789ABCDEF"
-        // if number is out of range return limit
-        if (dec < 0)
-                return "00"
-        if (dec > 255)
-                return "FF"
-        // decimal equivalent of first hex character in converted number
-        var i = Math.floor(dec / 16)
-        // decimal equivalent of second hex character in converted number
-        var j = dec % 16
-        // return hexadecimal equivalent
-        return hexCharacters.charAt(i) + hexCharacters.charAt(j)
+  // create list of hex characters
+  var hexCharacters = "0123456789ABCDEF"
+  // if number is out of range return limit
+  if (dec < 0)
+    return "00"
+  if (dec > 255)
+    return "FF"
+  // decimal equivalent of first hex character in converted number
+  var i = Math.floor(dec / 16)
+  // decimal equivalent of second hex character in converted number
+  var j = dec % 16
+  // return hexadecimal equivalent
+  return hexCharacters.charAt(i) + hexCharacters.charAt(j)
 }
 
 // Create instance within booze namespace

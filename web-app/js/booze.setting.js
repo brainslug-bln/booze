@@ -60,9 +60,8 @@ BoozeSetting.prototype.update = function(form, options) {
   
   $.post(APPLICATION_ROOT+"/setting/update", $(form).serialize(), 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         if(options && options.tabToShow) {
@@ -71,7 +70,7 @@ BoozeSetting.prototype.update = function(form, options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
       
@@ -103,7 +102,6 @@ BoozeSetting.prototype.tabClick = function(event) {
  * @param {Element} tabToShow Tab to show
  */
 BoozeSetting.prototype.displayTab = function(tabToShow) {
-  
   for(var i=0; i<booze.setting.tabs.length; i++) {
     $(booze.setting.tabs[i]).removeClass("active");
   }
@@ -139,6 +137,7 @@ BoozeSetting.prototype.formSubmit = function(event) {
  * @param {Event} event Calling event
  */
 BoozeSetting.prototype.fetchDriverOptions = function(event) {
+  var prefix;
   try { prefix = event.data.prefix } catch(e) { prefix = ""}
   
   var driver = $('#'+booze.setting.activeTab.id+'_'+prefix+'driverSelector').val()
@@ -150,9 +149,8 @@ BoozeSetting.prototype.fetchDriverOptions = function(event) {
     driver: driver
   }, 
   function(data) {
-    booze.clearStatusMessage();
     if(data.message) {
-      booze.showStatusMessage(data.message);
+      booze.notifier.statusMessage(data.message);
     }
     if(data.success) {
       $('#'+booze.setting.activeTab.id+'_'+prefix+'driverOptions').html(data.html);
@@ -160,7 +158,7 @@ BoozeSetting.prototype.fetchDriverOptions = function(event) {
     }
     else {
       if(data.error) {
-        booze.showStatusMessage(data.error);
+        booze.notifier.statusMessage(data.error);
       }
     }
   }, "json")
@@ -177,9 +175,8 @@ BoozeSetting.prototype.editRegulator = function(type, options) {
   
   $.post(APPLICATION_ROOT+"/"+type+"Regulator/edit", options, 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
@@ -188,7 +185,7 @@ BoozeSetting.prototype.editRegulator = function(type, options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
@@ -232,9 +229,8 @@ BoozeSetting.prototype.saveRegulator = function(event) {
   
   $.post(APPLICATION_ROOT+"/"+event.data.type+"Regulator/save", $('#'+booze.setting.activeTab.id+'_regulatorEditorForm').serialize(), 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_hasRegulatorField').val(1);
@@ -252,7 +248,7 @@ BoozeSetting.prototype.saveRegulator = function(event) {
         $('#'+booze.setting.activeTab.id+'_regulatorEditor').html(data.html);
         
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
@@ -269,9 +265,8 @@ BoozeSetting.prototype.editDevice = function(type, options) {
     
   $.post(APPLICATION_ROOT+"/"+type+"/edit", options, 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
@@ -280,7 +275,7 @@ BoozeSetting.prototype.editDevice = function(type, options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
@@ -307,9 +302,8 @@ BoozeSetting.prototype.saveDevice = function(event) {
   
   $.post(APPLICATION_ROOT+"/"+event.data.type+"/save", $('#'+booze.setting.activeTab.id+'_deviceEditorForm').serialize(), 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_deviceList').html(data.html);
@@ -321,7 +315,7 @@ BoozeSetting.prototype.saveDevice = function(event) {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').html(data.html);
         
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
@@ -337,9 +331,8 @@ BoozeSetting.prototype.deleteDevice = function(type, options) {
     
   $.post(APPLICATION_ROOT+"/"+type+"/delete", options, 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $('#'+booze.setting.activeTab.id+'_deviceEditor').slideUp();
@@ -348,7 +341,7 @@ BoozeSetting.prototype.deleteDevice = function(type, options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
@@ -364,9 +357,8 @@ BoozeSetting.prototype.createMotorTask = function(options) {
   
   $.get(APPLICATION_ROOT+"/setting/createMotorTask", options, 
     function(data) {
-      booze.clearStatusMessage();
       if(data.message) {
-        booze.showStatusMessage(data.message);
+        booze.notifier.statusMessage(data.message);
       }
       if(data.success) {
         $("#motorTask_"+options.type+"_data").html(data.html);
@@ -374,7 +366,7 @@ BoozeSetting.prototype.createMotorTask = function(options) {
       }
       else {
         if(data.error) {
-          booze.showStatusMessage(data.error);
+          booze.notifier.statusMessage(data.error);
         }
       }
     }, "json")
