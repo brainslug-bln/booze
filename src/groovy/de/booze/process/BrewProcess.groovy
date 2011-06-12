@@ -94,7 +94,8 @@ class BrewProcess implements Serializable {
     // Init the temperature regulator
     this.temperatureRegulator = new TemperatureRegulator()
     this.temperatureRegulator.setHysteresis(this.setting.hysteresis)
-
+    this.temperatureRegulator.setHeatingRamp(this.setting.heatingRamp)
+    
     // Init heaters
     this.heaters.each {
       log.debug("Init heater: ${it.name}")
@@ -163,21 +164,26 @@ class BrewProcess implements Serializable {
     this.devSwitcher = DeviceSwitcher.getInstance()
 
     // Create a new protocol instance
-    /*Protocol protocol = new Protocol([recipeName: this.recipe.name,
+    Protocol protocol = new Protocol([recipeName: this.recipe.name,
             dateStarted: (new Date()),
             recipeDescription: this.recipe.description,
             alcohol: this.recipe.alcohol,
             targetOriginalWort: this.recipe.originalWort,
-            targetPreCookingWort: this.recipe.preCookingWort,
+            targetPreSpargingWort: this.recipe.preSpargingWort,
+            targetPostSpargingWort: this.recipe.postSpargingWort,
             targetBottlingWort: this.recipe.bottlingWort,
-            mainWaterVolume: this.recipe.mainWaterVolume,
-            targetSecondWaterVolume: this.recipe.secondWaterVolume,
-            mainWaterTemperature: this.recipe.fillTemperature,
-            secondWaterTemperature: this.recipe.secondWaterTemperature,
+            mashingWaterVolume: this.recipe.mashingWaterVolume,
+            targetSpargingWaterVolume: this.recipe.spargingWaterVolume,
+            mashingTemperature: this.recipe.mashingTemperature,
+            spargingTemperature: this.recipe.spargingTemperature,
+            lauterTemperature: this.recipe.lauterTemperature,
             targetCookingTime: this.recipe.cookingTime,
-            yeastName: this.recipe.yeast.name,
-            yeastDescription: this.recipe.yeast.description,
-            meshTemperature: this.recipe.meshTemperature]);
+            targetPostIsomerization: this.recipe.postIsomerization,
+            fermentationTemperature: this.recipe.fermentationTemperature,
+            storingTime: this.recipe.storingTime,
+            storingTemperature: this.recipe.storingTemperature,
+            co2Concentration: this.recipe.co2Concentration,
+            yeast: this.recipe.yeast]);
 
     recipe.rests.each {
         ProtocolRest rest = new ProtocolRest(it.properties)
@@ -194,16 +200,13 @@ class BrewProcess implements Serializable {
         protocol.addToHops(hop);
     }
 
-    recipe.additives.each {
-        ProtocolAdditive ad = new ProtocolAdditive(it.properties)
-        protocol.addToAdditives(ad);
-    }
-
     protocol.validate()
+    log.error(protocol.errors)
     
     protocol.save(flush: true)
 
-    this.protocolId = protocol.id*/
+    this.protocolId = protocol.id
+    log.error("set protocol id ${protocol.id}")
 
     this.actualStep = new BrewInitStep();
 
@@ -216,8 +219,8 @@ class BrewProcess implements Serializable {
   public void start() {
     log.debug("starting brew process")
 
-    //this.protocolTimer = new Timer();
-    //this.protocolTimer.schedule(new ProtocolTask(this), 100, 30000);
+    this.protocolTimer = new Timer();
+    this.protocolTimer.schedule(new ProtocolTask(this), 100, 30000);
 
     this.nextStep();
 
@@ -396,9 +399,9 @@ class BrewProcess implements Serializable {
    */
   public List getEventsForProtocol() {
     List etd = []
-    this.events.each {
-      if (it.getSavedToProtocol() != true) {
-        etd.add(it);
+    for(int i=0; i<this.events.size(); i++) {
+      if (this.events[i].getSavedToProtocol() != true) {
+        etd.add(this.events[i]);
       }
     }
     return etd;
@@ -419,13 +422,18 @@ class BrewProcess implements Serializable {
     // all regulators
     log.debug("cancelling brew process")
 
-    /*if (this.protocolTimer) {
-      this.protocolTimer.cancel()
-    }
+    try {
+      if (this.protocolTimer) {
+        this.protocolTimer.cancel()
+      }
 
-    def pt = new ProtocolTask(this)
-    pt.run()
-    */
+      def pt = new ProtocolTask(this)
+      pt.run()
+    }
+    catch(Exception e) {
+      log.error("could not save protocol, cancelling anyway")
+    }
+    
    
     this.shutdownDevices();
   }

@@ -794,7 +794,9 @@ BoozeBrew.prototype.startCooking = function() {
 
   $.get(APPLICATION_ROOT + '/brew/startCooking', {
       processId: booze.brew.processId,
-      finalPreCookingWort: $('#brewLauterTemperatureReachedDialog_finalPreCookingWort').val()
+      finalSpargingWaterVolume: $('#brewLauterTemperatureReachedDialog_finalSpargingWaterVolume').val(),
+      finalPostSpargingWort: $('#brewLauterTemperatureReachedDialog_finalPostSpargingWort').val(),
+      finalPreSpargingWort: $('#brewLauterTemperatureReachedDialog_finalPreSpargingWort').val()
       }) 
     .success(function(data) {
       if (data.success === true) {
@@ -1281,6 +1283,40 @@ BoozeBrew.prototype.saveProtocolData = function() {
       delete data;
     })
     .error(booze.brew.ajaxError);   
+}
+
+BoozeBrew.prototype.showTemperatureChart = function() {
+  booze.log.info("Opening window for temperature chart");
+  
+  var now = new Date();
+  booze.brew.dialogs.temperatureChart =  $('<div><img src="'+$('#temperatureChartDialogTemplate').html()+'&q='+now.getTime()+'" style="width: 100%" /></div>')
+		.dialog({
+      width: "50%",
+      minHeight: '20%',
+      position: "top",
+      dialogClass: "showCloseButton",
+      close: function() { $(this).destroy(); booze.brew.dialogs.temperatureChart = null},
+			title: booze.messageSource.message("js.booze.brew.temperatureChart"),
+      modal: false,
+      buttons: []
+		});
+}
+
+BoozeBrew.prototype.showPressureChart = function() {
+  booze.log.info("Opening window for pressure chart");
+  
+  var now = new Date();
+  booze.brew.dialogs.pressureChart =  $('<div><img src="'+$('#pressureChartDialogTemplate').html()+'&q='+now.getTime()+'" style="width: 100%" /></div>')
+		.dialog({
+      width: "50%",
+      minHeight: '20%',
+      position: "top",
+      dialogClass: "showCloseButton",
+      close: function() { $(this).destroy(); booze.brew.dialogs.pressureChart = null},
+			title: booze.messageSource.message("js.booze.brew.pressureChart"),
+      modal: false,
+      buttons: []
+		});
 }
 
 /**

@@ -74,7 +74,7 @@ class BrewController {
       return
     }
 
-    log.error(f.getBrewProcess())
+    
     // Render template
     [brewProcess: f.getBrewProcess()]
   }
@@ -194,13 +194,15 @@ class BrewController {
       return
     }
 
-    try {
-      //Protocol p = Protocol.get(brewService.brewProcess.protocolId);
-      //bindData(p, params);
-
-      //p.save()
+    try {     
       p.startCooking()
 
+      log.error("Protocol id is: ${p.protocolId}")
+      Protocol proto = Protocol.get(p.protocolId);
+      proto.properties = params
+
+      proto.save()
+      
       render([success: true] as JSON)
     }
     catch (Exception e) {
@@ -561,47 +563,40 @@ class BrewController {
       return
     }
 
-//    Double totalPowerConsumption = 0.0 as Double
-//
-//    brewService.brewProcess.heaters.each {
-//      totalPowerConsumption += it.readTotalPowerConsumption()
-//    }
-//
-//    totalPowerConsumption += brewService.brewProcess.pump.readTotalPowerConsumption()
-
 
     try {
+      def myp = Protocol.get(p.protocolId)
+
+      myp.properties["finalBeerVolume", "finalOriginalWort"] = params
+
+      myp.dateFinished = new Date()
+      myp.finalCookingTime = p.finalCookingTime
+      
+      myp.targetFinalBeerVolume = recipeService.estimateFinalWaterAmount(p.recipe)
+      
+      Double originalWort = myp.finalOriginalWort?myp.finalOriginalWort:myp.targetOriginalWort
+      myp.ebc = recipeService.calculateBeerColor(p.recipe, originalWort)
+
+      def finalBeerVolume = myp.finalBeerVolume ? myp.finalBeerVolume : myp.targetFinalBeerVolume
+
+      // Calculate IBU
+      Double averageWort
+      if (myp.finalPostSpargingWort && myp.finalOriginalWort) {
+        averageWort = (myp.finalPostSpargingWort + myp.finalOriginalWort) / 2;
+      }
+      else {
+        averageWort = hopService.estimateAverageWort(p.recipe)
+      }
+
+      myp.ibu = hopService.calculateIbu(p.recipe, finalBeerVolume, averageWort)
+
+      
+      myp.save()
+
       p.cancel()
-
-//      def myp = Protocol.get(brewService.brewProcess.protocolId)
-//
-//      myp.properties["finalVolume", "finalOriginalWort"] = params
-//
-//      myp.powerConsumption = totalPowerConsumption
-//      myp.dateFinished = new Date()
-//      myp.finalCookingTime = brewService.brewProcess.finalCookingTime
-//      myp.targetFinalVolume = recipeService.estimateFinalWaterAmount(brewService.brewProcess.recipe)
-//      
-//      Double originalWort = myp.finalOriginalWort?myp.finalOriginalWort:myp.targetOriginalWort
-//      myp.ebc = recipeService.calculateBeerColor(brewService.brewProcess.recipe, originalWort)
-//
-//      def finalVolume = myp.finalVolume ? myp.finalVolume : myp.targetFinalVolume
-//
-//      // Calculate IBU
-//      Double averageWort
-//      if (myp.finalPreCookingWort && myp.finalOriginalWort) {
-//        averageWort = (myp.finalPreCookingWort + myp.finalOriginalWort) / 2;
-//      }
-//      else {
-//        averageWort = hopService.estimateAverageWort(brewService.brewProcess.recipe)
-//      }
-//
-//      myp.ibu = hopService.calculateIbu(brewService.brewProcess.recipe, finalVolume, averageWort)
-//
-//      myp.save()
-
       f.flushBrewProcess()
 
+      
       render([success: true, redirect: g.createLink(controller:'recipe', action:'edit', id:p.recipe.id)/*, protocolInstance: myp*/] as JSON)
       return
     }
@@ -616,28 +611,55 @@ class BrewController {
    * connection was los
    */
   def resumeLostSession = {
-    brewService.brewProcess.newProcessId();
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+
+    BrewProcess p = f.getBrewProcess()
+    
+    p.newProcessId();
     render(view: 'init', model: [brewProcess: brewService.brewProcess, resume: true, events: brewService.brewProcess.getAllEvents(), pumpModes: PumpMode.findAll()])
   }
 
-//  def editProtocolData = {
-//    render(template:"editProtocolData", model:[protocol: Protocol.get(brewService.brewProcess.protocolId)])
-//  }
-//
-//  def saveProtocolData = {
-//    try {
-//      Protocol p = Protocol.get(brewService.brewProcess.protocolId);
-//      p.properties = params
-//      if(!p.validate()) {
-//        render([success: true, close: false, html: g.render(template:"editProtocolData", model:[protocol: p])] as JSON)
-//      }
-//      p.save()
-//      render([success: true, close: true] as JSON)
-//    }
-//    catch(Exception e) {
-//      render([success: false, close: false, message: e] as JSON)
-//    }
-//  }
+  def editProtocolData = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+
+    BrewProcess p = f.getBrewProcess()
+    
+    render(template:"editProtocolData", model:[protocol: Protocol.get(p.protocolId)])
+  }
+
+  def saveProtocolData = {
+    BrewProcessHolder f = BrewProcessHolder.getInstance()
+
+    if (!f.hasBrewProcess()) {
+      response.sendError(503)
+      return
+    }
+
+    BrewProcess p = f.getBrewProcess()
+    
+    try {
+      Protocol proto = Protocol.get(p.protocolId);
+      proto.properties = params
+      if(!proto.validate()) {
+        render([success: true, close: false, html: g.render(template:"editProtocolData", model:[protocol: proto])] as JSON)
+      }
+      proto.save()
+      render([success: true, close: true] as JSON)
+    }
+    catch(Exception e) {
+      render([success: false, close: false, message: e] as JSON)
+    }
+  }
 
   def toggleForceHeater = {
     BrewProcessHolder f = BrewProcessHolder.getInstance()

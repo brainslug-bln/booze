@@ -52,6 +52,8 @@ function BoozeMessageSource() {
         'js.booze.brew.calculator.title': 'Braurechner',
         'js.booze.brew.finishBrewProcess':'Beenden',
         'js.booze.brew.coolingDialog.title':'Abpumpen/Kühlen',
+        'js.booze.brew.temperatureChart':'Temperaturverlauf',
+        'js.booze.brew.pressureChart':'Druckverlauf',
 
         'js.booze.manualMode.serverCommunicationError': "Fehler beim Verbindungsaufbau zum Server"
     };

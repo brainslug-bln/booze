@@ -3,29 +3,44 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <meta name="layout" content="main"/>
   <title><g:message code="protocol.show.headline" args="${[protocolInstance.recipeName.encodeAsHTML(), formatDate(formatName: 'default.date.formatter', date: protocolInstance.dateStarted)]}"/></title>
-  <jawr:script src="/bundles/recipe.js"/>
 </head>
 <body>
 
 <div class="body">
-  <h3>
-    <g:message code="protocol.show.headline" args="${[protocolInstance.recipeName.encodeAsHTML(), formatDate(formatName: 'default.date.formatter', date: protocolInstance.dateStarted)]}"/>
-  </h3>
+  <h1><g:message code="protocol.show.headline" args="${[protocolInstance.recipeName.encodeAsHTML(), formatDate(formatName: 'default.date.formatter', date: protocolInstance.dateStarted)]}"/></h1>
 
-  <g:render template="protocol" model="${[protocolInstance: protocolInstance]}"/>
+  <div class="leftColumn">
+    <div id="leftColumn_content" class="leftColumn_content">
+      <div class="leftNav" id="protocolNav">
+        <ul>
+          <li class="active"><a href="${createLink(action:'edit', id:protocolInstance.id)}"><g:message code="protocol.edit" /></a></li>
+          <li><a href="${createLink(action:'temperatureChart', id:protocolInstance.id)}"><g:message code="protocol.temperatureChart.headline" /></a></li>
+          <li><a href="${createLink(action:'pressureChart', id:protocolInstance.id)}"><g:message code="protocol.pressureChart.headline" /></a></li>
+        </ul>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
 
-  <g:renderErrors bean="${protocolInstance}" />
+  <div class="rightColumn">
+    <div class="rightColumn_content">
+  
+      <g:render template="protocol" model="${[protocolInstance: protocolInstance]}"/>
 
+      <g:renderErrors bean="${protocolInstance}" />
+      
+      <g:if test="${flash.message}">
+        <g:notification message="${flash.message}"/>
+      </g:if>
+
+      <g:hasErrors bean="${protocolInstance}">
+        <g:notification message="${g.message(code:'protocol.edit.pleaseCorrectErrors')}" duration="5000"/>
+      </g:hasErrors>
+      <div class="clear"></div>
+    </div>
+
+  </div>
 </div>
-
-
-<g:if test="${flash.message}">
-  <g:notification message="${flash.message}"/>
-</g:if>
-
-<g:hasErrors bean="${protocolInstance}">
-  <g:notification message="${g.message(code:'protocol.edit.pleaseCorrectErrors')}" duration="5000"/>
-</g:hasErrors>
 
 </body>
 </html>

@@ -6,6 +6,9 @@
     display: none;
 }
 
+.showCloseButton .ui-dialog-titlebar-close {
+  display: block !important;
+}
 
 .brew .leftColumn {
   width: 48%;

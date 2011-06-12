@@ -44,9 +44,7 @@ class ProtocolService {
   public JFreeChart createTemperatureChart(Protocol protocol, taglib) {
     // Temperature values
     Map temperatures = [:]
-    TimeSeries tempInner = new TimeSeries(taglib.message(code: "protocol.chart.temperature.inner"), Millisecond.class);
-    TimeSeries tempOuter = new TimeSeries(taglib.message(code: "protocol.chart.temperature.outer"), Millisecond.class);
-    TimeSeries tempTarget = new TimeSeries(taglib.message(code: "protocol.chart.temperature.target"), Millisecond.class);
+    TimeSeries tempTarget = new TimeSeries(taglib.message(code: "protocol.chart.targetTemperature"), Millisecond.class);
 
     protocol.targetTemperatureValues.each {
       tempTarget.add(new Millisecond(new Date(it.created)), it.value);
@@ -60,8 +58,8 @@ class ProtocolService {
     }
 
     TimeSeriesCollection tempDataset = new TimeSeriesCollection();
-    temperatures.each {
-      tempDataset.addSeries(it);
+    temperatures.each { key, value ->
+      tempDataset.addSeries(value);
     }
     tempDataset.addSeries(tempTarget);
 
@@ -70,8 +68,8 @@ class ProtocolService {
             taglib.message(code: "protocol.chart.time"),
             taglib.message(code: "protocol.chart.temperature"),
             tempDataset,
-            false,
-            false,
+            true,
+            true,
             false);
 
     // Set the background colour of the chart
@@ -82,11 +80,13 @@ class ProtocolService {
 
     // Change line color
     int i=0;
+    Random rand = new Random()
+    
     for(i; i<temperatures.size(); i++) {
-      p.getRenderer().setSeriesPaint(i, Color.red);
+      p.getRenderer().setSeriesPaint(i, new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
     }
     
-    p.getRenderer().setSeriesPaint(++i, Color.green);
+    p.getRenderer().setSeriesPaint((i+1), Color.red);
 
     // Modify the plot background
     p.setBackgroundPaint(Color.white);
@@ -111,14 +111,14 @@ class ProtocolService {
     Map pressures = [:]
     protocol.pressureValues.each {
       if(!pressures[it.sensorName]) {
-        pressures[it.sensorName] = new TimeSeries(taglib.message(code: "protocol.chart.pressure", args:[it.sensorName]), Millisecond.class);
+        pressures[it.sensorName] = new TimeSeries(taglib.message(code: "protocol.chart.pressureSensor", args:[it.sensorName]), Millisecond.class);
       }
-      pressure[it.sensorName].add(new Millisecond(new Date(it.created)), it.value);
+      pressures[it.sensorName].add(new Millisecond(new Date(it.created)), it.value);
     }
 
     TimeSeriesCollection pressureDataset = new TimeSeriesCollection();
-    pressures.each {
-      pressureDataset.addSeries(it);
+    pressures.each { key, value ->
+      pressureDataset.addSeries(value);
     }
 
     JFreeChart pressureChart = ChartFactory.createTimeSeriesChart(
@@ -126,8 +126,8 @@ class ProtocolService {
             taglib.message(code: "protocol.chart.time"),
             taglib.message(code: "protocol.chart.pressure"),
             pressureDataset,
-            false,
-            false,
+            true,
+            true,
             false);
 
     // Set the background colour of the chart
@@ -136,8 +136,10 @@ class ProtocolService {
     // Get the Plot object for a bar graph
     XYPlot p = pressureChart.getXYPlot();
 
+    Random rand = new Random()
+    
     for(int i=0; i<pressures.size(); i++) {
-      p.getRenderer().setSeriesPaint(i, Color.red);
+      p.getRenderer().setSeriesPaint(i, new Color(rand.nextInt(256), rand.nextInt(256), rand.nextInt(256)));
     }
     
     // Modify the plot background

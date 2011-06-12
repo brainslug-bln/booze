@@ -59,7 +59,7 @@ class Protocol implements Serializable {
    * Measured meshing wort (after mashing, before sparging)
    */
   Double targetPreSpargingWort
-  Double finalPreSpargingWortWort
+  Double finalPreSpargingWort
 
   /**
    * Targeted and final bottling wort
@@ -151,9 +151,14 @@ class Protocol implements Serializable {
   Double fareSugar
   
   /**
+   * CO2 concentration
+   */
+  Double co2Concentration
+  
+  /**
    * Glucose or saccharose
    */
-  Integer sugarType = SUGAR_TYPE_GLUCOSE
+  Integer fareSugarType = SUGAR_TYPE_GLUCOSE
 
   Date dateStarted
   Date dateFinished
@@ -194,6 +199,9 @@ class Protocol implements Serializable {
     targetSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
     finalSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
     spargingTemperature(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
+    
+    targetPostIsomerization(min: 0d, max: 1000d, nullable: true)
+    finalPostIsomerization(min: 0d, max: 1000d, nullable: true)
 
     dilutionWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
 

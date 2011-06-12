@@ -22,7 +22,7 @@
         <input id="brewCookingTemperatureReachedDialog_dilutionWaterVolume" type="text" name="dilutionWaterVolume" value="" /> 
 
         <label><g:message code="protocol.finalBeerVolume"/></label>
-        <input type="text" name="finalBeerVolume" value="" id="brewCookingTemperatureReachedDialog_finalVolume"/>
+        <input type="text" name="finalBeerVolume" value="" id="brewCookingTemperatureReachedDialog_finalBeerVolume"/>
     </div>
 
     <div class="rightColumn">
@@ -32,7 +32,7 @@
   </fieldset>
 
   <g:if test="${brewProcess.drainPumpRegulator}">
-    <p class="disclaimer">Achtung: Im nächsten Schritt wird die Entleerungspumpe aktiviert, bitte vor dem Drücken des "Weiter"-Knopfes die nötigen Vorkehrungen treffen</p>
+    <p class="disclaimer"><g:message code="brew.init.drainPumpDisclaimer" /></p>
   </g:if>
     
   <div class="clear"></div>

@@ -63,7 +63,7 @@ class DummyTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
     public Double getTemperature() throws Exception {
       DeviceSwitcher d = DeviceSwitcher.getInstance();
       if (this.lastTemperature < (d.getTargetTemperature() + 2.0 as Double)) {
-        this.lastTemperature += 0.2 * this.threshold as Double;
+        this.lastTemperature += 0.002 * this.threshold as Double;
 
         if (this.threshold > 1.1) {
           // this.threshold -= (0.000005 as Double)

@@ -63,12 +63,32 @@ class TemperatureRegulator {
   /**
    * Target temperature to achieve/hold
    */
-  private Double targetTemperature = 0.0 as Double
+  private Double targetTemperature = 0d
+  
+  /**
+   * Temperature thats lies on the heating ramp
+   */
+  private Double rampTemperature = 0d
+  
+  /**
+   * Ramp start temperature
+   */
+  private Double rampStartTemperature = 0d
+  
+  /**
+   * Heating ramp
+   */
+  private Double heatingRamp = 1d
+  
+  /**
+   * Heating ramp start date
+   */
+  private Date rampStartTime = new Date()
 
   /**
    * Actual reference temperature
    * */
-  private Double actualTemperature = 0.0 as Double
+  private Double actualTemperature = 0d
   
   /**
    * Which reference sensors to use
@@ -145,8 +165,59 @@ class TemperatureRegulator {
    */
   public void setTargetTemperature(Double t) {
     this.targetTemperature = t
+    
+    
+    Double at = this.getActualReferenceTemperature();
+    
+    this.rampTemperature = at;
+    this.rampStartTemperature = at
+    this.rampStartTime = new Date()
+    
     DeviceSwitcher d = DeviceSwitcher.getInstance();
     d.setTargetTemperature(t);
+  }
+  
+  public Double getActualReferenceTemperature() {
+    Double rt = 0.0d;
+    int rtc = 0;
+    
+    this.getReferenceSensorDevices().each() {
+      try {
+          rt += it.readTemperatureImmediate();;
+          rtc++;
+      }
+      catch (Exception e) {
+        log.error("Could not read temperature from sensor ${it.name}")
+      }
+    }
+
+    if (rtc < 1) {
+      throw new Exception('No valid reference temperature sensors found');
+    }
+
+    return (rt / rtc) as Double
+  }
+  
+  /**
+   * Returns the actual ramp temperature
+   */
+  public Double getRampTemperature() {
+    Long timeElapsed = (new Date()).getTime() - this.rampStartTime.getTime()
+    if((this.rampStartTemperature + (timeElapsed / 60000) * (this.heatingRamp)) <= this.targetTemperature) {
+      this.rampTemperature = this.rampStartTemperature + (timeElapsed / 60000) * (this.heatingRamp)
+    }
+    else {
+      this.rampTemperature = this.targetTemperature;
+    }
+    
+    log.debug("actual ramp temperature is ${this.rampTemperature}°C")
+    return this.rampTemperature;
+  }
+  
+  
+  public void setHeatingRamp(Double r) {
+    log.debug("setting heating ramp to ${this.heatingRamp}°C/min")
+    this.heatingRamp = r;
   }
 
   /**

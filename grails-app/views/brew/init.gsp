@@ -66,6 +66,7 @@
             <div class="leftColumn">
               <input class="left ui-button ui-state-default" type="button" onclick="booze.brew.cancel()" id="cancelButton" value="${message(code: 'brew.buttons.cancel')}"/>
               <input class="left ui-button ui-state-default" type="button" onclick="booze.brew.showCalculator()" id="showCalculatorButton" value="${message(code: 'brew.buttons.showCalculator')}"/>
+              <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.showPressureChart()" id="showPressureChartButton" value="${message(code: 'brew.buttons.showPressureChart')}"/>
             </div>
             
             <div class="rightColumn">
@@ -74,7 +75,9 @@
 
               <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.editProtocolData()" id="editProtocoldataButton" value="${message(code: 'brew.buttons.editProtocolData')}"/>
 
+              <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.showTemperatureChart()" id="showTemperatureChartButton" value="${message(code: 'brew.buttons.showTemperatureChart')}"/>
             </div>
+            
             
             <div class="clear"></div>
           </div>
@@ -468,6 +471,12 @@ return false"><span><g:pumpModeName pumpMode="${pumpMode}"/></span></li>
       <g:render template="calculator"/>
     </div>
   </script>
+  
+  <% /* Temperature chart window */ %>
+  <script id="temperatureChartDialogTemplate" type="text/x-jquery-tmpl">${createLink(controller: "protocol", action: "showTemperatureChart", params: [id: brewProcess.protocolId, width: "1000", height: "600"])}</script>
+  
+  <% /* Pressure chart window */ %>
+  <script id="pressureChartDialogTemplate" type="text/x-jquery-tmpl">${createLink(controller: "protocol", action: "showPressureChart", params: [id: brewProcess.protocolId, width: "1000", height: "600"])}</script>
 
   <g:if test="${resume == true}">
     <g:javascript>

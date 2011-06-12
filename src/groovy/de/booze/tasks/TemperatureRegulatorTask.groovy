@@ -50,30 +50,6 @@ class TemperatureRegulatorTask extends TimerTask {
     this.devSwitcher = DeviceSwitcher.getInstance()
   }
 
-  /**
-   * Returns the average reference temperature from the
-   * selected reference sensors
-   */
-  public Double getReferenceTemperature() {
-    Double rt = 0.0d;
-    int rtc = 0;
-    
-    this.tempRegulator.getReferenceSensorDevices().each() {
-      try {
-          rt += it.readTemperatureImmediate();;
-          rtc++;
-      }
-      catch (Exception e) {
-        log.error("Could not read temperature from sensor ${it.name}")
-      }
-    }
-
-    if (rtc < 1) {
-      throw new Exception('No valid reference temperature sensors found');
-    }
-
-    return (rt / rtc) as Double
-  }
 
   /**
    * Checks if the desired temperature is reached and
@@ -83,11 +59,12 @@ class TemperatureRegulatorTask extends TimerTask {
     log.debug("running TemperatureRegulatorTask")
     List heaters = this.tempRegulator.getHeaters();
 
-    Double targetTemperature = this.tempRegulator.getTargetTemperature();
+    //Double targetTemperature = this.tempRegulator.getTargetTemperature();
+    Double targetTemperature = this.tempRegulator.getRampTemperature();
     Double referenceTemperature = 0.0 as Double;
 
     try {
-      referenceTemperature = this.getReferenceTemperature();
+      referenceTemperature = this.tempRegulator.getActualReferenceTemperature();
       log.debug("reference temperature is ${referenceTemperature}°C")
     }
     catch (Exception e) {

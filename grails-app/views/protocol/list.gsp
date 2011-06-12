@@ -29,7 +29,7 @@
 
             <td>${fieldValue(bean: protocolInstance, field: 'recipeName')}</td>
 
-            <td><g:formatDate formatName="formatter.dateTime.minutes" date="${protocolInstance.dateStarted}"/></td>
+            <td><g:formatDate formatName="default.date.formatter" date="${protocolInstance.dateStarted}"/></td>
           </tr>
         </g:each>
       </g:if>

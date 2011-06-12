@@ -1,22 +1,6 @@
 <div class="protocol">
   <g:form controller="protocol">
-
-    <div class="protocolChart">
-      <div class="chartImage temperature">
-        <a href='${createLink(controller: "protocol", action: "showTemperatureChart", params: [id: protocolInstance.id, width: "700", height: "400"])}' rel="lightbox[charts]">
-          <img src='${createLink(controller: "protocol", action: "showTemperatureChart", params: [id: protocolInstance.id, width: "350", height: "200"])}'/>
-        </a>
-      </div>
-      <div class="chartImage pressure">
-        <a href='${createLink(controller: "protocol", action: "showPressureChart", params: [id: protocolInstance.id, width: "700", height: "400"])}' rel="lightbox[charts]">
-          <img src='${createLink(controller: "protocol", action: "showPressureChart", params: [id: protocolInstance.id, width: "350", height: "200"])}'/>
-        </a>
-      </div>
-    </div>
-
-    <div class="twoColumn">
-      <div class="column editProtocolArea">
-        <div class="yform">
+      <div class="column50percent editProtocolArea">
 
           <div class="fieldsetHeadline"><g:message code="protocol.fieldset.commonData"/></div>
           <fieldset>
@@ -54,11 +38,6 @@
               </div>
 
               <div class="clearfix"></div>
-
-              <label for="powerConsumption"><g:message code="protocol.powerConsumption"/></label>
-              <div class="type-text">
-                <g:message code="default.formatter.kilowatt" args="${[protocolInstance.powerConsumption?formatNumber(format:'####0.00', number: protocolInstance.powerConsumption?.div(1000)):0]}"/>
-              </div>
             </div>
 
             <div class="clearfix"></div>
@@ -104,9 +83,9 @@
 
             <div class="twoColumn">
               <div class="column">
-                <label for="finalMeshingWort"><g:message code="protocol.finalMeshingWort"/></label>
-                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'finalMeshingWort', 'error')}">
-                  <input type="text" name="finalMeshingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalMeshingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
+                <label for="finalPreSpargingWort"><g:message code="protocol.finalPreSpargingWort"/></label>
+                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'finalPreSpargingWort', 'error')}">
+                  <input type="text" name="finalPreSpargingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalPreSpargingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
                 </div>
               </div>
               <div class="column">
@@ -121,15 +100,15 @@
 
             <div class="twoColumn">
               <div class="column">
-                <label for="targetPreCookingWort"><g:message code="protocol.targetPreCookingWort"/></label>
-                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'targetPreCookingWort', 'error')}">
-                  <input type="text" name="targetPreCookingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.targetPreCookingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
+                <label for="targetPostSpargingWort"><g:message code="protocol.targetPostSpargingWort"/></label>
+                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'targetPostSpargingWort', 'error')}">
+                  <input type="text" name="targetPostSpargingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.targetPostSpargingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
                 </div>
               </div>
               <div class="column">
-                <label for="finalPreCookingWort"><g:message code="protocol.finalPreCookingWort"/></label>
-                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'finalPreCookingWort', 'error')}">
-                  <input type="text" name="finalPreCookingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalPreCookingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
+                <label for="finalPostSpargingWort"><g:message code="protocol.finalPostSpargingWort"/></label>
+                <div class="type-text ${hasErrors(bean: protocolInstance, field: 'finalPostSpargingWort', 'error')}">
+                  <input type="text" name="finalPostSpargingWort" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalPostSpargingWort)}"/> <span class="unit"><g:message code="default.unit.plato"/></span>
                 </div>
               </div>
             </div>
@@ -158,32 +137,15 @@
           <fieldset>
             <div class="twoColumn">
               <div class="column">
-                <label for="mainWaterVolume"><g:message code="protocol.mainWaterVolume"/></label>
+                <label for="mashingWaterVolume"><g:message code="protocol.mashingWaterVolume"/></label>
                 <div class="type-text">
-                  <input type="text" name="mainWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.mainWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
+                  <input type="text" name="mashingWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.mashingWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
                 </div>
               </div>
               <div class="column">
-                <label for="mainWaterTemperature"><g:message code="protocol.mainWaterTemperature"/></label>
+                <label for="mashingTemperature"><g:message code="protocol.mashingTemperature"/></label>
                 <div class="type-text">
-                  <input type="text" name="mainWaterTemperature" value="${formatNumber(format: '###0.##', number: protocolInstance.mainWaterTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
-                </div>
-              </div>
-            </div>
-
-            <div clas="clearfix"></div>
-
-            <div class="twoColumn">
-              <div class="column">
-                <label for="targetSecondWaterVolume"><g:message code="protocol.targetSecondWaterVolume"/></label>
-                <div class="type-text">
-                  <input type="text" name="targetSecondWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.targetSecondWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
-                </div>
-              </div>
-              <div class="column">
-                <label for="finalSecondWaterVolume"><g:message code="protocol.finalSecondWaterVolume"/></label>
-                <div class="type-text">
-                  <input type="text" name="finalSecondWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.finalSecondWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
+                  <input type="text" name="mashingTemperature" value="${formatNumber(format: '###0.##', number: protocolInstance.mashingTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
                 </div>
               </div>
             </div>
@@ -192,15 +154,32 @@
 
             <div class="twoColumn">
               <div class="column">
-                <label for="meshTemperature"><g:message code="protocol.meshTemperature"/></label>
+                <label for="targetSpargingWaterVolume"><g:message code="protocol.targetSpargingWaterVolume"/></label>
                 <div class="type-text">
-                  <input type="text" name="meshTemperature" value="${formatNumber(format: '##0.##', number: protocolInstance.meshTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
+                  <input type="text" name="targetSpargingWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.targetSpargingWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
                 </div>
               </div>
               <div class="column">
-                <label for="secondWaterTemperature"><g:message code="protocol.secondWaterTemperature"/></label>
+                <label for="finalSpargingWaterVolume"><g:message code="protocol.finalSpargingWaterVolume"/></label>
                 <div class="type-text">
-                  <input type="text" name="secondWaterTemperature" value="${formatNumber(format: '##0.##', number: protocolInstance.secondWaterTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
+                  <input type="text" name="finalSpargingWaterVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.finalSpargingWaterVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
+                </div>
+              </div>
+            </div>
+
+            <div clas="clearfix"></div>
+
+            <div class="twoColumn">
+              <div class="column">
+                <label for="lauterTemperature"><g:message code="protocol.lauterTemperature"/></label>
+                <div class="type-text">
+                  <input type="text" name="lauterTemperature" value="${formatNumber(format: '##0.##', number: protocolInstance.lauterTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
+                </div>
+              </div>
+              <div class="column">
+                <label for="spargingTemperature"><g:message code="protocol.spargingTemperature"/></label>
+                <div class="type-text">
+                  <input type="text" name="spargingTemperature" value="${formatNumber(format: '##0.##', number: protocolInstance.spargingTemperature)}"/> <span class="unit"><g:message code="default.unit.degrees.celsius"/></span>
                 </div>
               </div>
             </div>
@@ -240,15 +219,15 @@
 
             <div class="twoColumn">
               <div class="column">
-                <label for="targetFinalVolume"><g:message code="protocol.targetFinalVolume"/></label>
+                <label for="targetFinalBeerVolume"><g:message code="protocol.targetFinalBeerVolume"/></label>
                 <div class="type-text">
-                  <input type="text" name="targetFinalVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.targetFinalVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
+                  <input type="text" name="targetFinalBeerVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.targetFinalBeerVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
                 </div>
               </div>
               <div class="column">
-                <label for="finalVolume"><g:message code="protocol.finalVolume"/></label>
+                <label for="finalBeerVolume"><g:message code="protocol.finalBeerVolume"/></label>
                 <div class="type-text">
-                  <input type="text" name="finalVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.finalVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
+                  <input type="text" name="finalBeerVolume" value="${formatNumber(format: '###0.##', number: protocolInstance.finalBeerVolume)}"/> <span class="unit"><g:message code="default.unit.liter"/></span>
                 </div>
               </div>
             </div>
@@ -274,12 +253,12 @@
 
             <label for="yeast"><g:message code="protocol.yeast"/></label>
             <div class="type-text">
-              <g:fieldValue field="yeastName" bean="${protocolInstance}"/> (<g:fieldValue field="yeastDescription" bean="${protocolInstance}"/>)
+              <g:fieldValue field="yeast" bean="${protocolInstance}"/> 
             </div>
           </fieldset>
         </div>
-      </div>
-      <div class="column">
+
+      <div class="column50percent">
         <div class="yform">
           <div class="fieldsetHeadline"><g:message code="protocol.fieldset.messages"/></div>
           <fieldset>
@@ -301,34 +280,9 @@
         </div>
 
         <div class="yform">
-          <div class="fieldsetHeadline"><g:message code="protocol.malt"/></div>
-          <fieldset>
-            <div class="type-table">
-              <g:render template="/recipe/editMalt" model="${[containerInstance: protocolInstance]}"/>
-            </div>
+          
           </fieldset>
 
-          <div class="fieldsetHeadline"><g:message code="protocol.rests"/></div>
-          <fieldset>
-            <div class="type-table">
-              <g:render template="/recipe/editRests" model="${[containerInstance: protocolInstance, hideBrewParams: true]}"/>
-            </div>
-          </fieldset>
-
-
-          <div class="fieldsetHeadline"><g:message code="protocol.hop"/></div>
-          <fieldset>
-            <div class="type-table">
-              <g:render template="/recipe/editHops" model="${[containerInstance: protocolInstance]}"/>
-            </div>
-          </fieldset>
-
-          <div class="fieldsetHeadline"><g:message code="protocol.additives"/></div>
-          <fieldset>
-            <div class="type-table">
-              <g:render template="/recipe/editAdditives" model="${[containerInstance: protocolInstance]}"/>
-            </div>
-          </fieldset>
         </div>
 
         <div class="clearfix"></div>
@@ -346,9 +300,6 @@
         </div>
 
       </div>
-
-    </div>
-
     
   </g:form>
 </div>

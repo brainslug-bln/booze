@@ -8,6 +8,7 @@ class UrlMappings {
         }
 
         "/"(view:"/static/index")
+        "/home"(view:"/static/index")
         "/about"(view:"/static/about")
         "/version"(view:"/static/version")
         "500"(view:'/error')

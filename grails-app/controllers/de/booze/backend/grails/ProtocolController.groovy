@@ -45,7 +45,29 @@ class ProtocolController {
       redirect(action: "list")
     }
     else {
-      [protocolInstance: protocolInstance, temperatureValues: protocolInstance.temperatureValues.sort {it.created}.collect {it.value}]
+      [protocolInstance: protocolInstance]
+    }
+  }
+  
+  def temperatureChart = {
+    def protocolInstance = Protocol.get(params.id)
+    if (!protocolInstance) {
+      flash.message = message(code: 'protocol.notFound', args: [params.id])
+      redirect(action: "list")
+    }
+    else {
+      [protocolInstance: protocolInstance]
+    }
+  }
+  
+  def pressureChart = {
+    def protocolInstance = Protocol.get(params.id)
+    if (!protocolInstance) {
+      flash.message = message(code: 'protocol.notFound', args: [params.id])
+      redirect(action: "list")
+    }
+    else {
+      [protocolInstance: protocolInstance]
     }
   }
 
