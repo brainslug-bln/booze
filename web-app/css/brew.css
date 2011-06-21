@@ -305,75 +305,6 @@
 }
 
 
-
-.pump {
-    width: 100%;
-    height: 20px;
-}
-
-.pumpName {
-    float: left;
-    width: auto;
-    padding-top: 2px;
-}
-
-
-
-.pumpMode {
-    width: 53px;
-    float: right;
-    margin-left: 5px;
-}
-
-.pumpStatus {
-    float: right;
-    width: 16px;
-    margin-left: 5px;
-    padding-top: 2px;
-}
- background-image: url(../images/icons/brew/disabled.png);
-}
-
-
-
-.pumpMode a, .pumpMode a:hover {
-    text-decoration: none;
-}
-
-.pumpMode .forced {
-    width: 16px;
-    height: 16px;
-    display: block;
-    background-image: url(../images/icons/brew/exclamation.png);
-    float: left;
-    margin-top: 2px;
-}
-
-.pumpMode .mode_0 {
-    width: 20px;
-    height: 20px;
-    display: block;
-    background-image: url(../images/icons/pumpModes/continuus.png);
-    float: left;
-}
-
-.pumpMode .mode_1 {
-    width: 20px;
-    height: 20px;
-    display: block;
-    background-image: url(../images/icons/pumpModes/interval.png);
-    float: left;
-}
-
-.pumpMode .mode_2 {
-    width: 20px;
-    height: 20px;
-    display: block;
-    background-image: url(../images/icons/pumpModes/off.png);
-    float: left;
-}
-
-
 .brew .cancelButtonContainer {
     float: left;
     width: 49%;
@@ -453,53 +384,6 @@
 .brew .initError .container pre {
     width: 90%;
     margin: 20px 10px 20px 0;
-}
-
-.brew .pumpModeSelector {
-    border: 1px #3B69AD dotted;
-    position: absolute;
-    max-width: 150px;
-    max-height: 200px;
-    background-color: #ffffff;
-    padding: 0;
-    -moz-box-shadow: 3px 2px 2px black;
-    -webkit-box-shadow: 3px 2px 2px black;
-}
-
-.brew .pumpModeSelector ul {
-    padding: 0;
-    margin: 0;
-}
-
-.brew .pumpModeSelector ul li.headline, .brew .pumpModeSelector ul li.headline:hover {
-    background-color: #3B69AD;
-    color: #ffffff;
-    border: none;
-}
-
-.brew .pumpModeSelector ul li {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    height: 21px;
-    width: 100%;
-    border-bottom: 1px #3B69AD dotted;
-    cursor: pointer;
-    width: 100%;
-}
-
-.brew .pumpModeSelector ul li:hover {
-    background-color: #dedede;
-}
-
-.brew .pumpModeSelector ul li:last-child {
-    border-bottom: none;
-}
-
-.brew .pumpModeSelector ul li span {
-    width: 100%;
-    height: 15px;
-    padding: 3px;
 }
 
 .manualMode .pageHeadline {

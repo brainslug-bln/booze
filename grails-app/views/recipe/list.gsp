@@ -5,17 +5,18 @@
     </head>
     <body>
       <h1><g:message code="recipe.list.headline" /></h1>
-      <div class="itemList recipeList">
+      <div class="itemList recipeList scrollList">
         <ul>
           <g:each in="${recipes}" var="recipe">
-          <li class="ui-widget-content" onclick="window.location.href='${createLink(controller:"recipe", action:"edit", id:recipe.id)}'">
-            <div class="name"><g:fieldValue bean="${recipe}" field="name" /></div>
-            <div class="author"><g:fieldValue bean="${recipe}" field="author" /></div>
-            <div class="dateCreated"><g:formatDate format="dd.MM.yyyy" date="${recipe.dateCreated}"/></div>
+          <li onclick="window.location.href='${createLink(controller:"recipe", action:"edit", id:recipe.id)}'">
+            <div style="width: 60%"><g:fieldValue bean="${recipe}" field="name" /></div>
+            <div style="width: 15%"><g:fieldValue bean="${recipe}" field="author" />&nbsp;</div>
+            <div style="width: 10%"><g:formatDate format="dd.MM.yyyy" date="${recipe.dateCreated}"/></div>
+            <div class="delete">
+              <a class="ui-icon ui-icon-circle-close" href="${createLink(controller:'recipe', action: 'delete', id:recipe.id)}"></a>
+            </div>
           </li>
           </g:each>
-
-          <li class="pagination"><g:paginate controller="recipe" action="list" total="${recipeTotalCount}" /></li>
         </ul>
       </div>
     </body>

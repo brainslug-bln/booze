@@ -481,15 +481,15 @@ return false"><span><g:pumpModeName pumpMode="${pumpMode}"/></span></li>
   <g:if test="${resume == true}">
     <g:javascript>
       $(document).ready(function() {
-      console.log('calling booze.brew.resumeLostSession');
-        booze.brew.resumeLostSession('${brewProcess.processId}');
+        booze.log.info('calling booze.brew.resumeLostSession');
+        booze.brew.resumeLostSession('${brewProcess.processId}', {coolingStep:${brewProcess.drainPumpRegulator != null}, updateTimeout: ${brewProcess.setting.refreshInterval}});
       });
     </g:javascript>
   </g:if>
   <g:else>
     <g:javascript>
       $(document).ready(function() {
-        console.log('calling booze.brew.init');
+        booze.log.info('calling booze.brew.init');
         booze.brew.init('${brewProcess.processId}', {coolingStep:${brewProcess.drainPumpRegulator != null}, updateTimeout: ${brewProcess.setting.refreshInterval}});
       });
     </g:javascript>

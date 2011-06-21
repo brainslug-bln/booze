@@ -51,10 +51,8 @@ class BrewController {
     
     // Check if there is a running brew process
     if (f.hasBrewProcess()) {
-      f.getBrewProcess().cancel();
-      f.flushBrewProcess()
-      //forward(action: "resumeLostSession", params: params)
-      //return
+      forward(action: "resumeLostSession", params: params)
+      return
     }
 
     // Create a new brew process instance which holds
@@ -93,8 +91,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -104,7 +101,7 @@ class BrewController {
     catch (Exception e) {
       e.printStackTrace();
       log.error("Could not start brew process: ${e}")
-      render([success: false, message: g.message(code: 'brew.start.failed', args: [e])] as JSON)
+      render([success: false, error: g.message(code: 'brew.start.failed', args: [e])] as JSON)
       return
     }
 
@@ -112,7 +109,7 @@ class BrewController {
   }
 
   /**
-   * Commits the fill completion and inits meshing process
+   * Commits the fill completion and inits mashing process
    */
   def commitFill = {
     BrewProcessHolder f = BrewProcessHolder.getInstance()
@@ -125,8 +122,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -144,7 +140,7 @@ class BrewController {
   }
 
   /**
-   * Extends the meshing for a given amount of
+   * Extends the mashing for a given amount of
    * minutes
    */
   def elongateMashing = {
@@ -158,8 +154,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -189,15 +184,13 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
     try {     
       p.startCooking()
 
-      log.error("Protocol id is: ${p.protocolId}")
       Protocol proto = Protocol.get(p.protocolId);
       proto.properties = params
 
@@ -225,8 +218,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -256,8 +248,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -285,8 +276,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.error("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -315,8 +305,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -347,8 +336,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -379,8 +367,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -409,8 +396,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -439,8 +425,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -477,8 +462,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -500,8 +484,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -524,8 +507,7 @@ class BrewController {
     }
 
     if (brewService.brewProcess?.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -552,8 +534,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 
@@ -621,7 +602,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
     
     p.newProcessId();
-    render(view: 'init', model: [brewProcess: brewService.brewProcess, resume: true, events: brewService.brewProcess.getAllEvents(), pumpModes: PumpMode.findAll()])
+    render(view: 'init', model: [brewProcess: p, resume: true, events: p.getAllEvents()])
   }
 
   def editProtocolData = {
@@ -672,8 +653,7 @@ class BrewController {
     BrewProcess p = f.getBrewProcess()
 
     if (p.processId != params.processId) {
-      log.debug("Given process id does not match the processe's id")
-      response.sendError(503)
+      render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
       return
     }
 

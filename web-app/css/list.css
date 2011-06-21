@@ -12,6 +12,12 @@
     width: 100%;
 }
 
+.scrollList ul {
+  overflow-y: scroll;
+  height: 30em;
+  width: 100%;
+}
+
 .itemList li {
     float: left;
     width: 100%;
@@ -22,6 +28,8 @@
     border-top: none;
     border-bottom: 1px #AED0EA solid;
     cursor: pointer;
+    font-size: 1.1em;
+    line-height: 2.5em;
 }
 
 .itemList li:hover {
@@ -51,4 +59,14 @@
 
 .itemList li.pagination:hover {
     background: #3baae3 url(../images/jquery-ui/ui-bg_glass_80_d7ebf9_1x400.png) 50% 50% repeat-x;
+}
+
+.itemList .delete {
+  width: auto;
+}
+
+.itemList .delete a {
+  margin-top: 0.5em;
+  width: 16px;
+  height: 16px;
 }

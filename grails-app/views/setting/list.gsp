@@ -5,17 +5,16 @@
     </head>
     <body>
       <h1><g:message code="setting.list.headline" /></h1>
-      <div class="singleColumn itemList">
+      <div class="itemList scrollList">
         <ul>
           <g:each in="${settings}" var="setting">
-          <li class="ui-widget-content" onclick="window.location.href='${createLink(controller:'setting', action:'edit', id:setting.id)}'">
-            <div class="name"><g:fieldValue bean="${setting}" field="name" /></div>
+          <li onclick="window.location.href='${createLink(controller:'setting', action:'edit', id:setting.id)}'">
+            <div class="name" style="width: 91%"><g:fieldValue bean="${setting}" field="name" /></div>
+            <div class="delete">
+              <a class="ui-icon ui-icon-circle-close" href="${createLink(controller:'setting', action: 'delete', id:setting.id)}"></a>
+            </div>
           </li>
           </g:each>
-          
-          <li class="pagination">
-            &lt;&lt; 1 2 3 4 5 6 7 8 9 &gt;&gt;
-          </li>
         </ul>
       </div>
     </body>

@@ -46,7 +46,6 @@ BoozeNotifier.prototype.notify = function(message, options) {
     
     if(!options.modal) options.modal = false
     if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.notification");
-    if(!options.modal) options.modal = false;
     if(!options.callback) options.callback = function() { $(this).dialog("destroy")};
     if(!options.buttonText) options.buttonText = booze.messageSource.message("js.booze.notifier.close")
     
@@ -58,7 +57,7 @@ BoozeNotifier.prototype.notify = function(message, options) {
       modal: options.modal,
       buttons:  
         [
-          { text: booze.messageSource.message("js.booze.notifier.proceed"),
+          { text: options.buttonText,
             click: options.callback
           }
         ]
@@ -94,7 +93,7 @@ BoozeNotifier.prototype.error = function(message, options) {
       modal: options.modal,
       buttons:  
         [
-          { text: booze.messageSource.message("js.booze.notifier.close"),
+          { text: options.buttonText,
             click: options.callback
           }
         ]

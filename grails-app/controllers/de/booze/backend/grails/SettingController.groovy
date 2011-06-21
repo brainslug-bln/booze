@@ -55,6 +55,9 @@ class SettingController {
   }
   
   def editActive = {
+    if(!Setting.findByActive(true)) {
+      redirect(controller:'setting', action:'list')
+    }
     render(view:"edit", model:[settingInstance: Setting.findByActive(true)])
   }
     

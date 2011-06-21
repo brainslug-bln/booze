@@ -149,6 +149,7 @@ BoozeBrew.prototype.resumeLostSession = function(processId, options) {
 
   if(!options) options = {};
   if(options.updateTimeout) this.updateTimeout = options.updateTimeout;
+  if(options.coolingStep) this.coolingStep = true;
   
   this.processId = processId;
 
@@ -258,6 +259,12 @@ BoozeBrew.prototype.updateCallback = function(response) {
 
   if (response.success === false) {
     booze.log.error("Update status failed");
+    booze.notifier.error(response.error, 
+    {
+      callback: function() { window.location.reload() },
+      buttonText: "Sitzung übernehmen",
+      modal: true
+    })
     return;
   }
 

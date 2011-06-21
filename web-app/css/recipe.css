@@ -2,20 +2,5 @@
 
 }
 
-.recipeList .name {
-    width: 50%;
-}
-
-.recipeList .author {
-    width: 30%;
-}
-
-.recipeList .dateCreated {
-    width: auto;
-    text-align: right;
-    float: right;
-}
-
-
 
 
