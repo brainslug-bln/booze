@@ -70,3 +70,14 @@
   width: 16px;
   height: 16px;
 }
+
+.itemList .emptyList {
+  text-align: center;
+  font-weight: bold;
+  border-bottom: none;
+}
+
+.itemList .emptyList div {
+  width: 96%;
+  color: #a1a1a1;
+}

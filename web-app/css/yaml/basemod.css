@@ -168,4 +168,12 @@
         color: #ffffff;
         text-decoration: none;
     }
+    
+    .versionInfo h5 {
+    }
+    
+    .versionInfo ul {
+      margin-left: 0;
+      padding-left: 1em;
+    }
 }
