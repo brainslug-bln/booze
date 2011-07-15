@@ -19,7 +19,16 @@ class SettingController {
    * @responseType HTML
    */
   def delete = {
+    if(!params.id || !Setting.exists(params.id)) {
+      flash.message = g.message(code:"setting.delete.notFound")
+      redirect(action: "list")
+    }
 
+    Setting setting = Setting.get(params.id)
+    setting.delete(flush: true)
+    
+    flash.message = g.message(code:"setting.delete.deleted")
+    redirect(action:'list')
   }
 
   /**
@@ -45,9 +54,9 @@ class SettingController {
         if(setting.active == true) {
           List ss = Setting.findAll()
           for(int i=0; i<ss.size(); i++) {
-            if(ss.id != setting.id) {
-              ss.active = false;
-              ss.save(flush:true);
+            if(ss[i].id != setting.id) {
+              ss[i].active = false;
+              ss[i].save();
             }
           }
         }
@@ -58,6 +67,7 @@ class SettingController {
       catch(Exception e) {
         log.error("Saving setting failed: ${e}")
         flash.message = g.message(code:"setting.save.failed")
+        e.printStackTrace()
       }
     } 
     log.error(setting)

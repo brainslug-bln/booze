@@ -7,14 +7,14 @@
       <h1><g:message code="home.headline" /></h1>
 
       <div class="singleColumn">
-        <div style="float: left; width: 50%">
+        <div style="float: left; width: 45%; padding-right: 5%; text-align: justify;">
           <h3>Booze <g:meta name="app.version" /></h3>
           
           <p>Software zur Verwaltung und Steuerung einer Kleinstbrauanlage</p>
           <p>
             Booze ist unter der <a href="${createLink(uri:'/license')}">GPL (General Public License) Version 3</a> lizensiert. Die Software darf im Rahmen dieser Lizenz vervielfältigt, verbreitet und verändert werden.
           </p>
-          <p>Das Handbuch und weitere Informationen, vor allem auch zur Booze Hardware, findet ihr unter http://booze.esnake.de.</p>
+          <p>Das Handbuch und weitere Informationen, vor allem auch zur Booze Hardware, sind unter http://booze.esnake.de verfügbar.</p>
         </div>
         
         <div style="float: left; width: 50%; text-align: right">

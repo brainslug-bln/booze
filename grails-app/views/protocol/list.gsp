@@ -22,6 +22,10 @@
         </div>
       </li>
       </g:each>
+      
+      <g:if test="${protocolInstanceList.size() < 1}">
+          <li class="emptyList"><div><g:message code="protocol.list.noProtocolsAvailable" /></div></li>
+        </g:if>
       <li></li>
     </ul>
   </div>

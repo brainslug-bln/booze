@@ -17,6 +17,11 @@
             </div>
           </li>
           </g:each>
+          
+          <g:if test="${recipes.size() < 1}">
+            <li class="emptyList" onclick="window.location.href='${createLink(controller:'recipe', action:'create')}'"><div><g:message code="recipe.list.noRecipesAvailable" /></div></li>
+          </g:if>
+          
           <li></li>
         </ul>
       </div>

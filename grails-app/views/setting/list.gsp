@@ -16,6 +16,10 @@
             </div>
           </li>
           </g:each>
+          <g:if test="${settings.size() < 1}">
+            <li class="emptyList" onclick="window.location.href='${createLink(controller:'setting', action:'create')}'"><div><g:message code="setting.list.noSettingsAvailable" /></div></li>
+          </g:if>
+          
           <li></li>
         </ul>
       </div>

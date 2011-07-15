@@ -11,7 +11,7 @@
     <li>
       <strong>Lager</strong>
       <ul>
-        <li onclick="window.location.href='${createLink(controller:"protocol", action:"list")}'">Biere</li>
+        <li onclick="window.location.href='${createLink(controller:"protocol", action:"list")}'">Brauprotokolle</li>
         <!--<li><g:link controller="stock" action="shoppingList">Einkaufsliste</g:link></li>-->
       </ul>
     </li>
