@@ -43,12 +43,15 @@ abstract class AbstractDriver {
   public void setOptions(Map o) throws IllegalArgumentException {
         
     // Check every single option
-    o.each() { it ->
-      if(!getClass().checkOption(it)) {
-        throw new IllegalArgumentException("Invalid value '${it.value}' for option ${it.name}");
+    Class myClass = this.getClass()
+    def d = this
+
+    o.each() { key, value ->
+      if(!myClass.checkOption(myClass, key, value)) {
+        throw new IllegalArgumentException("Invalid value '${key}' for option ${value}");
       }
       else {
-        this[it.name] = this[it.name].getClass().getInstance(it.value);
+        d[key] = d[key].getClass().valueOf(value);
       }
     }
   }

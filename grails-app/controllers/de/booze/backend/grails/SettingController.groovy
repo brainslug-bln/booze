@@ -42,6 +42,16 @@ class SettingController {
         
       try {
         setting.save()
+        if(setting.active == true) {
+          List ss = Setting.findAll()
+          for(int i=0; i<ss.size(); i++) {
+            if(ss.id != setting.id) {
+              ss.active = false;
+              ss.save(flush:true);
+            }
+          }
+        }
+        
         flash.message = g.message(code:"setting.save.saved")
         redirect(controller: "setting", action:"edit", id:setting.id)
       }

@@ -11,33 +11,24 @@ hibernate {
 }
 // environment specific settings
 environments {
-    /*development {
-        dataSource {
-            dbCreate = "update" // one of 'create', 'create-drop','update'
-            url = "jdbc:h2:file:devDB"
-        }
-    }*/
-    development {
-        dataSource {
-        	dbCreate = "update" // one of 'create', 'create-drop','update'
-            url = "jdbc:mysql://localhost:3600/booze?useUnicode=true&characterEncoding=UTF-8"
-            driverClassName = "com.mysql.jdbc.Driver"
-            loggingSql = false
-            pooled = false
-            username = "root"
-            password = "root"
-        }
-    }
-    test {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:file:testDB"
-        }
-    }
     production {
         dataSource {
-            dbCreate = "update"
-            "jdbc:h2:file:prodDB"
+            dbCreate = "update" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:file:db/booze.db"
+        }
+    }
+    
+    development {
+        dataSource {
+            dbCreate = "update" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:file:devDb"
+        }
+    }
+    
+  test {
+        dataSource {
+            dbCreate = "update" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:file:boozeTestDb"
         }
     }
 }

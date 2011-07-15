@@ -17,6 +17,7 @@
             </div>
           </li>
           </g:each>
+          <li></li>
         </ul>
       </div>
     </body>

@@ -2,6 +2,8 @@
     <head>
         <title><g:message code="calculator.headline" /></title>
         <meta name="layout" content="main" />
+        
+        <g:javascript src="booze.leftnav.js" />
     </head>
     <body>
       <h1><g:message code="calculator.headline" /></h1>

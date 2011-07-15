@@ -65,27 +65,29 @@ class HeaterController {
     
     Map model = [:]
     
-    if(heater.validate() && heater.regulator.validate()) {
-      try {
-        // First save the device
-        heater.save()
-        
-        // Now save the regulator association
-        if(heater.regulator) {
-          heater.regulator.save()
+    if(heater.validate()) {
+      if(!heater.hasRegulator() || (heater.hasRegulator() && heater.regulator?.validate())) {
+        try {
+          // First save the device
+          heater.save(flush: true)
+
+          // Now save the regulator association
+          if(heater.regulator) {
+            heater.regulator.save(flush: true)
+          }
+
+
+          // Finally delete the old regulator association
+          if(oldRegulator) {
+            oldRegulator.delete()
+          }
+          render([success: true, message: g.message(code:"setting.heater.save.saved"), html:g.render(template:"list", bean: Setting.get(setting.id))] as JSON)
+          return
         }
-        
-        
-        // Finally delete the old regulator association
-        if(oldRegulator) {
-          oldRegulator.delete()
+        catch(Exception e) {
+          log.error(e)
+          model.error = g.message(code: "setting.heater.save.failed")
         }
-        render([success: true, message: g.message(code:"setting.heater.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
-        return
-      }
-      catch(Exception e) {
-        log.error(e)
-        model.error = g.message(code: "setting.heater.save.failed")
       }
     }
     

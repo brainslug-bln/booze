@@ -50,22 +50,22 @@ class BoozePressureSensorDriver extends AbstractPressureSensorDriver {
     /**
      * Minimum pressure value in mbar
      */
-    private Double minimum;
+    private Double minimum = 0;;
 
     /**
      * Maximum pressure value in mbar
      */
-    private Double maximum;
+    private Double maximum = 0;
 
     /**
      * PCF8591 address (0..7)
      */
-    private Integer pcf8591Address;
+    private Integer pcf8591Address = 0;
 
     /**
      * PCF8591 Channel
      */
-    private Integer pcf8591Channel;
+    private Integer pcf8591Channel = 0;
 
     /**
      * Average value from the last

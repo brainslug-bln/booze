@@ -1292,6 +1292,9 @@ BoozeBrew.prototype.saveProtocolData = function() {
     .error(booze.brew.ajaxError);   
 }
 
+/**
+ * Display the temperature chart
+ */
 BoozeBrew.prototype.showTemperatureChart = function() {
   booze.log.info("Opening window for temperature chart");
   
@@ -1309,6 +1312,9 @@ BoozeBrew.prototype.showTemperatureChart = function() {
 		});
 }
 
+/**
+ * Display the pressure chart
+ */
 BoozeBrew.prototype.showPressureChart = function() {
   booze.log.info("Opening window for pressure chart");
   

@@ -417,3 +417,8 @@
     width: auto;
     padding-top: 2px;
 }
+
+.serverErrorMessage {
+  font-family: monospace;
+  color: red;
+}

@@ -13,6 +13,7 @@ class RecipeController {
    */
   def list = {
     params.max = Math.min(params.max ? params.max.toInteger() : 10, 100)
+    params.sort = "name"
     [recipes: Recipe.list(params), recipeTotalCount: Recipe.count()]
   }
 
@@ -120,7 +121,16 @@ class RecipeController {
    * @responseType HTML
    */
   def delete = {
+    if(!params.id || !Recipe.exists(params.id)) {
+      flash.message = g.message(code:"recipe.edit.notFound")
+      redirect(action: "list")
+    }
 
+    Recipe recipe = Recipe.get(params.id)
+    recipe.delete(flush: true)
+    
+    flash.message = g.message(code:"recipe.delete.deleted")
+    redirect(action:'list')
   }
 
 

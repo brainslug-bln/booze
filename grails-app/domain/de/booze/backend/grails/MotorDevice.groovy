@@ -80,9 +80,7 @@ class MotorDevice extends Device {
    */
   public void writeSpeed(int s) {
     if(this.hasRegulator()) {
-      if(this.enabled()) {
-        this.regulator.writeSpeed(s);
-      }
+      this.regulator.writeSpeed(s);
     }
   }
   

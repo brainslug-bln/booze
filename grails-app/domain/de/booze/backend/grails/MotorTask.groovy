@@ -186,7 +186,9 @@ class MotorTask implements Serializable {
     this.readMotor().disable();
     this.enabled = false;
     
-    this.readMotor().writeSpeed(0);
+    Thread.sleep(100);
+    System.out.println("disabled motor, writing motor speed 0!")
+    this.readMotor().writeSpeed((int)0);
   }
   
   public boolean enabled() {

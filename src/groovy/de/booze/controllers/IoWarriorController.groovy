@@ -159,7 +159,7 @@ class IoWarriorController {
       throw new IllegalArgumentException("Tried to access a port number < 0")
     }
     if (port > (--this.device.getPortCount())) {
-      throw new IllegalArgumentException("Tried to access port #${port} while there are only ${instance.getPortCount()} available on the device")
+      throw new IllegalArgumentException("Tried to access port #${port} while there are only ${this.device.getPortCount()} available on the device")
     }
 
     return this.device.getPort(port)
@@ -294,6 +294,7 @@ class IoWarriorController {
           PCF8591 pcf = this.getPCF8591(address);
           pcf.enableAnalogueOutput();
           pcf.setAnalogueOutputValue(value);
+          log.debug("set output value for pcf at address ${address} to ${value}");
         }
         catch (Exception e) {
           log.error("Could not set analogue output value for PCF8591 at ${address}, value ${value} ${e}")

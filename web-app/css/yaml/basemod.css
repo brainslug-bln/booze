@@ -34,7 +34,7 @@
     /* Layout Properties | Layout-Eigenschaften */
     .page_margins { width: 70em;  min-width: inherit; max-width: none; background: #fff; }
     .page { padding: 10px 15px 10px 10px; }
-    #main { margin: 10px 0; background: #fff; float: left; width: 100%}
+    #main { margin: 10px 0; background: #fff; float: left; width: 100%; min-height: 30em;}
     #footer { margin: 0 0 10px 0; background: #fff; float: left; width: 100%; color:#666; background: #f9f9f9; border-top: 5px #efefef solid; font-size: 0.9em;}
     
     #footer .content {

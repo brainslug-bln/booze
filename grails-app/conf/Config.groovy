@@ -14,18 +14,18 @@ grails.project.groupId = appName // change this to alter the default package nam
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [ html: ['text/html','application/xhtml+xml'],
-                      xml: ['text/xml', 'application/xml'],
-                      text: 'text/plain',
-                      js: 'text/javascript',
-                      rss: 'application/rss+xml',
-                      atom: 'application/atom+xml',
-                      css: 'text/css',
-                      csv: 'text/csv',
-                      all: '*/*',
-                      json: ['application/json','text/json'],
-                      form: 'application/x-www-form-urlencoded',
-                      multipartForm: 'multipart/form-data'
-                    ]
+  xml: ['text/xml', 'application/xml'],
+  text: 'text/plain',
+  js: 'text/javascript',
+  rss: 'application/rss+xml',
+  atom: 'application/atom+xml',
+  css: 'text/css',
+  csv: 'text/csv',
+  all: '*/*',
+  json: ['application/json','text/json'],
+  form: 'application/x-www-form-urlencoded',
+  multipartForm: 'multipart/form-data'
+]
 
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
@@ -50,38 +50,78 @@ grails.spring.bean.packages = []
 
 // set per-environment serverURL stem for creating absolute links
 environments {
-    production {
-        grails.serverURL = "http://www.changeme.com"
-    }
-    development {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
-    test {
-        grails.serverURL = "http://localhost:8080/${appName}"
-    }
+  production {
+    grails.serverURL = "http://localhost:8098"
+  }
+  development {
+    grails.serverURL = "http://localhost:8080/${appName}"
+  }
+  test {
+    grails.serverURL = "http://localhost:8080/${appName}"
+  }
 
 }
 
 // log4j configuration
 log4j = {
-    // Example of changing the log pattern for the default console
-    // appender:
-    //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
-
-    warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-           'org.codehaus.groovy.grails.web.pages', //  GSP
-           'org.codehaus.groovy.grails.web.sitemesh', //  layouts
-           'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
-           'org.codehaus.groovy.grails.web.mapping', // URL mapping
-           'org.codehaus.groovy.grails.commons', // core / classloading
-           'org.codehaus.groovy.grails.plugins', // plugins
-           'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
-           'org.springframework',
-           'org.hibernate',
-           'net.sf.ehcache.hibernate'
-
+  // Example of changing the log pattern for the default console
+  // appender:
+  //
+  //appenders {
+  //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+  //}
+    
+  production {
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+         'org.codehaus.groovy.grails.web.pages', //  GSP
+         'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+         'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+         'org.codehaus.groovy.grails.web.mapping', // URL mapping
+         'org.codehaus.groovy.grails.commons', // core / classloading
+         'org.codehaus.groovy.grails.plugins', // plugins
+         'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+         'org.springframework',
+         'org.hibernate',
+         'net.sf.ehcache.hibernate'
+    
+    debug 'org.h2.Driver'
+    
+    error  'de.booze'
+      
     warn   'org.mortbay.log'
+  }
+  development {
+    warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+       'org.codehaus.groovy.grails.web.pages', //  GSP
+       'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+       'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+       'org.codehaus.groovy.grails.web.mapping', // URL mapping
+       'org.codehaus.groovy.grails.commons', // core / classloading
+       'org.codehaus.groovy.grails.plugins', // plugins
+       'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+       'org.springframework',
+       'org.hibernate',
+       'net.sf.ehcache.hibernate'
+
+    debug  'de.booze'
+      
+    warn   'org.mortbay.log'
+  }
+  test {
+    warn  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+       'org.codehaus.groovy.grails.web.pages', //  GSP
+       'org.codehaus.groovy.grails.web.sitemesh', //  layouts
+       'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping
+       'org.codehaus.groovy.grails.web.mapping', // URL mapping
+       'org.codehaus.groovy.grails.commons', // core / classloading
+       'org.codehaus.groovy.grails.plugins', // plugins
+       'org.codehaus.groovy.grails.orm.hibernate', // hibernate integration
+       'org.springframework',
+       'org.hibernate',
+       'net.sf.ehcache.hibernate'
+    
+    warn   'org.mortbay.log'
+
+    debug  'de.booze'
+  }
 }

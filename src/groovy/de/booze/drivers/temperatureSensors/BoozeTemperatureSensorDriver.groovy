@@ -37,12 +37,12 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
     /**
      * Minimum temperature value
      */
-    private Double minimum;
+    private Double minimum = 0;
 
     /**
      * Maximum temperature value
      */
-    private Double maximum;
+    private Double maximum = 0;
 
     /**
      * Logger instance
@@ -57,12 +57,12 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
     /**
      * PCF8591 address (0..7)
      */
-    private Integer pcf8591Address;
+    private Integer pcf8591Address = 0;
 
     /**
      * PCF8591 Channel
      */
-    private Integer pcf8591Channel;
+    private Integer pcf8591Channel = 0;
 
     /**
      * Driver options
@@ -95,8 +95,6 @@ class BoozeTemperatureSensorDriver extends AbstractTemperatureSensorDriver {
         this.iow = IoWarriorController.getInstance()
 
         this.setOptions(o);
-
-        this.setAddress(address);
     }
 
     /**

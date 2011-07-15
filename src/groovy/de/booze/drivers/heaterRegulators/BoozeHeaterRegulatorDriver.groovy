@@ -46,7 +46,7 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
     /**
      * PCF8591 address (0..7)
      */
-    private Integer pcf8591Address;
+    private Integer pcf8591Address = 0;
 
     /**
      * Acutal speed in percent
@@ -84,7 +84,7 @@ class BoozeHeaterRegulatorDriver extends AbstractHeaterRegulatorDriver {
      */
     public void setPower(Integer power) throws Exception, IllegalArgumentException {
         if(power >= 0 && power <= 100) {
-            this.iow.setPcf8591OutputValue(pcf8591Address, Math.round(power * 2.54))
+            this.iow.setPcf8591OutputValue(pcf8591Address, (int)Math.round(10 + speed * 2.45))
             this.power = power;
         }
         else {

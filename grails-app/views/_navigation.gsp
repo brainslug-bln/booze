@@ -3,37 +3,37 @@
     <li>
       <strong>Rezepte</strong>
       <ul>
-        <li><g:link controller="recipe" action="list">Liste/Suchen</g:link></li>
-        <li><g:link controller="recipe" action="create">Rezept erstellen</g:link></li>
-        <core:communityEnabled>
+        <li onclick="window.location.href='${createLink(controller:"recipe", action:"list")}'">Liste</li>
+        <li onclick="window.location.href='${createLink(controller:"recipe", action:"create")}'">Rezept erstellen</li>
+        <!--<core:communityEnabled>
           <li><g:link controller="recipe" action="database">Rezeptdatenbank (online)</g:link></li>
-        </core:communityEnabled>
+        </core:communityEnabled>-->
       </ul>
     </li>
 
     <li>
       <strong>Lager</strong>
       <ul>
-        <li><g:link controller="stock" action="beers">Biere</g:link></li>
-        <li><g:link controller="stock" action="ingredients">Rohstoffe</g:link></li>
-        <li><g:link controller="stock" action="shoppingList">Einkaufsliste</g:link></li>
+        <li onclick="window.location.href='${createLink(controller:"protocol", action:"list")}'">Biere</li>
+        <!--<li><g:link controller="stock" action="shoppingList">Einkaufsliste</g:link></li>-->
       </ul>
     </li>
 
     <li>
       <strong>Werkzeuge</strong>
       <ul>
-        <li><g:link controller="tools" action="calculator">Braurechner</g:link></li>
-        <li><g:link controller="tools" action="manualMode">Manuelle Steuerung</g:link></li>
+        <li onclick="window.location.href='${createLink(controller:"tools", action:"calculator")}'">Braurechner</li>
+        <!--<li><g:link controller="tools" action="manualMode">Manuelle Steuerung</g:link></li>-->
       </ul>
     </li>
 
     <li>
       <strong>Einstellungen</strong>
       <ul>
-        <li><g:link controller="setting" action="list">Umgebungen</g:link></li>
-        <li><g:link controller="setting" action="editActive">Aktive Umgebung</g:link></li>
-        <li><g:link controller="tools" action="update">Updates</g:link></li>
+        <li onclick="window.location.href='${createLink(controller:"setting", action:"list")}'">Umgebungen</li>
+        <li onclick="window.location.href='${createLink(controller:"setting", action:"create")}'">Umgebung erstellen</li>
+        <li onclick="window.location.href='${createLink(controller:"setting", action:"editActive")}'">Aktive Umgebung</li>
+        <!--<li><g:link controller="tools" action="update">Updates</g:link></li>-->
       </ul>
     </li>
 <!--

@@ -288,6 +288,7 @@ BoozeSetting.prototype.cancelEditDevice = function() {
   $('#'+booze.setting.activeTab.id+'_tabOptions').show();
   $('#'+booze.setting.activeTab.id+'_deviceEditor').hide();
   $('#'+booze.setting.activeTab.id+'_deviceList').show();
+  $('#'+booze.setting.activeTab.id+'_regulatorEditor').hide();
 }
 
 /**

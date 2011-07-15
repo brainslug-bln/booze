@@ -46,12 +46,12 @@ class BoozeHeaterDriver extends AbstractHeaterDriver {
   /**
    * Device port
    */
-  Integer port
+  Integer port = 0;
 
   /**
    * Device bit
    */
-  Integer bit
+  Integer bit = 0;
   
   /**
    * Driver options
