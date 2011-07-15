@@ -5,9 +5,6 @@
       <ul>
         <li onclick="window.location.href='${createLink(controller:"recipe", action:"list")}'">Liste</li>
         <li onclick="window.location.href='${createLink(controller:"recipe", action:"create")}'">Rezept erstellen</li>
-        <!--<core:communityEnabled>
-          <li><g:link controller="recipe" action="database">Rezeptdatenbank (online)</g:link></li>
-        </core:communityEnabled>-->
       </ul>
     </li>
 
@@ -53,7 +50,8 @@
       <strong>Über</strong>
       <ul>
         <li><g:link uri="/version">Diese Version</g:link></li>
-        <li><g:link uri="/about">Booze</g:link></li>
+        <li><g:link uri="/">Booze</g:link></li>
+        <li><g:link uri="/license">Lizenz</g:link></li>
       </ul>
     </li>
   </ul>

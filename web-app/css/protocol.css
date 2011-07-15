@@ -1,0 +1,18 @@
+.protocolContainer {
+    height: 10em;
+    overflow-y: scroll;
+    border-bottom: 1px solid #AED0EA;
+    margin-bottom: 0.5em;
+    border: 1px black dotted;
+}
+
+.protocolContainer ul {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.protocolContainer ul li {
+    padding-left: 0.2em;
+    font-size: 0.9em;
+}

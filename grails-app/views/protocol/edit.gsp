@@ -13,9 +13,9 @@
     <div id="leftColumn_content" class="leftColumn_content">
       <div class="leftNav" id="protocolNav">
         <ul>
-          <li class="active"><a href="${createLink(action:'edit', id:protocolInstance.id)}"><g:message code="protocol.edit" /></a></li>
-          <li><a href="${createLink(action:'temperatureChart', id:protocolInstance.id)}"><g:message code="protocol.temperatureChart.headline" /></a></li>
-          <li><a href="${createLink(action:'pressureChart', id:protocolInstance.id)}"><g:message code="protocol.pressureChart.headline" /></a></li>
+          <li class="active" onclick="window.location.href='${createLink(action:'edit', id:protocolInstance.id)}'"><a href="${createLink(action:'edit', id:protocolInstance.id)}"><g:message code="protocol.edit" /></a></li>
+          <li onclick="window.location.href='${createLink(action:'temperatureChart', id:protocolInstance.id)}'"><a href="${createLink(action:'temperatureChart', id:protocolInstance.id)}"><g:message code="protocol.temperatureChart.headline" /></a></li>
+          <li onclick="window.location.href='${createLink(action:'pressureChart', id:protocolInstance.id)}'"><a href="${createLink(action:'pressureChart', id:protocolInstance.id)}"><g:message code="protocol.pressureChart.headline" /></a></li>
         </ul>
       </div>
       <div class="clear"></div>

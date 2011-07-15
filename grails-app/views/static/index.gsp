@@ -10,7 +10,11 @@
         <div style="float: left; width: 50%">
           <h3>Booze <g:meta name="app.version" /></h3>
           
-          <p>Booze - tolle Software für tolle Leute</p>
+          <p>Software zur Verwaltung und Steuerung einer Kleinstbrauanlage</p>
+          <p>
+            Booze ist unter der <a href="${createLink(uri:'/license')}">GPL (General Public License) Version 3</a> lizensiert. Die Software darf im Rahmen dieser Lizenz vervielfältigt, verbreitet und verändert werden.
+          </p>
+          <p>Das Handbuch und weitere Informationen, vor allem auch zur Booze Hardware, findet ihr unter http://booze.esnake.de.</p>
         </div>
         
         <div style="float: left; width: 50%; text-align: right">

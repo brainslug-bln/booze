@@ -9,7 +9,7 @@ class CoreTagLib {
      * valid
      */
     def communityEnabled = { attrs, body ->
-        out << body()
+        out << ""
     }
     
     def settingsFontSize = { attrs, body ->

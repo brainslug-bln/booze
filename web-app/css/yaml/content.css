@@ -219,4 +219,10 @@
     background-position:0 0.45em;
   }
   */
+  
+  fieldset {
+    border: none;
+    padding: 0;
+    margin-top: 0.5em;
+  }
 }

@@ -17,6 +17,7 @@
   <link href="${resource(dir:'/css/',file:'form.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'list.css')}" rel="stylesheet" type="text/css" />
   <link href="${resource(dir:'/css/',file:'setting.css')}" rel="stylesheet" type="text/css" />
+  <link href="${resource(dir:'/css/',file:'protocol.css')}" rel="stylesheet" type="text/css" />
   <g:javascript>
       var APPLICATION_ROOT = "${resource(dir: '', absolute: true)}";      
       var APPLICATION_HOME = "${createLink(uri:'/home')}";
