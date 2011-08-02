@@ -92,6 +92,9 @@ class BrewCookingStep extends AbstractBrewStep {
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setCookingReferenceSensors();
     
+    // Disable the heating ramp for this step
+    this.brewProcess.temperatureRegulator.disableRamp();
+    
     // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 

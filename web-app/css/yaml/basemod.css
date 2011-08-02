@@ -176,4 +176,39 @@
       margin-left: 0;
       padding-left: 1em;
     }
+    
+    .booze-icon {
+      width: 1em;
+      height: 1em;
+      background-size: 100%;
+      -moz-background-size: 100%;
+      background-repeat: no-repeat;
+      display: block;
+    }
+    
+    .booze-icon-delete {
+      background-image: url(../../images/icons/delete.png);
+    }
+    
+    .booze-icon-add {
+      background-image: url(../../images/icons/add.png);
+    }
+    
+    .booze-icon-arrow-left {
+      background-image: url(../../images/icons/arrow_l.png);
+    }
+    
+    .booze-icon-arrow-right {
+      background-image: url(../../images/icons/arrow_r.png);
+    }
+    
+    html.busy, html.busy * {  
+      cursor: wait !important;  
+    }  
+    
+    .loading {
+      background-image: url(../../images/loading.gif);
+      background-size: 100%;
+      moz-background-size: 100%;
+    }
 }

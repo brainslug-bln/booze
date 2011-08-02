@@ -30,11 +30,21 @@ class HeaterDevice extends Device {
   Long secondsOn = 0
   Date lastEnableTime
   
+  /**
+   * True if the heater is controlled by the user
+   */
   boolean forced = false
+  
+  /**
+   * If the heater is forced (== controlled by the user)
+   * the programmatically assigned status is saved in this
+   * variable
+   */
+  boolean realEnabled = false
   
   HeaterRegulatorDevice regulator
 
-  static transients = ["secondsOn", "lastEnableTime", "forced"]
+  static transients = ["secondsOn", "lastEnableTime", "forced", "realEnabled"]
   
   static constraints = {
     regulator(nullable: true)
@@ -50,22 +60,51 @@ class HeaterDevice extends Device {
    * Enables the heater
    */
   public void enable() {
+    // Write the programmatically assigned status
+    // to a variable, don't really change anything
+    if(this.forced) {
+      this.realEnabled = true;
+      return;
+    }
+    
     if (!this.enabled()) {
       driverInstance.enable()
       this.lastEnableTime = new Date()
     }
+  }
+  
+  /**
+   * Enables the heater in forced mode
+   */
+  public void forceEnable() {
+    driverInstance.enable()
+    this.lastEnableTime = new Date()
   }
 
   /**
    * Disabled the heater
    */
   public void disable() {
+    // Write the programmatically assigned status
+    // to a variable, don't really change anything
+    if(this.forced) {
+      this.realEnabled = false;
+      return;
+    }
+    
     if (this.enabled()) {
       driverInstance.disable();
       this.secondsOn += Math.round((new Date().getTime()) - this.lastEnableTime.getTime())
     }
   }
-
+  
+  /**
+   * Disables the heater in forced mode
+   */
+  public void forceDisable() {
+    driverInstance.disable();
+    this.secondsOn += Math.round((new Date().getTime()) - this.lastEnableTime.getTime())
+  }
   /**
    * Returns true if the heater is enabled, false if not
    */
@@ -102,9 +141,19 @@ class HeaterDevice extends Device {
    * Toggles the force mode for this heater
    */
   public void toggleForce() {
-    // STUB
-    if(!this.forced) this.forced = true
-    else this.forced = false
+    if(!this.forced) {
+      this.realEnabled = this.enabled()
+      this.forced = true
+    }
+    else {
+      this.forced = false
+      if(this.realEnabled) {
+        this.enable()
+      }
+      else {
+        this.disable()
+      }
+    }
   }
   
   /**

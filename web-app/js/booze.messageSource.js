@@ -47,6 +47,7 @@ function BoozeMessageSource() {
         'js.booze.brew.addHopDialog.title': 'Hopfengabe',
         'js.booze.brew.lauterTemperatureReachedDialog.title': 'Abmaischtemperatur erreicht',
         'js.booze.brew.cookingFinishedDialog.title': 'Kochvorgang abgeschlossen',
+        'js.booze.brew.cookingFinishedDialog.finish':'Kochvorgang beenden',
         'js.booze.brew.serverCommunicationStalled': 'Der Server antwortet nicht',
         'js.booze.brew.editProtocolDialog.title': 'Messwerte eintragen',
         'js.booze.brew.calculator.title': 'Braurechner',
@@ -54,6 +55,7 @@ function BoozeMessageSource() {
         'js.booze.brew.coolingDialog.title':'Abpumpen/Kühlen',
         'js.booze.brew.temperatureChart':'Temperaturverlauf',
         'js.booze.brew.pressureChart':'Druckverlauf',
+        'js.booze.brew.save':"Speichern",
 
         'js.booze.manualMode.serverCommunicationError': "Fehler beim Verbindungsaufbau zum Server"
     };

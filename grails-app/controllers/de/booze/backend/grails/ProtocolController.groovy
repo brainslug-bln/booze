@@ -23,7 +23,7 @@ import org.jfree.chart.ChartUtilities
 
 class ProtocolController {
 
-  static allowedMethods = [delete: "POST", edit: 'GET', update: 'POST', list: 'GET']
+  static allowedMethods = [delete: "GET", edit: 'GET', update: 'POST', list: 'GET']
 
   def protocolService
 

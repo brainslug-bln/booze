@@ -33,9 +33,73 @@ class MotorController {
   }
   
   def save = {
-    log.error("Regler: "+MotorRegulatorDevice.list())
-
     MotorDevice motor = new MotorDevice()
+    Setting setting
+    MotorRegulatorDevice oldRegulator
+     
+    if(params.setting?.id && Setting.exists(params.setting?.id)) {
+      setting = Setting.get(params.setting?.id)
+    }
+    
+    if(params.motor?.id && MotorDevice.exists(params.motor?.id)) {
+      motor = MotorDevice.get(params.motor?.id)
+    }
+    
+    motor.properties = params.motor
+    motor.encodeOptions(params.driverOptionValues)
+    motor.setting = setting
+    
+    if(params.motor?.hasRegulator == "1") {
+      if(!motor?.regulator) {
+        motor.regulator = new MotorRegulatorDevice()
+      }
+      motor.regulator.properties = params.regulator
+      motor.regulator.motor = motor
+      motor.regulator.setting = setting
+    }
+    else {
+      oldRegulator = motor.regulator
+      motor.regulator = null
+    }
+    
+    Map model = [:]
+    
+    if(motor.validate()) {
+      if(!motor.hasRegulator() || (motor.hasRegulator() && motor.regulator?.validate())) {
+        try {
+          // First save the device
+          motor.save(flush: true)
+
+          // Now save the regulator association
+          if(motor.regulator) {
+            motor.regulator.save(flush: true)
+          }
+
+
+          // Finally delete the old regulator association
+          if(oldRegulator) {
+            oldRegulator.delete()
+          }
+          
+          setting.refresh()
+          render([success: true, message: g.message(code:"setting.motor.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
+          return
+        }
+        catch(Exception e) {
+          log.error(e)
+          model.error = g.message(code: "setting.motor.save.failed")
+        }
+      }
+    }
+    
+    log.error(motor.errors)
+    log.error(motor.regulator.errors)
+    
+    model.putAll([checkOptions: true, setting: setting, motor: motor, drivers: settingService.getDeviceDrivers("de.booze.drivers.motors"), driverOptionValues: motor.decodeOptions()])
+    render([success: false, html:g.render(template:"edit", model: model)] as JSON)
+    
+  
+/*    MotorDevice motor = new MotorDevice()
     Setting setting
     MotorRegulatorDevice oldRegulator
      
@@ -80,6 +144,7 @@ class MotorController {
         if(oldRegulator) {
           oldRegulator.delete()
         }
+        setting.refresh()
         render([success: true, message: g.message(code:"setting.motor.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
         return
       }
@@ -90,7 +155,7 @@ class MotorController {
     }
     log.error(motor.errors)
     model.putAll([checkOptions: true, setting: setting, motor: motor, drivers: settingService.getDeviceDrivers("de.booze.drivers.motors"), driverOptionValues: motor.decodeOptions()])
-    render([success: false, html:g.render(template:"edit", model: model)] as JSON)
+    render([success: false, html:g.render(template:"edit", model: model)] as JSON)*/
   }
   
   def delete = {

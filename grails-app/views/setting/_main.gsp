@@ -43,11 +43,11 @@
             <div class="errors" id="errors_cookingTemperature">
                <g:renderErrors bean="${it}" field="cookingTemperature" as="list" />
             </div>
-          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') - $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-left" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') - $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
           <div class="slider">
             <div id="cookingTemperatureSlider"></div>
           </div>
-          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') + $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-right" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') + $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
           <input type="hidden" id="cookingTemperatureField" name="setting.cookingTemperature" value="${formatNumber(format:'####.##', number:it?.cookingTemperature)}" maxlength="10" />
       </div>
 
@@ -56,11 +56,11 @@
             <div class="errors" id="errors_hysteresis">
                <g:renderErrors bean="${it}" field="hysteresis" as="list" />
             </div>
-          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') - $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-left" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') - $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
           <div class="slider">
             <div id="hysteresisSlider"></div>
           </div>
-          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') + $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-right" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') + $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
           <input type="hidden" id="hysteresisField" name="setting.hysteresis" value="${formatNumber(format:'##.##', number:it?.hysteresis)}" maxlength="10" />
       </div>
 
@@ -69,11 +69,11 @@
             <div class="errors" id="errors_heatingRamp">
                <g:renderErrors bean="${it}" field="heatingRamp" as="list" />
             </div>
-          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#heatingRampSlider').slider('value', $('#heatingRampSlider').slider('value') - $('#heatingRampSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-left" onclick="$('#heatingRampSlider').slider('value', $('#heatingRampSlider').slider('value') - $('#heatingRampSlider').slider('option', 'step')); return false;"></div>
           <div class="slider">
             <div id="heatingRampSlider"></div>
           </div>
-          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#heatingRampSlider').slider('value', $('#heatingRampSlider').slider('value') + $('#heatingRampSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-right" onclick="$('#heatingRampSlider').slider('value', $('#heatingRampSlider').slider('value') + $('#heatingRampSlider').slider('option', 'step')); return false;"></div>
           <input type="hidden" id="heatingRampField" name="setting.heatingRamp" value="${formatNumber(format:'##.##', number:it?.heatingRamp)}" maxlength="10" />
       </div>
     </div>

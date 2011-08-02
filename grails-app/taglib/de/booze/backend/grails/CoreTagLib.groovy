@@ -51,4 +51,12 @@ class CoreTagLib {
       out << body()
     }
   }
+  
+  def availableRecipeCount = { attrs, body ->
+    out << Recipe.count()
+  }
+  
+  def availableProtocolCount = { attrs, body ->
+    out << Protocol.count()
+  }
 }

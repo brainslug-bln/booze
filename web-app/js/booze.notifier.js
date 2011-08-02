@@ -53,6 +53,7 @@ BoozeNotifier.prototype.notify = function(message, options) {
 		.html(message)
 		.dialog({
       width: "30%",
+      minWidth: "35em",
 			title: options.title,
       modal: options.modal,
       buttons:  
@@ -89,6 +90,7 @@ BoozeNotifier.prototype.error = function(message, options) {
 		.html(message)
 		.dialog({
       width: "30%",
+      minWidth: "35em",
 			title: options.title,
       modal: options.modal,
       buttons:  
@@ -99,7 +101,7 @@ BoozeNotifier.prototype.error = function(message, options) {
         ]
 		});
     
-    $.sound.play(APPLICATION_ROOT + "/sounds/error.mp3");
+    $.sound.play(APPLICATION_ROOT + "/sounds/notification.mp3", {timeout: 10000});
 
     return dialog;
 };
@@ -112,44 +114,48 @@ BoozeNotifier.prototype.error = function(message, options) {
  * @type void
  */
 BoozeNotifier.prototype.confirm = function(message, options) {
+    if (!options) {
+        options = {};
+    }
+    
+    if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.confirm");
+    if(!options.modal) options.modal = false;
+    var pc = function() { $(this).dialog('destroy') };
+    if(options.proceedCallback) pc = options.proceedCallback;
+    if(options.proceedCallbackOptions) pc = function() { options.proceedCallback(options.proceedCallbackOptions)}
+    if(!options.proceedText) options.proceedText = booze.messageSource.message("js.booze.notifier.proceed")
+    
+    var cb = function() { $(this).dialog('destroy') };
+    if(options.cancelCallback) cb = options.cancelCallback;
+    if(options.cancelCallbackOptions) cb = function() { options.cancelCallback(options.cancelCallbackOptions)}
+    if(!options.cancelText) options.cancelText = booze.messageSource.message("js.booze.notifier.cancel")
+    
+    var dialog = $('<div></div>')
+		.html(message)
+		.dialog({
+      width: "30%",
+      minWidth: "35em",
+			title: options.title,
+      modal: options.modal,
+      buttons:  
+        [
+          { text: options.cancelText,
+            click: cb
+          },
+          { text: options.proceedText,
+            click: pc
+          }
+        ]
+		});
+    
+    if(options.playSound) {
+      $.sound.play(APPLICATION_ROOT + "/sounds/notification.mp3", {timeout: 10000});
+    }
 
-  var dialog = $('<div></div>');
+    return dialog;
+};
 
-  if (!options) {
-      options = {};
-  }
 
-  if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.confirm");
-  if(!options.modal) options.modal = false
-  
-  if(!options.proceedCallback) options.proceedCallback = function() {$(this).dialog("destroy")}
-  if(!options.proceedCallbackOptions) options.proceedCallbackOptions = {}
-  
-  if(!options.cancelCallback) options.cancelCallback = function() {$(this).dialog("destroy")}
-  if(!options.cancelCallbackOptions) options.cancelCallbackOptions = {}
-  
-  if(!options.proceedText) options.proceedText = booze.messageSource.message("js.booze.notifier.proceed")
-  if(!options.cancelText) options.cancelText = booze.messageSource.message("js.booze.notifier.cancel")
-  
-  
-  dialog.html(message)
-  .dialog({
-    width: "30%",
-    title: options.title,
-    modal: options.modal,
-    buttons:  
-      [
-        { text: options.cancelText,
-          click: function() { options.cancelCallback(options.cancelCallbackOptions)}
-        },
-        { text: options.proceedText,
-          click: function() { options.proceedCallback(options.proceedCallbackOptions) }
-        }
-      ]
-  });
-
-  return dialog;
-}
 
 BoozeNotifier.prototype.statusMessage = function(msg) {
   booze.log.info(msg);

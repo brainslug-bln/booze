@@ -615,7 +615,7 @@ class BrewController {
 
     BrewProcess p = f.getBrewProcess()
     
-    render(template:"editProtocolData", model:[protocol: Protocol.get(p.protocolId)])
+    render([success: true, html: g.render(template:"editProtocolData", model:[protocol: Protocol.get(p.protocolId)])] as JSON)
   }
 
   def saveProtocolData = {
@@ -631,11 +631,15 @@ class BrewController {
     try {
       Protocol proto = Protocol.get(p.protocolId);
       proto.properties = params
-      if(!proto.validate()) {
-        render([success: true, close: false, html: g.render(template:"editProtocolData", model:[protocol: proto])] as JSON)
+      proto.validate()
+      
+      if(!proto.hasErrors()) {
+        proto.save()
+        render([success: true, close: true] as JSON)
+        return
       }
-      proto.save()
-      render([success: true, close: true] as JSON)
+      
+      render([success: true, close: false, html: g.render(template:"editProtocolData", model:[protocol: proto])] as JSON)
     }
     catch(Exception e) {
       render([success: false, close: false, message: e] as JSON)

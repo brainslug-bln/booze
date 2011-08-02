@@ -64,3 +64,8 @@
   padding: 1em;
   width: auto;
 }
+
+.deviceList .booze-icon-add {
+  margin-top: 0.2em;
+  margin-right: 0.5em;
+}

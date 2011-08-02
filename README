@@ -1,0 +1,54 @@
+BOOZE 2.0
+Management software for micro breweries
+http://booze.esnake.de
+
+LICENSE
+Booze is licensed under the GPLv3. See the LICENSE file for
+more information.
+
+DEVELOPING BOOZE
+There is a project page on github where you can access the 
+latest source code. Please feel free to participate:
+https://github.com/booze.
+Pleas take a look at the Booze website for information about 
+developing Booze: http://booze.esnake.de.
+
+RUNNING BOOZE
+First of all, you need a Java Runtime Environment. Fetch it from 
+http://www.java.com/download/ or install it via your package 
+manager.
+The software itself is based on the Grails framework. Therefore you need
+to install Grails before you can run Booze. 
+Download it from http://grails.org/ and follow the installation 
+instructions. You need to have grails/bin in your PATH to issue
+the following commands. Test it by executing "grails" from your command
+line.
+Once you got Grails running, run Booze by issuing "grails run-app"
+in the command line. This will start the application in development
+mode, listening on http://localhost:8080/Booze/. You can switch to 
+production mode by adding a "prod" before the run-app: "grails prod run-app".
+There will be far less debugging output in production mode. Please 
+consider that Booze uses different database files for production and
+development mode (./devDb vs. ./db/booze.db).
+
+BOOZE APPLICATION STARTER
+For convenience I developed a little Java application which fires up
+a Jetty application server and deploys Booze automatically. 
+After startup, you can access Booze by pointing your browser to 
+http://localhost:8098/. 
+
+BUILDING BOOZE
+You can build a .war file for deployment in your favorite application 
+server by executing "grails war" from within the application directory.
+If you want to use the Booze Application Starter, place "booze.war" in  
+the "backend" folder. 
+The "build.sh" script automatically builds booze and copies all needed
+files including the application starter into the ./dist directory.
+You can run the application from there by executing "java -jar booze.jar".
+
+Have fun!
+02.08.2011
+
+
+
+

@@ -1,69 +1,75 @@
- <html>
- <head>
-   <meta name="layout" content="empty"/>
- </head>
-
- <body>
-<div class="editProtocolWindow">
-  <h4><g:message code="brew.init.editProtocolHeadline"/></h4>
+<div class="editProtocolDialog brew brewDialog" id="editProtocolDialog">
   <p><g:message code="brew.init.editProtocolInfo" /></p>
 
-  <div class="editProtocolArea">
+  <g:hasErrors bean="${protocol}">
+    <p><g:message code="brew.editProtocolData.pleaseCorrectErrors" /></p>  
+  </g:hasErrors>
 
-    <g:hasErrors bean="${protocol}">
-      <p><g:message code="brew.editProtocoldata.pleaseCorrectErrors" /></p>  
-    </g:hasErrors>
-    
-    <div class="yform">
-      <form name="protocolDataForm" action="${createLink(action:'saveProtocolData', controller:'brew')}" id="protocolDataForm" method="POST">
+  <div class="form">
+    <form id="protocolDataForm">
+      
+      <fieldset>
+        <div class="leftColumn">
+          <div class="row">
+            <label><g:message code="protocol.finalPreSpargingWort"/></label>
+            
+            <div class="errors" id="errors_finalPreSpargingWort">
+             <g:renderErrors bean="${protocol}" field="finalPreSpargingWort" as="list" />
+            </div>
 
-        <div class="twoColumn">
-          <div class="column">
-            <fieldset>
-              <label class="${hasErrors(bean:protocol,field:'finalPreSpargingWort', 'error')}"><g:message code="protocol.finalPreSpargingWort"/></label>
-              <div class="type-text">
-                <input type="text" name="finalPreSpargingWort" value="${formatNumber(number:protocol.finalPreSpargingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
-              </div>
-
-              <label class="${hasErrors(bean:protocol,field:'finalPostSpargingWort', 'error')}"><g:message code="protocol.finalPostSpargingWort"/></label>
-              <div class="type-text">
-                <input type="text" name="finalPostSpargingWort" value="${formatNumber(number:protocol.finalPostSpargingWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
-              </div>
-
-              <label class="${hasErrors(bean:protocol,field:'finalSpargingWaterVolume', 'error')}"><g:message code="protocol.finalSpargingWaterVolume"/></label>
-              <div class="type-text">
-                <input type="text" name="finalSpargingWaterVolume" value="${formatNumber(number:protocol.finalSpargingWaterVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
-              </div>
-
-            </fieldset>
+            <input type="text" name="finalPreSpargingWort" onkeyup="$('#errors_finalPreSpargingWort').slideUp(100)" value="${formatNumber(format:'##0.0#', number: protocol.finalPreSpargingWort)}" /> 
           </div>
-          <div class="column">
-            <fieldset>
-              <label class="${hasErrors(bean:protocol,field:'dilutionWaterVolume', 'error')}"><g:message code="protocol.dilutionWaterVolume"/></label>
-              <div class="type-text">
-                <input type="text" name="dilutionWaterVolume" value="${formatNumber(number:protocol.dilutionWaterVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
-              </div>
+          
+        </div>
 
-              <label class="${hasErrors(bean:protocol,field:'finalBeerVolume', 'error')}"><g:message code="protocol.finalVolume"/></label>
-              <div class="type-text">
-                <input type="text" name="finalBeerVolume" value="${formatNumber(number:protocol.finalBeerVolume, format: '##0.00')}" /> <g:message code="default.unit.liter"/>
-              </div>
+        <div class="rightColumn">
+            <label><g:message code="protocol.finalSpargingWaterVolume"/></label>
+            <div class="errors" id="errors_finalSpargingWaterVolume">
+             <g:renderErrors bean="${protocol}" field="finalSpargingWaterVolume" as="list" />
+            </div>
+            <input type="text" name="finalSpargingWaterVolume" value="${formatNumber(format:'###0.0#', number: protocol.finalSpargingWaterVolume)}" onkeyup="$('#errors_finalSpargingWaterVolume').slideUp(100)" /> 
+        </div>
+        
+        <div class="singleColumn">
+          <div class="row">
+            <label><g:message code="protocol.finalPostSpargingWort"/></label>
+            <div class="errors" id="errors_finalPostSpargingWort">
+             <g:renderErrors bean="${protocol}" field="finalPostSpargingWort" as="list" />
+            </div>
 
-              <label class="${hasErrors(bean:protocol,field:'finalOriginalWort', 'error')}"><g:message code="protocol.finalOriginalWort"/></label>
-              <div class="type-text">
-                <input type="text" name="finalOriginalWort" value="${formatNumber(number:protocol.finalOriginalWort, format: '##0.00')}" /> <g:message code="default.unit.plato"/>
-              </div>
-            </fieldset>
+            <input type="text" name="finalPostSpargingWort" value="${formatNumber(format:'##0.0#', number: protocol.finalPostSpargingWort)}" onkeyup="$('#errors_finalPostSpargingWort').slideUp(100)"  />
           </div>
         </div>
-        <div class="clearfix"></div>
-      </form>
-    </div>
+      </fieldset>
 
-    <div class="clearfix"></div>
+      <fieldset>
+        <div class="leftColumn">
+            <label><g:message code="protocol.dilutionWaterVolume"/></label>
+            <div class="errors" id="errors_dilutionWaterVolume">
+             <g:renderErrors bean="${protocol}" field="dilutionWaterVolume" as="list" />
+            </div>
+            <input type="text" onkeyup="$('#errors_dilutionWaterVolume').slideUp(100)" name="dilutionWaterVolume" value="${formatNumber(format:'###0.0#', number: protocol.dilutionWaterVolume)}" /> 
+
+            <label><g:message code="protocol.finalBeerVolume"/></label>
+            <div class="errors" id="errors_finalBeerVolume">
+             <g:renderErrors bean="${protocol}" field="finalBeerVolume" as="list" />
+            </div>
+            <input type="text" onkeyup="$('#errors_finalBeerVolume').slideUp(100)" name="finalBeerVolume" value="${formatNumber(format:'###0.0#', number: protocol.finalBeerVolume)}" />
+        </div>
+
+        <div class="rightColumn">
+            <label><g:message code="protocol.finalOriginalWort"/></label>
+            <div class="errors" id="errors_finalOriginalWort">
+             <g:renderErrors bean="${protocol}" field="finalOriginalWort" as="list" />
+            </div>
+            <input type="text" onkeyup="$('#errors_finalOriginalWort').slideUp(100)" name="finalOriginalWort" value="${formatNumber(format:'##0.0#', number: protocol.finalOriginalWort)}" /> 
+        </div>
+      </fieldset>
+
+      <div class="clear"></div>
+    </form>
   </div>
 
-</div>
+  <div class="clear"></div>
 
- </body>
- </html>
+</div>

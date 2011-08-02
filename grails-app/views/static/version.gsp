@@ -27,7 +27,7 @@
               Der komplette Javascript-Teil wurde auf jQuery umgestellt. Daraus resultiert eine wesentlich höhere Geschwindigkeit und ein deutlich niedrigerer Speicherbedarf des Frontends.
             </li>
             <li>
-              Das Backend wurde auf Grails 1.4 umgestellt.
+              Das Backend wurde auf Grails 2.0 umgestellt.
             </li>
           </ul>
       </div>

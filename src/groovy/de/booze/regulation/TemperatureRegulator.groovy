@@ -97,6 +97,11 @@ class TemperatureRegulator {
    * @see TemperatureRegulator.REFERENCE_SENSORS_*
    */
   private int referenceSensors = 0
+  
+  /**
+   * Wheter to use the heating ramp or not
+   */
+  private boolean useRamp = true;
 
   /**
    * Timer for temperature regulation cycles
@@ -202,6 +207,11 @@ class TemperatureRegulator {
    * Returns the actual ramp temperature
    */
   public Double getRampTemperature() {
+    if(!this.useRamp) {
+      log.debug("not using the heating ramp")
+      return this.targetTemperature
+    }
+    
     Long timeElapsed = (new Date()).getTime() - this.rampStartTime.getTime()
     if((this.rampStartTemperature + (timeElapsed / 60000) * (this.heatingRamp)) <= this.targetTemperature) {
       this.rampTemperature = this.rampStartTemperature + (timeElapsed / 60000) * (this.heatingRamp)
@@ -308,6 +318,21 @@ class TemperatureRegulator {
    */
   public Double getHysteresis() {
     return this.hysteresis;
+  }
+  
+  /**
+   * Do not use the heating ramp
+   */
+  public void disableRamp() {
+    this.useRamp = false;
+  }
+  
+  
+  /**
+   * Use the heating ramp
+   */
+  public void enableRamp() {
+    this.useRamp = true;
   }
 }
 

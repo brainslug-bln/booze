@@ -66,9 +66,7 @@
 }
 
 .itemList .delete a {
-  margin-top: 0.5em;
-  width: 16px;
-  height: 16px;
+  margin-top: 0.9em;
 }
 
 .itemList .emptyList {

@@ -29,7 +29,7 @@
       <ul>
         <li onclick="window.location.href='${createLink(controller:"setting", action:"list")}'">Umgebungen</li>
         <li onclick="window.location.href='${createLink(controller:"setting", action:"create")}'">Umgebung erstellen</li>
-        <li onclick="window.location.href='${createLink(controller:"setting", action:"editActive")}'">Aktive Umgebung</li>
+        <setting:activeSettingExists><li onclick="window.location.href='${createLink(controller:"setting", action:"editActive")}'">Aktive Umgebung</li></setting:activeSettingExists>
         <!--<li><g:link controller="tools" action="update">Updates</g:link></li>-->
       </ul>
     </li>
@@ -49,9 +49,9 @@
     <li>
       <strong>Über</strong>
       <ul>
-        <li><g:link uri="/version">Diese Version</g:link></li>
-        <li><g:link uri="/">Booze</g:link></li>
-        <li><g:link uri="/license">Lizenz</g:link></li>
+        <li onclick="window.location.href='${createLink(uri:"/")}'">Booze</li>
+        <li onclick="window.location.href='${createLink(uri:"/license")}'">Lizenz</li>
+        <li onclick="window.location.href='${createLink(uri:"/version")}'">Diese Version</li>
       </ul>
     </li>
   </ul>

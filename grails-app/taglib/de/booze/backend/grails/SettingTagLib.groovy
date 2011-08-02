@@ -61,4 +61,20 @@ class SettingTagLib {
       }
     }
   }
+  
+  def activeSettingName = { attrs, body ->
+    def s = Setting.findByActive(true)
+    if(s) {
+      out << "<a href='${createLink(controller:'setting', action:'edit', id:s.id)}'>${s.name.encodeAsHTML()}</a>"
+    }
+    else {
+      out << message(code:"setting.noActiveAvailable")
+    }
+  }
+  
+  def activeSettingExists = { attrs, body ->
+    if(Setting.findByActive(true)) {
+      out << body()
+    }
+  }
 }

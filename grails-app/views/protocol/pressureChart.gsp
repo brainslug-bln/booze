@@ -21,7 +21,7 @@
 
       <div class="rightColumn">
         <div class="rightColumn_content">
-          <img style="width: 100%" src='${createLink(controller: "protocol", action: "showPressureChart", params: [id: protocolInstance.id, width: "600", height: "400"])}'/>
+          <img class="loading" style="width: 100%" src='${createLink(controller: "protocol", action: "showPressureChart", params: [id: protocolInstance.id, width: "600", height: "400"])}'/>
         </div>
       </div>
       

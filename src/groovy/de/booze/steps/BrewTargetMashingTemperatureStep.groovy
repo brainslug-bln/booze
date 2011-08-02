@@ -69,6 +69,9 @@ class BrewTargetMashingTemperatureStep extends AbstractBrewStep {
     // Use the mashing sensors as reference
     this.brewProcess.temperatureRegulator.setMashingReferenceSensors();
     
+    // Disable the heating ramp for this step
+    this.brewProcess.temperatureRegulator.disableRamp();
+    
     // Start the temperatureRegulator
     this.brewProcess.temperatureRegulator.start();
 

@@ -94,11 +94,6 @@ function BoozeBrew() {
   this.stopUpdating = false;
 
   /**
-   * Handle for pump mode selector event
-   */
-  this.pmsClickHandle = null;
-
-  /**
    * Brew calculator window
    */
   this.showCalculatorWindow = null;
@@ -555,7 +550,7 @@ BoozeBrew.prototype.handleEvent = function(event) {
   }
 
   if (event.playSound) {
-    $.sound.play(APPLICATION_ROOT + "/sounds/notification.wav");
+    $.sound.play(APPLICATION_ROOT + "/sounds/notification.mp3", {timeout: 10000});
   }
 
   if (event.dialog) {
@@ -1086,75 +1081,7 @@ BoozeBrew.prototype.addComment = function() {
     .error(booze.brew.ajaxError);
 }
 
-/**
- * Displays a pump mode selector for a pump
- *
- * @param {Object} event    Calling event
- * @param {Element} callee
- */
-BoozeBrew.prototype.pumpModeSelector = function(event, callee) {
-  event.stop();
 
-  var pms = callee.up().select('.pumpModeSelector').first();
-
-  pms.clonePosition(callee, {
-    offsetLeft: (pms.getDimensions().width * -1 + callee.getDimensions().width), 
-    setWidth: false, 
-    setHeight: false
-  });
-  pms.show();
-
-  pms.style.zIndex = 10000;
-
-  this.pmsClickHandle = Element.observe(window.document, 'click', this.hidePumpModeSelector.bindAsEventListener(this, pms))
-}
-
-
-/**
- * Hides a pump mode selector
- *
- * @param {Object} event    Calling event
- * @param {Element} pms     Pump mode selector dialog
- * @type void
- */
-BoozeBrew.prototype.hidePumpModeSelector = function(event, pms) {
-  event.stop();
-
-  pms.hide();
-  Element.stopObserving(window.document, this.pmsClickHandle);
-}
-
-/**
- * Forces the pump to the selected pump mode
- *
- * @param {Integer} pump Pump Id
- * @param {Integer} pumpMode Pump mode id
- * @type void
- */
-BoozeBrew.prototype.forcePumpMode = function(pump, pumpMode) {
-  new Ajax.Request(APPLICATION_ROOT + '/brew/forcePumpMode', {
-    parameters: {
-      processId: this.processId, 
-      pumpMode: pumpMode, 
-      pump: pump
-    },
-    onSuccess: function(response) {
-      if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-          booze.log.info("cleared forced pump mode");
-        }
-        else {
-          booze.notifier.error(data.message);
-        }
-      }
-      else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
-      }
-    }.bindAsEventListener(this),
-    onFailure: this.ajaxError.bindAsEventListener(this)
-  });
-}
 
 /**
  * Toggles the forced mode for a heater
@@ -1180,35 +1107,41 @@ BoozeBrew.prototype.toggleForceHeater = function(heater) {
     .error(booze.brew.ajaxError);
 }
 
-
-/**
- * Unforces a forced pump mode
- *
- * @param {Integer} pump
- * @type void
- */
-BoozeBrew.prototype.unforcePumpMode = function(pump) {
-  new Ajax.Request(APPLICATION_ROOT + '/brew/unforcePumpMode', {
-    parameters: {
-      processId: this.processId, 
-      pump: pump
-    },
-    onSuccess: function(response) {
-      if (response.responseJSON) {
-        var data = response.responseJSON;
-        if (data.success === true) {
-          booze.log.info("cleared forced pump mode");
-        }
-        else {
-          booze.notifier.error(data.message);
-        }
+BoozeBrew.prototype.setHeaterPower = function(heater, power) {
+  $.get(APPLICATION_ROOT + '/brew/setHeaterPower', {
+      processId: booze.brew.processId,
+      heater: heater,
+      power: power
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+          booze.log.info("set heater power for heater "+heater+" to: "+power);
       }
       else {
-        booze.notifier.error(booze.messageSource.message("js.booze.brew.serverCommunicationError"));
+        booze.notifier.error(data.message);
       }
-    }.bindAsEventListener(this),
-    onFailure: this.ajaxError.bindAsEventListener(this)
-  });
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
+}
+
+BoozeBrew.prototype.toggleHeaterStatus = function(heater, status) {
+  $.get(APPLICATION_ROOT + '/brew/toggleHeaterStatus', {
+      processId: booze.brew.processId,
+      heater: heater
+      }) 
+    .success(function(data) {
+      if (data.success === true) {
+          booze.log.info("toggled status for heater: "+heater);
+      }
+      else {
+        booze.notifier.error(data.message);
+      }
+
+      delete data;
+    })
+    .error(booze.brew.ajaxError);
 }
 
 /**
@@ -1224,6 +1157,10 @@ BoozeBrew.prototype.spinAliveThrobber = function() {
   $('#aliveThrobber').attr('src', APPLICATION_ROOT+"/images/icons/brew/throbber/"+this.aliveThrobber+".png");
 };
 
+/**
+ * Displays the brew calculator
+ * @type void
+ */
 BoozeBrew.prototype.showCalculator = function() {
   booze.log.info("Opening window for calculator");
 
@@ -1241,31 +1178,34 @@ BoozeBrew.prototype.showCalculator = function() {
  * @type void
  */
 BoozeBrew.prototype.editProtocolData = function() {
-  if(this.editProtocolDialog != null) {
-    this.editProtocolDialog.dialog("moveToTop");
+  if(booze.brew.dialogs.editProtocolData) {
+    $(booze.brew.dialogs.editProtocolData).dialog("moveToTop");
     return;
   }
   
   $.get(APPLICATION_ROOT + '/brew/editProtocolData', {
-      processId: booze.brew.processId,
-      }) 
-    .success(function(data) {
-      if (data.success === true) {
-          booze.brew.dialogs.editProtocolDialog = booze.notifier.notify(data.html, 
-            {
-              title: booze.messageSource.message('js.booze.brew.editProtocolDialog.title'),
-              closeCallback: function() {booze.brew.dialogs.editProtocolDialog = null},
-              callback: booze.brew.saveProtocolData
-            }
-          );
-      }
-      else {
-        booze.notifier.error(data.message);
-      }
+    processId: booze.brew.processId
+  }) 
+  .success(function(data) {
+    if (data.success === true) {
+        booze.brew.dialogs.editProtocolData = booze.notifier.confirm(data.html,
+        {
+          title: booze.messageSource.message("js.booze.brew.editProtocolDialog.title"),
+          proceedCallback: booze.brew.saveProtocolData,
+          proceedText: booze.messageSource.message("js.booze.brew.save"),
+          cancelCallback: function() { $(this).dialog('destroy'); booze.brew.dialogs.editProtocolData = null; }
+        }
+      )
+    }
+    else {
+      booze.notifier.error(data.message);
+    }
 
-      delete data;
-    })
-    .error(booze.brew.ajaxError);
+    delete data;
+  })
+  .error(booze.brew.ajaxError);
+  
+  
 };
 
 /**
@@ -1274,16 +1214,16 @@ BoozeBrew.prototype.editProtocolData = function() {
  * @type void
  */
 BoozeBrew.prototype.saveProtocolData = function() {
-  $.get(APPLICATION_ROOT + '/brew/saveProtocolData', {
-      processId: booze.brew.processId,
-      }) 
+  console.log($('#protocolDataForm'))
+  $.get(APPLICATION_ROOT + '/brew/saveProtocolData', $('#protocolDataForm').serialize()+"&processId="+booze.brew.processId) 
     .success(function(data) {
       if (data.success === true) {
         if(data.close == true) {
-          booze.brew.dialogs.editProtocolDialog.dialog("close");
+          $(booze.brew.dialogs.editProtocolData).dialog("close");
+          booze.brew.dialogs.editProtocolData = null;
         }
         else {
-          booze.brew.dialogs.editProtocolDialog.html(data.html);  
+          $('#editProtocolDialog').replaceWith(data.html);
         }
       }
 
@@ -1302,6 +1242,7 @@ BoozeBrew.prototype.showTemperatureChart = function() {
   booze.brew.dialogs.temperatureChart =  $('<div><img src="'+$('#temperatureChartDialogTemplate').html()+'&q='+now.getTime()+'" style="width: 100%" /></div>')
 		.dialog({
       width: "50%",
+      minWidth: "35em",
       minHeight: '20%',
       position: "top",
       dialogClass: "showCloseButton",
@@ -1322,6 +1263,7 @@ BoozeBrew.prototype.showPressureChart = function() {
   booze.brew.dialogs.pressureChart =  $('<div><img src="'+$('#pressureChartDialogTemplate').html()+'&q='+now.getTime()+'" style="width: 100%" /></div>')
 		.dialog({
       width: "50%",
+      minWidth: "35em",
       minHeight: '20%',
       position: "top",
       dialogClass: "showCloseButton",

@@ -81,7 +81,9 @@ class HeaterController {
           if(oldRegulator) {
             oldRegulator.delete()
           }
-          render([success: true, message: g.message(code:"setting.heater.save.saved"), html:g.render(template:"list", bean: Setting.get(setting.id))] as JSON)
+          
+          setting.refresh()
+          render([success: true, message: g.message(code:"setting.heater.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
           return
         }
         catch(Exception e) {

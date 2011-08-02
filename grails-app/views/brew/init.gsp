@@ -51,7 +51,7 @@
           </div>
           <div class="addComment">
             <input type="text" value="" id="brewCommentField"/> 
-            <span><a href="#" onclick="booze.brew.addComment(); return false;"><g:message code="brew.init.addComment"/></a></span>
+            <input type="button" class="ui-button ui-state-default" onclick="booze.brew.addComment(); return false;" value="<g:message code='brew.init.addComment'/>">
           </div>
           
           <script type="text/javascript">
@@ -167,10 +167,10 @@
                       
                       <div class="clear"></div>
                       
-                      <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') - $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
+                      <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') - $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
                       
                       <div class="slider"></div>
-                      <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') + $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
+                      <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') + $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
                     </g:if>
                   </div>
                   
@@ -251,10 +251,10 @@
 
                           <div class="clear"></div>
 
-                          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') - $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
+                          <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') - $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
 
                           <div class="slider"></div>
-                          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') + $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
+                          <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') + $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
                         </g:if>
                       </div>
 
@@ -342,11 +342,11 @@ return false"><span><g:pumpModeName pumpMode="${pumpMode}"/></span></li>
             <div class="content">
               <span id="hysteresisIndicator" class="sliderIndicator">${brewProcess.setting.hysteresis.encodeAsHTML()}</span>
               <div class="clear"></div>
-              <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') - $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
+              <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') - $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
               <div class="slider">
                 <div id="hysteresisSlider"></div>
               </div>
-              <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') + $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
+              <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#hysteresisSlider').slider('value', $('#hysteresisSlider').slider('value') + $('#hysteresisSlider').slider('option', 'step')); return false;"></div>
 
               <div class="row" style="width: 100%;">
                 <div class="cautious">
@@ -388,11 +388,11 @@ return false"><span><g:pumpModeName pumpMode="${pumpMode}"/></span></li>
             <div class="content">
               <span id="cookingTemperatureIndicator" class="sliderIndicator">${brewProcess.setting.cookingTemperature.encodeAsHTML()}</span>
               <div class="clear"></div>
-              <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') - $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
+              <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') - $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
               <div class="slider">
                 <div id="cookingTemperatureSlider"></div>
               </div>
-              <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') + $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
+              <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#cookingTemperatureSlider').slider('value', $('#cookingTemperatureSlider').slider('value') + $('#cookingTemperatureSlider').slider('option', 'step')); return false;"></div>
 
               <div class="row" style="width: 100%;">
                 <div class="low">

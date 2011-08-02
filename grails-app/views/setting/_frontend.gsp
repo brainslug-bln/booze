@@ -9,11 +9,11 @@
             <div class="errors" id="errors_frontendFontSize">
                <g:renderErrors bean="${it}" field="frontendFontSize" as="list" />
             </div>
-          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#frontendFontSizeSlider').slider('value', $('#frontendFontSizeSlider').slider('value') - $('#frontendFontSizeSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-left" onclick="$('#frontendFontSizeSlider').slider('value', $('#frontendFontSizeSlider').slider('value') - $('#frontendFontSizeSlider').slider('option', 'step')); return false;"></div>
           <div class="slider">
             <div id="frontendFontSizeSlider"></div>
           </div>
-          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#frontendFontSizeSlider').slider('value', $('#frontendFontSizeSlider').slider('value') + $('#frontendFontSizeSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-right" onclick="$('#frontendFontSizeSlider').slider('value', $('#frontendFontSizeSlider').slider('value') + $('#frontendFontSizeSlider').slider('option', 'step')); return false;"></div>
           <input type="hidden" id="frontendFontSizeField" name="setting.frontendFontSize" value="${formatNumber(format:'####', number:it?.frontendFontSize)}" maxlength="10" />
       </div>
       
@@ -25,11 +25,11 @@
             <div class="errors" id="errors_refreshInterval">
                <g:renderErrors bean="${it}" field="refreshInterval" as="list" />
             </div>
-          <div class="sliderButton ui-icon-circle-arrow-w ui-icon" onclick="$('#refreshIntervalSlider').slider('value', $('#refreshIntervalSlider').slider('value') - $('#refreshIntervalSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-left" onclick="$('#refreshIntervalSlider').slider('value', $('#refreshIntervalSlider').slider('value') - $('#refreshIntervalSlider').slider('option', 'step')); return false;"></div>
           <div class="slider">
             <div id="refreshIntervalSlider"></div>
           </div>
-          <div class="sliderButton ui-icon-circle-arrow-e ui-icon" onclick="$('#refreshIntervalSlider').slider('value', $('#refreshIntervalSlider').slider('value') + $('#refreshIntervalSlider').slider('option', 'step')); return false;"></div>
+          <div class="booze-icon sliderButton booze-icon-arrow-right" onclick="$('#refreshIntervalSlider').slider('value', $('#refreshIntervalSlider').slider('value') + $('#refreshIntervalSlider').slider('option', 'step')); return false;"></div>
           <input type="hidden" id="refreshIntervalField" name="setting.refreshInterval" value="${formatNumber(format:'#####', number:it?.refreshInterval)}" maxlength="10" />
       </div>
     </div>

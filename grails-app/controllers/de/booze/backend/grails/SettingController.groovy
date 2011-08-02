@@ -22,9 +22,27 @@ class SettingController {
     if(!params.id || !Setting.exists(params.id)) {
       flash.message = g.message(code:"setting.delete.notFound")
       redirect(action: "list")
+      return
     }
 
     Setting setting = Setting.get(params.id)
+    
+    setting.heaters.each {
+      it.delete(flush: true)
+    }
+    
+    setting.motors.each {
+      it.delete(flush: true)
+    }
+    
+    setting.temperatureSensors.each {
+      it.delete(flush: true)
+    }
+    
+    setting.pressureSensors.each {
+      it.delete(flush: true)
+    }
+    
     setting.delete(flush: true)
     
     flash.message = g.message(code:"setting.delete.deleted")

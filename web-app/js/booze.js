@@ -53,6 +53,15 @@ String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 }
 
+$(function(){  
+  $("html").bind("ajaxStart", function(){  
+     $(this).addClass('busy');  
+   }).bind("ajaxStop", function(){  
+     $(this).removeClass('busy');  
+   });  
+});
+
+
 
 
 

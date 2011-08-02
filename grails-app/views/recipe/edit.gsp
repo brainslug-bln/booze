@@ -21,6 +21,7 @@
               <li><a href="#" rel="mashing"><g:message code="recipe.edit.mashing" /></a></li>
               <li><a href="#" rel="cooking"><g:message code="recipe.edit.cooking" /></a></li>
               <li><a href="#" rel="fermentation"><g:message code="recipe.edit.fermentation" /></a></li>
+              <li><a href="#" rel="brew"><g:message code="recipe.edit.brew" /></a></li>
             </ul>
           </div>
           <div class="clearfix"></div>
@@ -43,6 +44,10 @@
           
           <div id="fermentation" style="display: none;">
             <g:render template="fermentation" bean="${recipeInstance}" />
+          </div>
+          
+          <div id="brew" style="display: none">
+            <g:render template="brew" bean="${recipeInstance}" />
           </div>
           
           <!--

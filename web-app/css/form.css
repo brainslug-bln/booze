@@ -68,7 +68,10 @@
 
 .form .sliderButton {
   float: left;
-  width: 14px;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: pointer;
+  margin-top: 0.1em;
 }
 
 .form .sliderIndicator {

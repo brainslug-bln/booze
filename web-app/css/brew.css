@@ -22,6 +22,12 @@
   margin: 0 1% 0 1%;
 }
 
+.brew .singleColumn {
+  width: 98%;
+  float: left;
+  margin: 0 1% 0 1%;
+}
+
 .brew h1 .recipeName {
   float: left;
 }
@@ -70,11 +76,14 @@
 
 .brew .sliderButton {
   float: left;
-  width: 16px;
+  width: 1.2em;
+  height: 1.2em;
+  cursor: pointer;
 }
 
 .brew .sliderIndicator {
   float: right;
+  height: 1.3em;
   margin-right: 15%;
 }
 
@@ -145,14 +154,15 @@
 }
 
 .protocolContainer .addComment input {
-    width: 58%;
+    width: 50%;
     margin-right: 2%;
     float: left;
 }
 
-.protocolContainer .addComment span {
+.protocolContainer .addComment input.ui-button {
     line-height: 2em;
     font-size: 0.9em;
+    width: 47%;
 }
 
 .buttonContainer .leftColumn, .buttonContainer .rightColumn {

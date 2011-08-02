@@ -54,6 +54,7 @@ class TemperatureSensorController {
     if(ts.validate()) {
       try {
         ts.save(flush: true)
+        setting.refresh()
         
         render([success: true, message: g.message(code:"setting.temperatureSensor.save.saved"), html:g.render(template:"list", bean: setting)] as JSON)
         return
