@@ -492,9 +492,48 @@ class BrewProcess implements Serializable {
   public void toggleForceHeater(Long heater) {
     for(int i=0; i<this.heaters.size(); i++) {
       if(this.heaters[i].id == heater) {
-        this.heaters[i].toggleForce();
+		  if(this.heaters[i].forced()) {
+			  this.heaters[i].unforce()
+		  }
+		  else {
+			  this.heaters[i].force()
+		  }
       }
     }
+  }
+  
+  /**
+   * Sets a forced heater's power value
+   * 
+   * @param heater Heater ID
+   * @param power In percent of the maximal power value
+   * @throws IllegalArgumentException
+   */
+  
+  public void setForcedHeaterPower(Long heater, Integer power) throws IllegalArgumentException {
+	  for(int i=0; i<this.heaters.size(); i++) {
+		  if(this.heaters[i].id == heater) {
+			  if(!this.heaters[i].hasRegulator()) {
+				  throw new IllegalArgumentException("you are trying modify a heater regulator where there is none")
+			  }
+			  this.heaters[i].writeForcedPower(power);
+		  }
+	  }
+  }
+  
+  /**
+   * Toggles a forced heater's enabled/disabled status
+   * @param heater Heater ID
+   */
+  public void toggleForcedHeaterStatus(Long heater) {
+	  for(int i=0; i<this.heaters.size(); i++) {
+		  if(this.heaters[i].id == heater) {
+			  if(this.heaters[i].forced()) {	
+				  if(this.heaters[i].enabled()) this.heaters[i].forceDisable()
+				  else this.heaters[i].forceEnable()
+			  }
+		  }
+	  }
   }
   
   /**

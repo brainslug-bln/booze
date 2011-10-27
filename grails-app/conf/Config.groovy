@@ -96,7 +96,7 @@ log4j = {
        'org.hibernate',
        'net.sf.ehcache.hibernate'
 
-    debug  'de.booze'
+    warn  'de.booze'
       
     warn   'org.mortbay.log'
 }

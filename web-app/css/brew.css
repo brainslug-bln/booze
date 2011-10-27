@@ -125,6 +125,12 @@
   margin-left: 3em;
 }
 
+.brewDialog fieldset .radioset .ui-button {
+	margin-left: 0;
+	margin-top: 0.3em;
+	width: auto;
+}
+
 .brewDialog fieldset .value {
   float: left;
 }

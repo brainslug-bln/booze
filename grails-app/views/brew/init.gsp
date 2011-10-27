@@ -1,181 +1,263 @@
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <meta name="layout" content="brew"/>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="layout" content="brew" />
 
-    <title><g:message code="brew.init.headline" args="${[brewProcess.recipe.name?.encodeAsHTML()]}"/></title>
+<title><g:message code="brew.init.headline"
+		args="${[brewProcess.recipe.name?.encodeAsHTML()]}" /></title>
 
-  </head>
-  <body>
+</head>
+<body>
 
-    <div id="bodyContainer" class="brew">
-      <h1>
-        <span class="recipeName">${brewProcess.recipe.name?.encodeAsHTML()}</span>
-        <img id="aliveThrobber" src="${resource(dir:'images/icons/brew/throbber/0.png')}" />
+	<div id="bodyContainer" class="brew">
+		<h1>
+			<span class="recipeName">
+				${brewProcess.recipe.name?.encodeAsHTML()}
+			</span> <img id="aliveThrobber"
+				src="${resource(dir:'images/icons/brew/throbber/0.png')}" />
 
-        <div class="recipeStartTime">
-          <span id="timeElapsed">0</span> <g:message code="brew.init.elapsedMinutes"/>
-        </div>
-        <div class="clear">&nbsp;</div>
-      </h1>
+			<div class="recipeStartTime">
+				<span id="timeElapsed">0</span>
+				<g:message code="brew.init.elapsedMinutes" />
+			</div>
+			<div class="clear">&nbsp;</div>
+		</h1>
 
 
 
-      <div class="clear"></div>
+		<div class="clear"></div>
 
-<% /* Info column */ %>
-      <div class="leftColumn">
-        <div class="contentbox stepInfo" id="step">
-          <h1><g:message code="brew.init.stepInfo.headline"/></h1>
+		<% /* Info column */ %>
+		<div class="leftColumn">
+			<div class="contentbox stepInfo" id="step">
+				<h1>
+					<g:message code="brew.init.stepInfo.headline" />
+				</h1>
 
-          <div class="content">
-            <g:render template="stepInfo"/>
-          </div>
-        </div>
+				<div class="content">
+					<g:render template="stepInfo" />
+				</div>
+			</div>
 
-        <div class="contentbox protocolContainer">
-          <h1><g:message code="brew.init.protocol.headline"/></h1>
+			<div class="contentbox protocolContainer">
+				<h1>
+					<g:message code="brew.init.protocol.headline" />
+				</h1>
 
-          <div class="content">
-            <ul class="protocolList" id="protocol">
-              <g:if test="${resume}">
-                <li><g:message code="brew.brewProcess.event" args="${[formatDate(date:(new Date()), formatName: 'default.time.formatter'), message(code:'brew.process.resumed')]}"/></li>
-                <g:each in="${events?.reverse()}" var="event">
-                  <li>${event.getEventDataForFrontend(g)?.message}</li>
-                </g:each>
-              </g:if>
-              <g:else>
-                <li><g:message code="brew.brewProcess.event" args="${[formatDate(date:(new Date()), formatName: 'default.time.formatter'), message(code:'brew.process.initialized')]}"/></li>
-              </g:else>
-            </ul>
-          </div>
-          <div class="addComment">
-            <input type="text" value="" id="brewCommentField"/> 
-            <input type="button" class="ui-button ui-state-default" onclick="booze.brew.addComment(); return false;" value="<g:message code='brew.init.addComment'/>">
-          </div>
-          
-          <script type="text/javascript">
+				<div class="content">
+					<ul class="protocolList" id="protocol">
+						<g:if test="${resume}">
+							<li><g:message code="brew.brewProcess.event"
+									args="${[formatDate(date:(new Date()), formatName: 'default.time.formatter'), message(code:'brew.process.resumed')]}" /></li>
+							<g:each in="${events?.reverse()}" var="event">
+								<li>
+									${event.getEventDataForFrontend(g)?.message}
+								</li>
+							</g:each>
+						</g:if>
+						<g:else>
+							<li><g:message code="brew.brewProcess.event"
+									args="${[formatDate(date:(new Date()), formatName: 'default.time.formatter'), message(code:'brew.process.initialized')]}" /></li>
+						</g:else>
+					</ul>
+				</div>
+				<div class="addComment">
+					<input type="text" value="" id="brewCommentField" /> <input
+						type="button" class="ui-button ui-state-default"
+						onclick="booze.brew.addComment(); return false;"
+						value="<g:message code='brew.init.addComment'/>">
+				</div>
+
+				<script type="text/javascript">
             $('#brewCommentField').keypress(function(event) { if (event.which == "13") { booze.brew.addComment(); event.preventDefault(); }});
           </script>
-        </div>
+			</div>
 
-        <div class="contentbox buttonContainer">
-          <h1><g:message code="brew.init.buttons.headline"/></h1>
+			<div class="contentbox buttonContainer">
+				<h1>
+					<g:message code="brew.init.buttons.headline" />
+				</h1>
 
-          <div class="content">
-            <div class="leftColumn">
-              <input class="left ui-button ui-state-default" type="button" onclick="booze.brew.cancel()" id="cancelButton" value="${message(code: 'brew.buttons.cancel')}"/>
-              <input class="left ui-button ui-state-default" type="button" onclick="booze.brew.showCalculator()" id="showCalculatorButton" value="${message(code: 'brew.buttons.showCalculator')}"/>
-              <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.showPressureChart()" id="showPressureChartButton" value="${message(code: 'brew.buttons.showPressureChart')}"/>
-            </div>
-            
-            <div class="rightColumn">
-              <input class="ui-button ui-state-default" onclick="booze.brew.pause()" type="button" id="pauseButton" value="${message(code: 'brew.buttons.pause')}"/>
-              <input class="ui-button ui-state-default" onclick="booze.brew.resume()" style="display: none" type="button" id="resumeButton" value="${message(code: 'brew.buttons.resume')}"/>
+				<div class="content">
+					<div class="leftColumn">
+						<input class="left ui-button ui-state-default" type="button"
+							onclick="booze.brew.cancel()" id="cancelButton"
+							value="${message(code: 'brew.buttons.cancel')}" /> <input
+							class="left ui-button ui-state-default" type="button"
+							onclick="booze.brew.showCalculator()" id="showCalculatorButton"
+							value="${message(code: 'brew.buttons.showCalculator')}" /> <input
+							class="right ui-button ui-state-default" type="button"
+							onclick="booze.brew.showPressureChart()"
+							id="showPressureChartButton"
+							value="${message(code: 'brew.buttons.showPressureChart')}" />
+					</div>
 
-              <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.editProtocolData()" id="editProtocoldataButton" value="${message(code: 'brew.buttons.editProtocolData')}"/>
+					<div class="rightColumn">
+						<input class="ui-button ui-state-default"
+							onclick="booze.brew.pause()" type="button" id="pauseButton"
+							value="${message(code: 'brew.buttons.pause')}" /> <input
+							class="ui-button ui-state-default" onclick="booze.brew.resume()"
+							style="display: none" type="button" id="resumeButton"
+							value="${message(code: 'brew.buttons.resume')}" /> <input
+							class="right ui-button ui-state-default" type="button"
+							onclick="booze.brew.editProtocolData()"
+							id="editProtocoldataButton"
+							value="${message(code: 'brew.buttons.editProtocolData')}" /> <input
+							class="right ui-button ui-state-default" type="button"
+							onclick="booze.brew.showTemperatureChart()"
+							id="showTemperatureChartButton"
+							value="${message(code: 'brew.buttons.showTemperatureChart')}" />
+					</div>
 
-              <input class="right ui-button ui-state-default" type="button" onclick="booze.brew.showTemperatureChart()" id="showTemperatureChartButton" value="${message(code: 'brew.buttons.showTemperatureChart')}"/>
-            </div>
-            
-            
-            <div class="clear"></div>
-          </div>
-        </div>
-      </div>
 
-<% /* Sensor/Regulation column**/ %>
-      <div class="rightColumn">
+					<div class="clear"></div>
+				</div>
+			</div>
+		</div>
 
-        <div class="contentbox temperatureSensorContainer">
-          <h1><g:message code="brew.init.temperatureSensors.headline"/></h1>
-          <div class="content">
+		<% /* Sensor/Regulation column**/ %>
+		<div class="rightColumn">
 
-<% /* temperature sensors */ %>
-            <g:each in="${brewProcess.temperatureSensors?.sort{it.name}}" var="temperatureSensor">
-              <div class="temperatureSensor" id="temperatureSensor_${temperatureSensor.id.encodeAsHTML()}">
-                <div class="temperatureSensorName">${temperatureSensor.name?.encodeAsHTML()} <div class="temperatureSensorUnit">°C</div>&nbsp;<div class="temperatureSensorValue">0</div> <div class="reference ui-icon ui-icon-star" style="display: none;">(R)</div></div>
-                <div class="progressbar">
-                </div>
-              </div>
+			<div class="contentbox temperatureSensorContainer">
+				<h1>
+					<g:message code="brew.init.temperatureSensors.headline" />
+				</h1>
+				<div class="content">
 
-              <script type="text/javascript">
+					<% /* temperature sensors */ %>
+					<g:each in="${brewProcess.temperatureSensors?.sort{it.name}}"
+						var="temperatureSensor">
+						<div class="temperatureSensor"
+							id="temperatureSensor_${temperatureSensor.id.encodeAsHTML()}">
+							<div class="temperatureSensorName">
+								${temperatureSensor.name?.encodeAsHTML()}
+								<div class="temperatureSensorUnit">°C</div>
+								&nbsp;
+								<div class="temperatureSensorValue">0</div>
+								<div class="reference ui-icon ui-icon-star"
+									style="display: none;">(R)</div>
+							</div>
+							<div class="progressbar"></div>
+						</div>
+
+						<script type="text/javascript">
                 $(document).ready(function() {
                   $('#temperatureSensor_${temperatureSensor.id.encodeAsHTML()}').find('.progressbar').first().progressbar({value: 0});
                 });
               </script>
-            </g:each>
+					</g:each>
 
-          </div>
-        </div>
+				</div>
+			</div>
 
-<% /* Pressure sensors */ %>
-        <div class="contentbox pressureSensorContainer">
-          <h1><g:message code="brew.init.pressureSensors.headline"/></h1>
+			<% /* Pressure sensors */ %>
+			<div class="contentbox pressureSensorContainer">
+				<h1>
+					<g:message code="brew.init.pressureSensors.headline" />
+				</h1>
 
-          <div class="content">
-            <g:each in="${brewProcess.pressureSensors?.sort{it.name}}" var="pressureSensor">
-              <div class="pressureSensor" id="pressureSensor_${pressureSensor.id.encodeAsHTML()}">
-                <div class="pressureSensorName">${pressureSensor.name?.encodeAsHTML()} <div class="pressureSensorUnit">mbar</div>&nbsp;<div class="pressureSensorValue">0</div></div>
-                <div class="progressbar">
-                </div>
-              </div>
+				<div class="content">
+					<g:each in="${brewProcess.pressureSensors?.sort{it.name}}"
+						var="pressureSensor">
+						<div class="pressureSensor"
+							id="pressureSensor_${pressureSensor.id.encodeAsHTML()}">
+							<div class="pressureSensorName">
+								${pressureSensor.name?.encodeAsHTML()}
+								<div class="pressureSensorUnit">mbar</div>
+								&nbsp;
+								<div class="pressureSensorValue">0</div>
+							</div>
+							<div class="progressbar"></div>
+						</div>
 
-              <script type="text/javascript">
+						<script type="text/javascript">
                 $(document).ready(function() {
                   $('#pressureSensor_${pressureSensor.id.encodeAsHTML()}').find('.progressbar').first().progressbar({value: 0});
                 });
               </script>
-            </g:each>
-          </div>
-        </div>
+					</g:each>
+				</div>
+			</div>
 
-<% /* Heater column */ %>
-        <div class="leftColumn">
-          <div class="contentbox heaterBox">
-            <h1><g:message code="brew.init.heaters.headline"/></h1>
-            <div class="content">
-              <g:each in="${brewProcess.heaters?.sort{it.name}}" var="heater">
-                
-                <div class="heater" id="heater_${heater.id.encodeAsHTML()}">
-                  
-                  <div id="heater_${heater.id}_regular">
-                    <div class="name">${heater.name.encodeAsHTML()}</div>
-                    
-                    <div class="statusIcon ui-state-default"><div class="ui-icon ui-icon-play"></div></div>
-                    <div class="manualModeIcon ui-state-default"><div class="ui-icon ui-icon-person" onclick="booze.brew.toggleForceHeater('${heater.id}')"></div></div>
-                    
-                    <g:if test="${heater.hasRegulator()}">
-                      <div class="clear"></div>
-                      <div id="heater_${heater.id}_progressbar">
-                        <div class="progressbar">
-                          <div class="progressbarPower"><div class="label"><g:message code="brew.init.power" /></div> <div class="indicator">0</div><div class="unit"><g:message code="default.unit.percent" /></div></div>
-                        </div>
-                      </div>
-                    </g:if>
-                  </div>
-                  
-                  <div id="heater_${heater.id}_forced" style="display: none">
-                    <div class="name">${heater.name.encodeAsHTML()}</div>
-                                       
-                    <div class="statusIcon ui-state-default"><div class="ui-icon ui-icon-play"></div></div>
-                    <div class="manualModeIcon ui-state-active"><div class="ui-icon ui-icon-person" onclick="booze.brew.toggleForceHeater('${heater.id}')"></div></div> 
-                    
-                    <g:if test="${heater.hasRegulator()}">
-                      <div class="clear"></div>
-                      <div class="label"><g:message code="brew.init.power" /></div> <div class="indicator">0</div><div class="unit"><g:message code="default.unit.percent" /></div>
-                      
-                      <div class="clear"></div>
-                      
-                      <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') - $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
-                      
-                      <div class="slider"></div>
-                      <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') + $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
-                    </g:if>
-                  </div>
-                  
-                  <g:if test="${heater.hasRegulator()}">
-                    <script type="text/javascript">
+			<% /* Heater column */ %>
+			<div class="leftColumn">
+				<div class="contentbox heaterBox">
+					<h1>
+						<g:message code="brew.init.heaters.headline" />
+					</h1>
+					<div class="content">
+						<g:each in="${brewProcess.heaters?.sort{it.name}}" var="heater">
+
+							<div class="heater" id="heater_${heater.id.encodeAsHTML()}">
+
+								<div id="heater_${heater.id}_regular">
+									<div class="name">
+										${heater.name.encodeAsHTML()}
+									</div>
+
+									<div class="statusIcon ui-state-default">
+										<div class="ui-icon ui-icon-play"></div>
+									</div>
+									<div class="manualModeIcon ui-state-default">
+										<div class="ui-icon ui-icon-person"
+											onclick="booze.brew.toggleForceHeater('${heater.id}')"></div>
+									</div>
+
+									<g:if test="${heater.hasRegulator()}">
+										<div class="clear"></div>
+										<div id="heater_${heater.id}_progressbar">
+											<div class="progressbar">
+												<div class="progressbarPower">
+													<div class="label">
+														<g:message code="brew.init.power" />
+													</div>
+													<div class="indicator">0</div>
+													<div class="unit">
+														<g:message code="default.unit.percent" />
+													</div>
+												</div>
+											</div>
+										</div>
+									</g:if>
+								</div>
+
+								<div id="heater_${heater.id}_forced" style="display: none">
+									<div class="name">
+										${heater.name.encodeAsHTML()}
+									</div>
+
+									<div class="statusIcon ui-state-default">
+										<div class="ui-icon ui-icon-play"
+											onclick="booze.brew.toggleForcedHeaterStatus('${heater.id}')"></div>
+									</div>
+									<div class="manualModeIcon ui-state-active">
+										<div class="ui-icon ui-icon-person"
+											onclick="booze.brew.toggleForceHeater('${heater.id}')"></div>
+									</div>
+
+									<g:if test="${heater.hasRegulator()}">
+										<div class="clear"></div>
+										<div class="label">
+											<g:message code="brew.init.power" />
+										</div>
+										<div class="indicator">0</div>
+										<div class="unit">
+											<g:message code="default.unit.percent" />
+										</div>
+
+										<div class="clear"></div>
+
+										<div class="booze-icon booze-icon-arrow-left sliderButton"
+											onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') - $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
+
+										<div class="slider"></div>
+										<div class="booze-icon booze-icon-arrow-right sliderButton"
+											onclick="$('#heater_${heater.id}_slider').slider('value', $('#heater_${heater.id}_slider').slider('value') + $('#heater_${heater.id}_slider').slider('option', 'step')); return false;"></div>
+									</g:if>
+								</div>
+
+								<g:if test="${heater.hasRegulator()}">
+									<script type="text/javascript">
                       $(document).ready(function() {
                         $('#heater_${heater.id}_progressbar').find('.progressbar').first().progressbar(
                           {
@@ -186,80 +268,122 @@
                       });
                         
                       $(document).ready(function() {
-                            $( "#heater_${heater.id}_forced" ).find(".slider").first().slider({
-                                value:0,
-                                min: 0,
-                                max: 100,
-                                step: 1,
-                                change: function( event, ui ) {
-                                  $('#heater_${heater.id}_slider').find('.indicator').first().html(ui.value);
-                                  if(event.orginalEvent != undefined) {
-                                    booze.brew.setHeaterPower('${heater.id}', ui.value);
-                                  }
-                                },
-                                slide: function( event, ui ) {
-                                  $('#heater_${heater.id}_slider').find('.indicator').first().html(ui.value);
-                                }
-                            });
+                    	   $( "#heater_${heater.id}_forced" ).find(".slider").first().removeClass("sliding");
+                         $( "#heater_${heater.id}_forced" ).find(".slider").first().slider({
+                             value:0,
+                             min: 0,
+                             max: 100,
+                             step: 1,
+                             change: function( event, ui ) {
+                                 if($( "#heater_${heater.id}_forced" ).find(".slider").first().hasClass("sliding") === false) {
+                                	  $( "#heater_${heater.id}_forced" ).find('.indicator').first().html(ui.value);
+                                 
+			                              if(typeof(event.orginalEvent) != undefined) {
+			                                booze.brew.setForcedHeaterPower('${heater.id}', ui.value);
+			                              }
+                                 }
+                             },
+                             slide: function( event, ui ) {
+                             	$( "#heater_${heater.id}_forced" ).find('.indicator').first().html(ui.value);
+                             },
+                             start: function(event, ui) {
+                                 $( "#heater_${heater.id}_forced" ).find(".slider").first().addClass("sliding");
+                             },
+                             stop: function(event, ui) {
+                            	 $( "#heater_${heater.id}_forced" ).find(".slider").first().removeClass("sliding");
+                             }
+                         });
                         });
                     </script>
-                  </g:if>
-                </div>
-                <div class="clear"></div>
-              </g:each>
-              <div class="clear"></div>
-            </div>
-            <div class="clear">&nbsp;</div>
-          </div>
-        </div>
+								</g:if>
+							</div>
+							<div class="clear"></div>
+						</g:each>
+						<div class="clear"></div>
+					</div>
+					<div class="clear">&nbsp;</div>
+				</div>
+			</div>
 
-<% /* motors column */ %>
-        <div class="rightColumn">
-          <div class="contentbox motorsBox">
-            <h1><g:message code="brew.init.motors.headline"/></h1>
-            
-            <div class="content">
-              <g:each in="${['mashingPumpRegulator', 'mashingMixerRegulator', 'cookingPumpRegulator', 'cookingMixerRegulator', 'drainPumpRegulator']}" var="motor">
-                <g:if test="${brewProcess[motor]}">
-                  <div class="motor" id="motor_${motor}">
+			<% /* motors column */ %>
+			<div class="rightColumn">
+				<div class="contentbox motorsBox">
+					<h1>
+						<g:message code="brew.init.motors.headline" />
+					</h1>
 
-                      <div id="motor_${motor}_regular">
-                        <div class="name"><g:message code="brew.init.${motor}" /></div>
+					<div class="content">
+						<g:each
+							in="${['mashingPumpRegulator', 'mashingMixerRegulator', 'cookingPumpRegulator', 'cookingMixerRegulator', 'drainPumpRegulator']}"
+							var="motor">
+							<g:if test="${brewProcess[motor]}">
+								<div class="motor" id="motor_${motor}">
 
-                        <div class="statusIcon ui-state-default"><div class="ui-icon ui-icon-play"></div></div>
-                        <div class="manualModeIcon ui-state-default"><div class="ui-icon ui-icon-person"></div></div>
+									<div id="motor_${motor}_regular">
+										<div class="name">
+											<g:message code="brew.init.${motor}" />
+										</div>
 
-                        <g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
-                          <div class="clear"></div>
-                          <div id="motor_${motor}_progressbar">
-                            <div class="progressbar">
-                              <div class="progressbarPower"><div class="label"><g:message code="brew.init.power" /></div> <div class="indicator">0</div><div class="unit"><g:message code="default.unit.percent" /></div></div>
-                            </div>
-                          </div>
-                        </g:if>
-                      </div>
+										<div class="statusIcon ui-state-default">
+											<div class="ui-icon ui-icon-play"></div>
+										</div>
+										<div class="manualModeIcon ui-state-default">
+											<div class="ui-icon ui-icon-person"></div>
+										</div>
 
-                      <div id="motor_${motor}_forced" style="display: none">
-                        <div class="name"><g:message code="brew.init.${motor}" /></div>
+										<g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
+											<div class="clear"></div>
+											<div id="motor_${motor}_progressbar">
+												<div class="progressbar">
+													<div class="progressbarPower">
+														<div class="label">
+															<g:message code="brew.init.power" />
+														</div>
+														<div class="indicator">0</div>
+														<div class="unit">
+															<g:message code="default.unit.percent" />
+														</div>
+													</div>
+												</div>
+											</div>
+										</g:if>
+									</div>
 
-                        <div class="statusIcon ui-state-default"><div class="ui-icon ui-icon-play"></div></div>
-                        <div class="manualModeIcon ui-state-active"><div class="ui-icon ui-icon-person"></div></div> 
+									<div id="motor_${motor}_forced" style="display: none">
+										<div class="name">
+											<g:message code="brew.init.${motor}" />
+										</div>
 
-                        <g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
-                          <div class="clear"></div>
-                          <div class="label"><g:message code="brew.init.power" /></div> <div class="indicator">0</div><div class="unit"><g:message code="default.unit.percent" /></div>
+										<div class="statusIcon ui-state-default">
+											<div class="ui-icon ui-icon-play"></div>
+										</div>
+										<div class="manualModeIcon ui-state-active">
+											<div class="ui-icon ui-icon-person"></div>
+										</div>
 
-                          <div class="clear"></div>
+										<g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
+											<div class="clear"></div>
+											<div class="label">
+												<g:message code="brew.init.power" />
+											</div>
+											<div class="indicator">0</div>
+											<div class="unit">
+												<g:message code="default.unit.percent" />
+											</div>
 
-                          <div class="booze-icon booze-icon-arrow-left sliderButton" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') - $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
+											<div class="clear"></div>
 
-                          <div class="slider"></div>
-                          <div class="booze-icon booze-icon-arrow-right sliderButton" onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') + $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
-                        </g:if>
-                      </div>
+											<div class="booze-icon booze-icon-arrow-left sliderButton"
+												onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') - $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
 
-                      <g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
-                        <script type="text/javascript">
+											<div class="slider"></div>
+											<div class="booze-icon booze-icon-arrow-right sliderButton"
+												onclick="$('#motor_${motor}_slider').slider('value', $('#motor_${motor}_slider').slider('value') + $('#motor_${motor}_slider').slider('option', 'step')); return false;"></div>
+										</g:if>
+									</div>
+
+									<g:if test="${brewProcess[motor].getMotor().hasRegulator()}">
+										<script type="text/javascript">
                           $(document).ready(function() {
                             $('#motor_${motor}_progressbar').find('.progressbar').first().progressbar(
                               {
@@ -414,8 +538,6 @@ return false"><span><g:pumpModeName pumpMode="${pumpMode}"/></span></li>
                       max: 106,
                       step: 0.5,
                       change: function( event, ui ) {
-                          console.log("cookingTemperature change event, value: "+ui.value);
-                          console.log(event);
                           $( "#cookingTemperatureIndicator").html(String.replace(ui.value, ".", ","));
                           booze.brew.setCookingTemperature(ui.value);
                       },

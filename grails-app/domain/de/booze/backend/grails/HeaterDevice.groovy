@@ -36,12 +36,12 @@ class HeaterDevice extends Device {
   boolean forced = false
   
   /**
-   * If the heater is forced (== controlled by the user)
+   * If the heater is forced (^= manually controlled by the user)
    * the programmatically assigned status is saved in this
    * variable
    */
   boolean realEnabled = false
-  
+ 
   HeaterRegulatorDevice regulator
 
   static transients = ["secondsOn", "lastEnableTime", "forced", "realEnabled"]
@@ -105,6 +105,7 @@ class HeaterDevice extends Device {
     driverInstance.disable();
     this.secondsOn += Math.round((new Date().getTime()) - this.lastEnableTime.getTime())
   }
+ 
   /**
    * Returns true if the heater is enabled, false if not
    */
@@ -114,12 +115,24 @@ class HeaterDevice extends Device {
   
   /**
    * Sets the device power if a regulator is available
+   * @param s Power in percent
    */
   public void writePower(int s) {
     if(this.hasRegulator()) {
       this.regulator.writePower(s);
     }
   }
+  
+  /**
+   * Writes the device power if a regulator is
+   * available and in forced mode
+   * @param s Power in percent
+   */
+  public void writeForcedPower(int s) {
+	if(this.hasRegulator()) {
+		this.regulator.writeForcedPower(s);
+	}  
+  }  
   
   /**
    * Returns the device power if a regulator is available
@@ -138,15 +151,30 @@ class HeaterDevice extends Device {
   }
   
   /**
-   * Toggles the force mode for this heater
+   * Activates the forced mode for this heater.
+   * "Forced" means that the heater can only be
+   * modified via the "forced" methods, calls to
+   * the standard enable/disable methods are ignored
    */
-  public void toggleForce() {
-    if(!this.forced) {
-      this.realEnabled = this.enabled()
-      this.forced = true
-    }
-    else {
+  public void force() {
+	if(!this.forced) {
+	  this.realEnabled = this.enabled()
+	  if(this.hasRegulator()) {
+		  this.regulator.force()
+	  }
+	  this.forced = true
+	}
+  }
+  
+  /**
+   * Disables the forced mode for this heater
+   */
+  public void unforce() {
+    if(this.forced) {
       this.forced = false
+	  if(this.hasRegulator()) {
+		  this.regulator.unforce()
+	  }
       if(this.realEnabled) {
         this.enable()
       }
@@ -157,7 +185,7 @@ class HeaterDevice extends Device {
   }
   
   /**
-   * Returns heater force status
+   * Returns true if the heater is in forced mode
    */
   public boolean forced() {
     return this.forced

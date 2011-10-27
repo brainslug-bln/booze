@@ -180,8 +180,9 @@
     .booze-icon {
       width: 1em;
       height: 1em;
-      background-size: 100%;
-      -moz-background-size: 100%;
+      background-size: 94%;
+      -moz-background-size: 94%;
+      background-position: 3% 3%;
       background-repeat: no-repeat;
       display: block;
     }

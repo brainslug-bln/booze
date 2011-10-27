@@ -46,7 +46,7 @@ BoozeNotifier.prototype.notify = function(message, options) {
     
     if(!options.modal) options.modal = false
     if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.notification");
-    if(!options.callback) options.callback = function() { $(this).dialog("destroy")};
+    if(!options.callback) options.callback = function() { $(this).dialog("destroy"); $(this).remove()};
     if(!options.buttonText) options.buttonText = booze.messageSource.message("js.booze.notifier.close")
     
     var dialog = $('<div></div>')
@@ -83,7 +83,7 @@ BoozeNotifier.prototype.error = function(message, options) {
     
     if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.error");
     if(!options.modal) options.modal = false;
-    if(!options.callback) options.callback = function() { $(this).dialog('destroy') };
+    if(!options.callback) options.callback = function() { $(this).dialog('destroy'); $(this).remove() };
     if(!options.buttonText) options.buttonText = booze.messageSource.message("js.booze.notifier.close")
     
     var dialog = $('<div></div>')
@@ -120,18 +120,17 @@ BoozeNotifier.prototype.confirm = function(message, options) {
     
     if(!options.title) options.title = booze.messageSource.message("js.booze.notifier.confirm");
     if(!options.modal) options.modal = false;
-    var pc = function() { $(this).dialog('destroy') };
+    var pc = function() { $(this).dialog('destroy'); $(this).remove() };
     if(options.proceedCallback) pc = options.proceedCallback;
     if(options.proceedCallbackOptions) pc = function() { options.proceedCallback(options.proceedCallbackOptions)}
     if(!options.proceedText) options.proceedText = booze.messageSource.message("js.booze.notifier.proceed")
     
-    var cb = function() { $(this).dialog('destroy') };
+    var cb = function() { $(this).dialog('destroy'); $(this).remove() };
     if(options.cancelCallback) cb = options.cancelCallback;
     if(options.cancelCallbackOptions) cb = function() { options.cancelCallback(options.cancelCallbackOptions)}
     if(!options.cancelText) options.cancelText = booze.messageSource.message("js.booze.notifier.cancel")
     
     var dialog = $('<div></div>')
-		.html(message)
 		.dialog({
       width: "30%",
       minWidth: "35em",
@@ -146,7 +145,8 @@ BoozeNotifier.prototype.confirm = function(message, options) {
             click: pc
           }
         ]
-		});
+		})
+	.html(message);
     
     if(options.playSound) {
       $.sound.play(APPLICATION_ROOT + "/sounds/notification.mp3", {timeout: 10000});
@@ -154,6 +154,12 @@ BoozeNotifier.prototype.confirm = function(message, options) {
 
     return dialog;
 };
+
+BoozeNotifier.prototype.removeDialog = function(dialog) {
+	$(dialog).dialog("destroy");
+    $(dialog).remove();
+    dialog = null;
+}
 
 
 

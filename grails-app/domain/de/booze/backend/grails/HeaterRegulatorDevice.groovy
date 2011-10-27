@@ -26,12 +26,40 @@ class HeaterRegulatorDevice extends Device {
   
   static belongsTo = [heater: HeaterDevice]
   
+  static transients = ["forced", "realPower"]
+  
+  /**
+   * True if the heater is in forced mode
+   */
+  private boolean forced = false
+  
+  /**
+   * If the heater regulator is forced (^= manually controlled by the user)
+   * the programmatically assigned power value is saved in this
+   * variable
+   */
+  private int realPower = 0;
+  
   /**
    * Sets the heater power in percent
    * of the maximum value
+   * @param power Power in percent
    */
   public void writePower(int power) {
+	if(this.forced) {
+		this.realPower = power;
+		return;
+	}
     driverInstance.setPower(power);
+  }
+  
+  /**
+   * Sets the heater power in percent of 
+   * the maximum power in forced mode
+   * @param power
+   */
+  public void writeForcedPower(int power) {
+	  driverInstance.setPower(power);
   }
 
   /**
@@ -40,5 +68,23 @@ class HeaterRegulatorDevice extends Device {
    */
   public int readPower() {
     return driverInstance.getPower();
+  }
+  
+  /**
+   * Enables the forced mode for this heater regulator.
+   * While in forced mode, the regulator power value
+   * may only be modified by the writeForcedPower method
+   */
+  public void force() {
+	  this.realPower = this.readPower();
+	  this.forced = true;
+  }
+  
+  /**
+   * Disables the forced mode
+   */
+  public void unforce() {
+	  this.forced = false;
+	  this.writePower(this.realPower);
   }
 }

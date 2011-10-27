@@ -24,7 +24,7 @@ package de.wagner_ibw.iow.spi;
  * Implementation of a generic spi device.
  * Tested successfully with AvrMega8.
  *
- * @author Achim Stüsgen, Thomas Wagner
+ * @author Achim Stoesgen, Thomas Wagner
  * @since 0.9.4.
  */
 public class GenericSPIDevice extends AbstractSPIDevice {

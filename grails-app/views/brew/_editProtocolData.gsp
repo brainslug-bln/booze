@@ -40,6 +40,25 @@
             <input type="text" name="finalPostSpargingWort" value="${formatNumber(format:'##0.0#', number: protocol.finalPostSpargingWort)}" onkeyup="$('#errors_finalPostSpargingWort').slideUp(100)"  />
           </div>
         </div>
+        </fieldset>
+        
+        <fieldset>
+        <div class="singleColumn">
+          <div class="row">
+	        <label><g:message code="protocol.iodineTest"/></label>
+	        <div class="radioset ui-buttonset" id="iodineTest">
+	          <input type="radio" id="iodineTest_positive" name="iodineTest" value="${0}" <g:if test="${protocol.iodineTest == 0}">checked</g:if> /><label for="iodineTest_positive"><g:message code="protocol.iodineTest.positive" /></label>
+	          <input type="radio" id="iodineTest_negative" name="iodineTest" value="${1}" <g:if test="${protocol.iodineTest == 1}">checked</g:if> /><label for="iodineTest_negative"><g:message code="protocol.iodineTest.negative" /></label>
+	        </div>
+          </div>
+          
+          <script type="text/javascript">
+			$(function() {
+				console.log($("#iodineTest"));
+				$( "#iodineTest" ).buttonset();
+			});
+		  </script>
+        </div>
       </fieldset>
 
       <fieldset>

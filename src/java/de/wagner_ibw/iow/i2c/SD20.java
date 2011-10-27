@@ -24,7 +24,7 @@ import de.wagner_ibw.iow.AbstractIowDevice;
 
 /**
  * This is the implementation of the SD20 device "Servocontroller" by
- * Jörg Pohl (www.roboter-teile.de))
+ * Joerg Pohl (www.roboter-teile.de))
  *
  * @author Thomas Wagner
  * @since 0.9.5

@@ -671,4 +671,60 @@ class BrewController {
     }
   }
   
+  /**
+   * Set power value for a forced heater
+   */
+  def setForcedHeaterPower = {
+	  BrewProcessHolder f = BrewProcessHolder.getInstance()
+	  
+	  if (!f.hasBrewProcess()) {
+		response.sendError(503)
+		return
+	  }
+  
+	  BrewProcess p = f.getBrewProcess()
+  
+	  if (p.processId != params.processId) {
+		render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
+		return
+	  }
+  
+	  try {
+		Long heater = Long.parseLong(params.heater)
+		Integer power = Integer.parseInt(params.power)
+		p.setForcedHeaterPower(heater, power);
+		render([success: true] as JSON)
+	  }
+	  catch (Exception e) {
+		render([success: false, message: e])
+	  }
+  }
+  
+  /**
+   * Enable or disable a forced heater
+   */
+  def toggleForcedHeaterStatus = {
+	  BrewProcessHolder f = BrewProcessHolder.getInstance()
+	  
+	  if (!f.hasBrewProcess()) {
+		response.sendError(503)
+		return
+	  }
+  
+	  BrewProcess p = f.getBrewProcess()
+  
+	  if (p.processId != params.processId) {
+		render([success: false, error: g.message(code: 'brew.brewProcess.processId.mismatch')] as JSON)
+		return
+	  }
+  
+	  try {
+		Long heater = Long.parseLong(params.heater)
+		p.toggleForcedHeaterStatus(heater);
+		render([success: true] as JSON)
+	  }
+	  catch (Exception e) {
+		render([success: false, message: e])
+	  }
+  }
 }

@@ -56,6 +56,10 @@ function BoozeMessageSource() {
         'js.booze.brew.temperatureChart':'Temperaturverlauf',
         'js.booze.brew.pressureChart':'Druckverlauf',
         'js.booze.brew.save':"Speichern",
+        
+        'js.booze.brew.startCooking':'Kochvorgang starten',
+        
+        'js.booze.brew.hijackSession':'Sitzung übernehmen',
 
         'js.booze.manualMode.serverCommunicationError': "Fehler beim Verbindungsaufbau zum Server"
     };

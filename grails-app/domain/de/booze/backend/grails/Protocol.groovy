@@ -20,224 +20,236 @@
 package de.booze.backend.grails
 
 class Protocol implements Serializable {
-  
-  final static Integer SUGAR_TYPE_GLUCOSE = 0
-  final static Integer SUGAR_TYPE_SACCHAROSE = 1
 
-  String recipeName
+	final static Integer SUGAR_TYPE_GLUCOSE = 0
+	final static Integer SUGAR_TYPE_SACCHAROSE = 1
 
-  String recipeDescription
+	final static Integer IODINE_TEST_POSITIVE = 0
+	final static Integer IODINE_TEST_NEGATIVE = 1
 
-  /**
-   * Bitterness in IBU
-   */
-  Double ibu
+	String recipeName
 
-  /**
-   * Alcohol in Vol/0%
-   */
-  Double alcohol
+	String recipeDescription
 
-  /**
-   * Beer color in ebc
-   */
-  Double ebc
+	/**
+	 * Bitterness in IBU
+	 */
+	Double ibu
 
-  /**
-   * Targeted and final original wort
-   */
-  Double targetOriginalWort
-  Double finalOriginalWort
+	/**
+	 * Alcohol in Vol/%
+	 */
+	Double alcohol
 
-  /**
-   * Targeted and final pre-cooking wort
-   */
-  Double targetPostSpargingWort
-  Double finalPostSpargingWort
+	/**
+	 * Beer color in ebc
+	 */
+	Double ebc
 
-  /**
-   * Measured meshing wort (after mashing, before sparging)
-   */
-  Double targetPreSpargingWort
-  Double finalPreSpargingWort
+	/**
+	 * Targeted and final original wort
+	 */
+	Double targetOriginalWort
+	Double finalOriginalWort
 
-  /**
-   * Targeted and final bottling wort
-   */
-  Double targetBottlingWort
-  Double finalBottlingWort
+	/**
+	 * Targeted and final pre-cooking wort
+	 */
+	Double targetPostSpargingWort
+	Double finalPostSpargingWort
 
-  /**
-   * Main water volume
-   */
-  Double mashingWaterVolume
+	/**
+	 * Measured meshing wort (after mashing, before sparging)
+	 */
+	Double targetPreSpargingWort
+	Double finalPreSpargingWort
 
-  /**
-   * Temperature for the main water
-   */
-  Double mashingTemperature
-  
+	/**
+	 * Targeted and final bottling wort
+	 */
+	Double targetBottlingWort
+	Double finalBottlingWort
 
-  /**
-   * Targeted and final second water volume
-   */
-  Double targetSpargingWaterVolume
-  Double finalSpargingWaterVolume
+	/**
+	 * Main water volume
+	 */
+	Double mashingWaterVolume
 
-  /**
-   * Temperature in °C for the second water
-   */
-  Double spargingTemperature
-
-  /**
-   * Targeted and final beer volume
-   */
-  Double finalBeerVolume
-  Double targetFinalBeerVolume
-
-  /**
-   * Dilution water volume in l
-   */
-  Double dilutionWaterVolume
+	/**
+	 * Temperature for the main water
+	 */
+	Double mashingTemperature
 
 
-  /**
-   * Targeted and final cooking time in minutes
-   */
-  Integer targetCookingTime
-  Integer finalCookingTime
+	/**
+	 * Targeted and final second water volume
+	 */
+	Double targetSpargingWaterVolume
+	Double finalSpargingWaterVolume
 
-  /**
-   * Lauter temperature in °C
-   */
-  Double lauterTemperature
-  
-  Double targetPostIsomerization
-  Double finalPostIsomerization
-  
-  /**
-   * Yeast info
-   */
-  String yeast
-  
-  /**
-   * Fermentation temperature in °C
-   */
-  Double fermentationTemperature
-  
-  /**
-   * Storing period in weeks
-   */  
-  Double storingTime
-  
-  /**
-   * Storing temperature in °C
-   */
-  Double storingTemperature
+	/**
+	 * Temperature in °C for the second water
+	 */
+	Double spargingTemperature
 
-  /**
-   * Amount of fare for storing in ml/l
-   */
-  Double fareVolume
-  
-  /**
-   * Fare concentration in °Plato
-   */
-  Double fareConcentration
-  
-  /**
-   * Amount of sugar added to the bottles or cans in g/l
-   */
-  Double fareSugar
-  
-  /**
-   * CO2 concentration
-   */
-  Double co2Concentration
-  
-  /**
-   * Glucose or saccharose
-   */
-  Integer fareSugarType = SUGAR_TYPE_GLUCOSE
+	/**
+	 * Targeted and final beer volume
+	 */
+	Double finalBeerVolume
+	Double targetFinalBeerVolume
 
-  Date dateStarted
-  Date dateFinished
+	/**
+	 * Dilution water volume in l
+	 */
+	Double dilutionWaterVolume
 
-  static hasMany = [temperatureValues: ProtocolTemperatureValue,
-          pressureValues: ProtocolPressureValue,
-          targetTemperatureValues: ProtocolTargetTemperatureValue,
-          events: ProtocolEvent,
-          rests: ProtocolRest,
-          malts: ProtocolMalt,
-          hops: ProtocolHop]
 
-  static constraints = {
-    recipeName(nullable: false, blank: false)
-    recipeDescription(nullable: true, blank: true)
+	/**
+	 * Targeted and final cooking time in minutes
+	 */
+	Integer targetCookingTime
+	Integer finalCookingTime
 
-    dateFinished(nullable: true)
+	/**
+	 * Lauter temperature in °C
+	 */
+	Double lauterTemperature
 
-    ibu(min: 0.0 as Double, max: 2000 as Double, nullable: true)
-    ebc(min: 0.0 as Double, max: 2000 as Double, nullable: true)
+	/**
+	 * Iodine test
+	 */
+	Integer iodineTest = Protocol.IODINE_TEST_POSITIVE
 
-    alcohol(min: 0.0 as Double, max: 20.0 as Double, nullable: true)
+	Double targetPostIsomerization
+	Double finalPostIsomerization
 
-    targetPostSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-    finalPostSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-    
-    targetPreSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-    finalPreSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+	/**
+	 * Yeast info
+	 */
+	String yeast
 
-    targetBottlingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-    finalBottlingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+	/**
+	 * Fermentation temperature in °C
+	 */
+	Double fermentationTemperature
 
-    targetOriginalWort(min: 0.0 as Double, max: 40.0 as Double, nullable: false)
-    finalOriginalWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+	/**
+	 * Storing period in weeks
+	 */  
+	Double storingTime
 
-    mashingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+	/**
+	 * Storing temperature in °C
+	 */
+	Double storingTemperature
 
-    targetSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
-    finalSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
-    spargingTemperature(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
-    
-    targetPostIsomerization(min: 0d, max: 1000d, nullable: true)
-    finalPostIsomerization(min: 0d, max: 1000d, nullable: true)
+	/**
+	 * Amount of fare for storing in ml/l
+	 */
+	Double fareVolume
 
-    dilutionWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+	/**
+	 * Fare concentration in °Plato
+	 */
+	Double fareConcentration
 
-    finalBeerVolume(nullable: true, min: 0.0 as Double, max: 1000 as Double)
-    targetFinalBeerVolume(nullable: true, min: 0.0 as Double, max: 1000 as Double)
+	/**
+	 * Amount of sugar added to the bottles or cans in g/l
+	 */
+	Double fareSugar
 
-    lauterTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
-    mashingTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
-    spargingTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
+	/**
+	 * CO2 concentration
+	 */
+	Double co2Concentration
 
-    yeast(nullable: false, blank: false)
+	/**
+	 * Glucose or saccharose
+	 */
+	Integer fareSugarType = SUGAR_TYPE_GLUCOSE
 
-    targetCookingTime(nullable: false, min: 0, max: 1000)
-    finalCookingTime(nullable: true, min: 0, max: 1000)
+	Date dateStarted
+	Date dateFinished
 
-    fareVolume(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
-    fareConcentration(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
-    fareSugar(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
-    fareSugarType(nullable: true)
-    
-    storingTime(nullable: true, min: 0d, max: 2000d)
-    storingTemperature(nullable: true, min: 0d, max: 100d)
-    
-    fermentationTemperature(nullable: true, min: 0d, max: 100d)
-    
-    co2Concentration(nullable: true, min: 0d, max: 1000d)
-  }
+	static hasMany = [temperatureValues: ProtocolTemperatureValue,
+		pressureValues: ProtocolPressureValue,
+		targetTemperatureValues: ProtocolTargetTemperatureValue,
+		events: ProtocolEvent,
+		rests: ProtocolRest,
+		malts: ProtocolMalt,
+		hops: ProtocolHop]
 
-  static mapping = {
-    temperatureValues cascade: "delete-orphan,all"
-    pressureValues cascade: "delete-orphan,all"
-    events cascade: "delete-orphan,all"
-    /*columns {
-        temperatureValues lazy: false
-        pressureValues lazy: false
-        events lazy: false
-    }*/
-  }
+	static constraints = {
+		recipeName(nullable: false, blank: false)
+		recipeDescription(nullable: true, blank: true)
+
+		dateFinished(nullable: true)
+
+		ibu(min: 0.0 as Double, max: 2000 as Double, nullable: true)
+		ebc(min: 0.0 as Double, max: 2000 as Double, nullable: true)
+
+		alcohol(min: 0.0 as Double, max: 20.0 as Double, nullable: true)
+
+		targetPostSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+		finalPostSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+
+		targetPreSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+		finalPreSpargingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+
+		targetBottlingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+		finalBottlingWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+
+		targetOriginalWort(min: 0.0 as Double, max: 40.0 as Double, nullable: false)
+		finalOriginalWort(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+
+		mashingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: false)
+
+		targetSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+		finalSpargingWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+		spargingTemperature(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
+
+		targetPostIsomerization(min: 0d, max: 1000d, nullable: true)
+		finalPostIsomerization(min: 0d, max: 1000d, nullable: true)
+
+		dilutionWaterVolume(min: 0.0 as Double, max: 1000 as Double, nullable: true)
+
+		finalBeerVolume(nullable: true, min: 0.0 as Double, max: 1000 as Double)
+		targetFinalBeerVolume(nullable: true, min: 0.0 as Double, max: 1000 as Double)
+
+		lauterTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
+		mashingTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
+		spargingTemperature(min: 0.0 as Double, max: 100.0 as Double, nullable: true)
+
+		iodineTest(inList:[
+			IODINE_TEST_POSITIVE,
+			IODINE_TEST_NEGATIVE
+		], nullable: false)
+		yeast(nullable: false, blank: false)
+
+		targetCookingTime(nullable: false, min: 0, max: 1000)
+		finalCookingTime(nullable: true, min: 0, max: 1000)
+
+		fareVolume(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
+		fareConcentration(min: 0.0 as Double, max: 40.0 as Double, nullable: true)
+		fareSugar(min: 0.0 as Double, max: 1000.0 as Double, nullable: true)
+		fareSugarType(nullable: true)
+
+		storingTime(nullable: true, min: 0d, max: 2000d)
+		storingTemperature(nullable: true, min: 0d, max: 100d)
+
+		fermentationTemperature(nullable: true, min: 0d, max: 100d)
+
+		co2Concentration(nullable: true, min: 0d, max: 1000d)
+	}
+
+	static mapping = {
+		temperatureValues cascade: "delete-orphan,all"
+		pressureValues cascade: "delete-orphan,all"
+		events cascade: "delete-orphan,all"
+		/*columns {
+		 temperatureValues lazy: false
+		 pressureValues lazy: false
+		 events lazy: false
+		 }*/
+	}
 }
