@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite errors="0" failures="0" hostname="doctorwho.local" name="de.booze.backend.grails.RecipeTests" tests="1" time="2.656" timestamp="2011-11-09T10:09:06">
+  <properties />
+  <testcase classname="de.booze.backend.grails.RecipeTests" name="testCreateRecipe" time="2.602" />
+  <system-out><![CDATA[--Output from testCreateRecipe--
+]]></system-out>
+  <system-err><![CDATA[--Output from testCreateRecipe--
+]]></system-err>
+</testsuite>

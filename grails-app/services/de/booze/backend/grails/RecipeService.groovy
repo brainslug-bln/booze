@@ -42,15 +42,46 @@ class RecipeService {
 
   /**
    * Estimates the final water amount for a given recipe
+   * @param recipe
+   * @return
    */
   public Double estimateFinalWaterAmount(Recipe recipe) {
 
-    Double water = recipe.mashingWaterVolume
+	Double spargingWaterVolume = 0
     if (recipe.spargingWaterVolume) {
-      water += recipe.spargingWaterVolume
+     spargingWaterVolume = recipe.spargingWaterVolume
     }
 
-    return (water - (this.calculateAverageEvaporationFactor() * recipe.cookingTime))
+	return this.estimateFinalWaterAmount(recipe.mashingWaterVolume, spargingWaterVolume, recipe.cookingTime);
+  }
+  
+  /**
+   * Estimates the final water amount for given water fill and cooking time
+   * @param water
+   * @param spargingWaterVolume
+   * @param cookingTime
+   * @return
+   */
+  public Double estimateFinalWaterAmount(Double water, Double spargingWaterVolume, Double cookingTime) {
+	  water += spargingWaterVolume 
+	  return (water - (this.calculateAverageEvaporationFactor() * cookingTime))
+	  
+  }
+
+  /**
+   * Estimates the final water amount for a given protocol
+   * @param protocol
+   * @return
+   */
+  public Double estimateFinalWaterAmount(Protocol protocol) {
+	  Double spargingWaterVolume = protocol.finalSpargingWaterVolume?protocol.finalSpargingWaterVolume:protocol.targetSpargingWaterVolume
+	  if(protocol.dilutionWaterVolume) {
+		  spargingWaterVolume += protocol.dilutionWaterVolume
+	  }
+	  
+	  Double cookingTime = protocol.finalCookingTime?protocol.finalCookingTime:protocol.targetCookingTime;
+	  
+	  return this.estimateFinalWaterAmount(protocol.mashingWaterVolume, spargingWaterVolume, cookingTime);
   }
 
   /**
@@ -86,16 +117,16 @@ class RecipeService {
   }
 
   /**
-   * Calculate the beer color in ebc for the given recipe
+   * Calculate the beer color in ebc for the given recipe and originalWort
    * @param recipe
    * @param originalWort
    * @return Double
    */
-  public Double calculateBeerColor(Recipe recipe, Double originalWort) {
+  public Double calculateBeerColor(malts, Double originalWort) {
     Double totalFillWeight = 0.0D;
     Double colorWeightSum = 0.0D;
 
-    recipe.malts.each {
+    malts.each {
       colorWeightSum += it.ebc * it.amount
       totalFillWeight += it.amount;
     }
@@ -115,7 +146,12 @@ class RecipeService {
    * @return Double
    */
   public Double calculateBeerColor(Recipe recipe) {
-    return calculateBeerColor(recipe, recipe.originalWort)
+    return calculateBeerColor(recipe.malts, recipe.originalWort)
+  }
+  
+  public Double calculateBeerColor(Protocol protocol) {
+	  def originalWort = protocol.finalOriginalWort?protocol.finalOriginalWort:protocol.targetOriginalWort;
+	  return calculateBeerColor(protocol.malts, originalWort)
   }
 
   /**

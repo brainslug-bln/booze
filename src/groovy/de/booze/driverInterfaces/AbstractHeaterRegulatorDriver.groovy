@@ -28,7 +28,7 @@ package de.booze.driverInterfaces
  */
 abstract class AbstractHeaterRegulatorDriver extends AbstractDriver {
 
-  abstract public Integer power
+  public Integer power
 
   /**
    * Sets the heater power in percent

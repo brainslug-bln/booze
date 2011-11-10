@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.controllers
 
@@ -33,8 +33,12 @@ import de.wagner_ibw.iow.IowPort
 import de.wagner_ibw.iow.i2c.I2C
 import de.wagner_ibw.iow.i2c.PCF8591
 
+
 /**
- *
+ * This class provides methods for communication with an IOWarrior 
+ * device connected to the USB port. Pins can be set to high or low. 
+ * Also one or more attached PCF8591 I2C a/d converters can be read.
+ * 
  * @author akotsias
  */
 class IoWarriorController {

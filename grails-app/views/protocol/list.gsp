@@ -24,7 +24,7 @@
       
       <script type="text/javascript" language="javascript">
         var li = $('#protocolList_item_${protocol.id}');
-        li.click(function() {window.location.href='${createLink(controller:"protocol", action:"edit", id:protocol.id)}'});
+        li.click(function() {window.location.href='${createLink(controller:"protocol", action:"editBrewData", id:protocol.id)}'});
         li.find('.delete').first().click(function(e) { 
           e.stopPropagation();
           booze.notifier.confirm('Soll das Protokoll \'${protocol.recipeName.encodeAsHTML()}\' wirklich gelöscht werden?', {modal: true, proceedCallback: function() {window.location.href='${createLink(controller:'protocol', action: 'delete', id:protocol.id)}'}})

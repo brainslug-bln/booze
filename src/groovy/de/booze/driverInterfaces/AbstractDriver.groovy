@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.driverInterfaces
 
@@ -29,9 +29,9 @@ abstract class AbstractDriver {
    * Map that contains the names of variables
    * which contain driver options
    */
-  abstract public static DriverOption[] availableOptions;
+  public static DriverOption[] availableOptions;
     
-  public void shutdown() {
+  public void shutdown() throws Exception {
       
   }
     

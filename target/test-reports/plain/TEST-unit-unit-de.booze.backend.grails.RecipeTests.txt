@@ -1,0 +1,10 @@
+Testsuite: de.booze.backend.grails.RecipeTests
+Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 2,656 sec
+------------- Standard Output ---------------
+--Output from testCreateRecipe--
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+--Output from testCreateRecipe--
+------------- ---------------- ---------------
+
+Testcase: testCreateRecipe took 2,602 sec

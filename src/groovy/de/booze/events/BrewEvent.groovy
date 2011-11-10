@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,11 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.events
 
 import grails.util.GrailsNameUtils
+
 
 /**
  * Default brew event which holds
@@ -49,27 +50,56 @@ class BrewEvent {
    */
   boolean savedToProtocol = false
 
-
+  /**
+   * Returns true if the message is already delivered
+   * @return
+   */
   public boolean delivered() {
     return this.delivered;
   }
 
+  /**
+   * Tell the event that is has been delivered
+   * @return
+   */
   public boolean deliver() {
     this.delivered = true;
   }
 
+  /**
+   * Returns true if the event has already been saved
+   * to the protocol
+   * @return
+   */
   public boolean getSavedToProtocol() {
     return this.savedToProtocol;
   }
 
+  /**
+   * Constructor
+   * @param message
+   */
   public BrewEvent(String message) {
     this.message = message;
   }
 
+  /**
+   * Returns an object with data for the
+   * frontend
+   * 
+   * @param g
+   * @return
+   */
   public Map getEventDataForFrontend(g) {
     return [message: g.message(code: 'brew.brewProcess.event', args: [(g.formatDate(format: g.message(code: 'default.time.formatter'), date: this.created)), g.message(code: this.message)])]
   }
 
+  /**
+   * Returns an object with data for the
+   * protocol
+   * 
+   * @return
+   */
   public Map getEventDataForProtocol() {
     this.savedToProtocol = true;
     return [message: this.message,

@@ -28,7 +28,7 @@ package de.booze.driverInterfaces
  */
 abstract class AbstractMotorRegulatorDriver extends AbstractDriver {
 
-  abstract public Integer speed
+  public Integer speed
 
   /**
    * Sets the motor speed in percent

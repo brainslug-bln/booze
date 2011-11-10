@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,16 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 package de.booze.tasks
 
 import org.apache.log4j.Logger;
-
-
 import de.booze.backend.grails.Recipe
 import de.booze.regulation.DeviceSwitcher
 import de.booze.regulation.TemperatureRegulator
 
+/**
+ * This task periodically checks if the actual
+ * reference temperature fits the target temperature
+ * and enables/disables the heater devices accordingly
+ * 
+ * @author akotsias
+ *
+ */
 class TemperatureRegulatorTask extends TimerTask {
 
   /**
@@ -53,7 +59,7 @@ class TemperatureRegulatorTask extends TimerTask {
 
   /**
    * Checks if the desired temperature is reached and
-   *
+   * enables/disables the heater devices accordingly
    */
   public void run() {
     log.debug("running TemperatureRegulatorTask")
@@ -64,7 +70,7 @@ class TemperatureRegulatorTask extends TimerTask {
     Double referenceTemperature = 0.0 as Double;
 
     try {
-      referenceTemperature = this.tempRegulator.getActualReferenceTemperature();
+      referenceTemperature = this.tempRegulator.readActualTemperatureImmediately();
       log.debug("reference temperature is ${referenceTemperature}°C")
     }
     catch (Exception e) {
@@ -82,8 +88,10 @@ class TemperatureRegulatorTask extends TimerTask {
       return;
     }
 
-    // Tell the actual temperature to the tempRegulator
-    this.tempRegulator.setActualTemperature(referenceTemperature);
+    // Push the actual temperature to the tempRegulator
+    // this.tempRegulator.setActualTemperature(referenceTemperature);
+	// DEPRECATED!
+	// This is done automatically by readActualTemperatureImmediately() now
 
     if (referenceTemperature < targetTemperature) {
       log.debug("reference temperature is lower than target temperature (${targetTemperature}°C)")

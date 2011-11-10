@@ -66,13 +66,6 @@
       </div>
 
       <div class="row">
-        <label for="ebc"><g:message code="protocol.ebc"/></label>
-        <span class="immutable">
-          <g:formatNumber format="##0.0#" number="${protocolInstance.ebc}"/>
-        </span>
-      </div>
-
-      <div class="row">
         <label for="targetOriginalWort"><g:message code="protocol.targetOriginalWort"/></label>
         <div id="errors_targetOriginalWort" class="errors"> </div>
         <input class="small" type="text" onkeyup="$('#errors_targetOriginalWort').slideUp(100)" maxlength="254" value="${formatNumber(format: '##0.0#', number: protocolInstance.targetOriginalWort)}" name="targetOriginalWort">
@@ -89,23 +82,16 @@
         <div id="errors_targetPostSpargingWort" class="errors"> </div>
         <input class="small" type="text" onkeyup="$('#errors_targetPostSpargingWort').slideUp(100)" maxlength="254" value="${formatNumber(format: '##0.0#', number: protocolInstance.targetPostSpargingWort)}" name="targetPostSpargingWort">
       </div>
-
-      <div class="row">
-        <label for="targetBottlingWort"><g:message code="protocol.targetBottlingWort"/></label>
-        <div id="errors_targetBottlingWort" class="errors"> </div>
-        <input class="small" type="text" onkeyup="$('#errors_targetBottlingWort').slideUp(100)" maxlength="254" value="${formatNumber(format: '##0.0#', number: protocolInstance.targetBottlingWort)}" name="targetBottlingWort">
-      </div>
     </div>
 
     <div class="column50percent">
+
       <div class="row">
-        <label for="alcohol"><g:message code="protocol.alcohol"/></label>
+        <label for="ebc"><g:message code="protocol.ebc"/></label>
         <span class="immutable">
-          <g:formatNumber format="##0.0#" number="${protocolInstance.alcohol}"/>
+          <g:formatNumber format="##0.0#" number="${protocolInstance.ebc}"/>
         </span>
       </div>
-
-      <div class="row"></div>
 
       <div class="row">
         <label for="finalOriginalWort"><g:message code="protocol.finalOriginalWort"/></label>
@@ -125,17 +111,80 @@
         <input class="small" type="text" onkeyup="$('#errors_finalPostSpargingWort').slideUp(100)" maxlength="254" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalPostSpargingWort)}" name="finalPostSpargingWort">
       </div>
 
-      <div class="row">
-        <label for="finalBottlingWort"><g:message code="protocol.finalBottlingWort"/></label>
-        <div id="errors_finalBottlingWort" class="errors"> </div>
-        <input class="small" type="text" onkeyup="$('#errors_finalBottlingWort').slideUp(100)" maxlength="254" value="${formatNumber(format: '##0.0#', number: protocolInstance.finalBottlingWort)}" name="finalBottlingWort">
-      </div>
+    </div>
+    
+    <div class="clear"></div>
+    
+    <div class="columnFull">
+      <table>
+        <caption><g:message code="protocol.malts" /></caption>
+        <thead>
+          <tr class="ui-widget-header">
+            <th style="width: 60%"><g:message code="malt.name" /></th>
+            <th style="width: 20%;"><g:message code="malt.ebc" /></th>
+            <th style="width: 20%;"><g:message code="malt.amount" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          <g:each in="${protocolInstance?.malts?.sort{it.name}}" var="malt" status="i">
+            <tr class="ui-widget-content">
+              <td>${malt.name?.encodeAsHTML()}</td>
+              <td>${formatNumber(format: '##0.0#', number: malt.ebc)}</td>
+              <td>${formatNumber(format: '##0.0#', number: malt.amount)}</td>
+            </tr>
+          </g:each>
+        </tbody>
+    </table>
+    
+    <table>
+       <caption><g:message code="protocol.rests" /></caption>
+       <thead>
+         <tr class="ui-widget-header">
+            <th style="width: 60%"><g:message code="rest.comment" /></th>
+            <th style="width: 20%;"><g:message code="rest.temperature" /></th>
+            <th style="width: 20%;"><g:message code="rest.duration" /></th>
+         </tr>
+       </thead>
+       <tbody>
+         <g:each in="${protocolInstance?.rests?.sort{it.temperature}}" var="rest" status="i">
+           <tr class="ui-widget-content">
+             <td>${rest.comment?.encodeAsHTML()}</td>
+             <td>${formatNumber(format: '##0', number: rest.temperature)}</td>
+             <td>${formatNumber(format: '##0', number: rest.duration)}</td>
+           </tr>
+         </g:each>
+       </tbody>
+    </table>
+     
+    <table>
+      <caption><g:message code="protocol.hops" /></caption>
+      <thead>
+        <tr class="ui-widget-header">
+          <th><g:message code="hop.name" /></th>
+		      <th style="width: 15%;"><g:message code="hop.percentAlpha" /></th>
+		      <th style="width: 15%;"><g:message code="hop.amount" /></th>
+		      <th style="width: 15%;"><g:message code="hop.time" /></th>
+	      </tr>
+      </thead>
+      <tbody>
+     
+      <g:each in="${protocolInstance?.hops?.sort{it?.time}}" var="hop" status="i">
+        <tr class="ui-widget-content">
+          <td>${hop.name?.encodeAsHTML()}</td>
+          <td>${formatNumber(format: '##0.0#', number: hop.percentAlpha)}</td>
+          <td>${formatNumber(format: '##0', number: hop.amount)}</td>
+          <td>${formatNumber(format: '##0', number: hop.time)}</td>
+        </tr>
+      </g:each>
+      </tbody>
+    </table>
+   
     </div>
     
     <div class="clear"></div>
 
     <h3><g:message code="protocol.fieldset.processData"/></h3>
-
+    
     <div class="column50percent">
       <div class="row">
         <label for="mashingWaterVolume"><g:message code="protocol.mashingWaterVolume"/></label>
@@ -174,11 +223,6 @@
         </span>
       </div>
       
-      <div class="row">
-        <label for="fareVolume"><g:message code="protocol.fareVolume"/></label>
-        <div id="errors_fareVolume" class="errors"> </div>
-        <input class="small" type="text" onkeyup="$('#errors_fareVolume').slideUp(100)" maxlength="254" value="${formatNumber(format: '###0.0#', number: protocolInstance.fareVolume)}" name="fareVolume">
-      </div>
     </div>
 
     <div class="column50percent">
@@ -214,29 +258,18 @@
         <div id="errors_finalBeerVolume" class="errors"> </div>
         <input class="small" type="text" onkeyup="$('#errors_finalBeerVolume').slideUp(100)" maxlength="254" value="${formatNumber(format: '###0.0#', number: protocolInstance.finalBeerVolume)}" name="finalBeerVolume">
       </div>
-      
-      <div class="row">
-        <label for="fareConcentration"><g:message code="protocol.fareConcentration"/></label>
-        <div id="errors_fareConcentration" class="errors"> </div>
-        <input class="small" type="text" onkeyup="$('#errors_fareConcentration').slideUp(100)" maxlength="254" value="${formatNumber(format: '###0.0#', number: protocolInstance.fareConcentration)}" name="fareConcentration">
-      </div>
-    </div>
 
-    <div class="row">
-      <label for="yeast"><g:message code="protocol.yeast"/></label>
-      <div id="errors_yeast" class="errors"> </div>
-      <input type="text" onkeyup="$('#errors_yeast').slideUp(100)" maxlength="254" value="${fieldValue(bean:protocolInstance, field:'yeast')}" name="yeast"></input>
     </div>
 
     <div class="clear"></div>
     <div class="type-button">
       <input type="hidden" name="id" value="${protocolInstance.id.encodeAsHTML()}"/>
       <span style="float: right">
-        <g:actionSubmit value="${message(code:'protocol.edit.save')}" action="update"/>
+        <g:actionSubmit class="ui-button ui-state-default" value="${message(code:'protocol.edit.save')}" action="update"/>
       </span>
 
       <span style="float: left">
-        <g:actionSubmit value="${message(code:'protocol.edit.delete')}" action="delete"/>
+        <g:actionSubmit class="ui-button ui-state-default" value="${message(code:'protocol.edit.delete')}" action="delete"/>
       </span>
     </div>
   </g:form>

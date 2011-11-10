@@ -45,7 +45,7 @@ class MotorRegulatorTask extends TimerTask {
   private Date actualIntervalStart
 
   /**
-   * True if the task is not run yet
+   * True if the task has not run yet
    */
   private boolean virgin = true;
 
@@ -57,7 +57,9 @@ class MotorRegulatorTask extends TimerTask {
   }
 
   /**
-   * Run method for this task
+   * Run method
+   * If motor is in interval cycling mode this
+   * task controls the periodical on/off switching
    */
   public void run() {
     try {

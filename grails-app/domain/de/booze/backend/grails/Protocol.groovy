@@ -21,6 +21,8 @@ package de.booze.backend.grails
 
 class Protocol implements Serializable {
 
+	def recipeService, hopService
+
 	final static Integer SUGAR_TYPE_GLUCOSE = 0
 	final static Integer SUGAR_TYPE_SACCHAROSE = 1
 
@@ -129,9 +131,14 @@ class Protocol implements Serializable {
 	String yeast
 
 	/**
-	 * Fermentation temperature in °C
+	 * Target fermentation temperature in °C
 	 */
 	Double fermentationTemperature
+
+	/**
+	 * Fermentation duration in days
+	 */
+	Double fermentationDuration
 
 	/**
 	 * Storing period in weeks
@@ -238,6 +245,7 @@ class Protocol implements Serializable {
 		storingTemperature(nullable: true, min: 0d, max: 100d)
 
 		fermentationTemperature(nullable: true, min: 0d, max: 100d)
+		fermentationDuration(nullable: true, min: 0d, max: 100d)
 
 		co2Concentration(nullable: true, min: 0d, max: 1000d)
 	}
@@ -246,10 +254,45 @@ class Protocol implements Serializable {
 		temperatureValues cascade: "delete-orphan,all"
 		pressureValues cascade: "delete-orphan,all"
 		events cascade: "delete-orphan,all"
-		/*columns {
-		 temperatureValues lazy: false
-		 pressureValues lazy: false
-		 events lazy: false
-		 }*/
+		columns {
+			malts lazy: false
+			hops lazy: false
+			rests lazy: false
+			temperatureValues lazy: false
+			pressureValues lazy: false
+			events lazy: false
+		}
 	}
+
+	def calculateData = {
+		if(malts && malts.size() > 0) {
+			try {
+				ebc = recipeService.calculateBeerColor(this)
+			}
+			catch(Exception e) {
+				log.error("Could not calculate beer color: ${e}")
+			}
+		}
+		if(mashingWaterVolume) {
+			try {
+				targetFinalBeerVolume = recipeService.estimateFinalWaterAmount(this)
+			}
+			catch(Exception e) {
+				log.error("Could not estimate final beer amount: ${e}")
+			}
+		}
+
+		if(hops && hops.size() > 0) {
+			try {
+				ibu = hopService.estimateIbu(this)
+			}
+			catch(Exception e) {
+				log.error("Could not estimate IBU: ${e}")
+			}
+		}
+	}
+
+	def afterLoad = { this.calculateData() }
+
+	def afterUpdate = { this.calculateData() }
 }

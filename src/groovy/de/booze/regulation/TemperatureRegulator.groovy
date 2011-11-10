@@ -1,7 +1,7 @@
 /**
  * Booze - Software for micro breweries
  *
- * Copyright (C) 2010  Andreas Kotsias <akotsias@esnake.de>
+ * Copyright (C) 2011  Andreas Kotsias <akotsias@esnake.de>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * */
+ **/
 
 package de.booze.regulation
 
@@ -166,13 +166,13 @@ class TemperatureRegulator {
   }
 
   /**
-   * Sets the desired temperature
+   * Sets the target temperature
    */
   public void setTargetTemperature(Double t) {
     this.targetTemperature = t
     
     
-    Double at = this.getActualReferenceTemperature();
+    Double at = this.readActualTemperatureImmediately();
     
     this.rampTemperature = at;
     this.rampStartTemperature = at
@@ -182,7 +182,14 @@ class TemperatureRegulator {
     d.setTargetTemperature(t);
   }
   
-  public Double getActualReferenceTemperature() {
+  /**
+   * Immediately reads the actual temperature from the
+   * reference sensors and caches it into 
+   * this.actualTemperature
+   * 
+   * @return
+   */
+  public Double readActualTemperatureImmediately() {
     Double rt = 0.0d;
     int rtc = 0;
     
@@ -200,7 +207,10 @@ class TemperatureRegulator {
       throw new Exception('No valid reference temperature sensors found');
     }
 
-    return (rt / rtc) as Double
+	// Cache the actual temperature
+	this.actualTemperature = (rt / rtc)
+	
+    return this.actualTemperature
   }
   
   /**
@@ -238,14 +248,12 @@ class TemperatureRegulator {
   }
 
   /**
-   * Sets the actural reference temperature
-   */
-  public void setActualTemperature(Double t) {
-    this.actualTemperature = t
-  }
-
-  /**
    * Returns the actual reference temperature
+   * Cave: This is only a cached value, the temperature
+   * is not really read from the sensors
+   * 
+   * Use readActualTemperatureImmediately() for
+   * immediate temperature reading
    */
   public Double getActualTemperature() {
     return this.actualTemperature;

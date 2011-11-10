@@ -38,8 +38,9 @@ class ProtocolController {
     [protocolInstanceList: Protocol.list(params), protocolInstanceTotal: Protocol.count()]
   }
 
-  def edit = {
+  def editBrewData = {
     def protocolInstance = Protocol.get(params.id)
+	
     if (!protocolInstance) {
       flash.message = message(code: 'protocol.notFound', args: [params.id])
       redirect(action: "list")
@@ -48,6 +49,17 @@ class ProtocolController {
       [protocolInstance: protocolInstance]
     }
   }
+  
+  def editFermentationData = {
+	  def protocolInstance = Protocol.get(params.id)
+	  if (!protocolInstance) {
+		flash.message = message(code: 'protocol.notFound', args: [params.id])
+		redirect(action: "list")
+	  }
+	  else {
+		[protocolInstance: protocolInstance]
+	  }
+	}
   
   def temperatureChart = {
     def protocolInstance = Protocol.get(params.id)
@@ -147,18 +159,10 @@ class ProtocolController {
         def version = params.version.toLong()
         if (protocolInstance.version > version) {
           protocolInstance.errors.rejectValue("version", "protocol.optimistic.locking.failure", "Another user has updated this Protocol while you were editing.")
-          render(view: 'edit', model: [protocolInstance: protocolInstance])
+          render(view: 'editBrewData', model: [protocolInstance: protocolInstance])
           return
         }
       }
-
-      protocolInstance.malts.clear();
-      protocolInstance.hops.clear();
-      protocolInstance.additives.clear();
-      protocolInstance.rests.clear();
-
-      protocolInstance.save(flush: true);
-      protocolInstance = Protocol.get(protocolInstance.id)
 
       protocolInstance.properties = params
 
@@ -166,7 +170,7 @@ class ProtocolController {
         flash.message = message(code: 'protocol.edit.saved')
       }
 
-      render(view: "edit", model: [protocolInstance: protocolInstance])
+      render(view: "editBrewData", model: [protocolInstance: protocolInstance])
     }
     else {
       flash.message = message(code: 'protocol.edit.notFound')

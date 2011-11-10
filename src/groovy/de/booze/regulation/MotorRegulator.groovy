@@ -91,7 +91,8 @@ class MotorRegulator {
 
   /**
    * Enables this motor and starts
-   * the MotorRegulatorTask if motor mode is interval
+   * the MotorRegulatorTask if motor 
+   * cycling mode is set to "interval"
    */
   public void enable() {
     log.error("Enabling motor")
